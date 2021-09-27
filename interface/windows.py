@@ -66,23 +66,23 @@ def janela_consulta_pregao():
         [5,4,15,20,30,6,10,10,10,10,8,15]
     ]
 
-    layout=[[
-        sg.Text('Órgão: ',(10,1), click_submits=False,enable_events=False),
-        sg.Combo(values=orgaos,size=(40,1),enable_events=True,key='cb_orgao',readonly=True),
-        sg.Text(' UASG ',(10,1),enable_events=False,visible=False),
-        sg.Combo(values=[],size=(10,1),enable_events=True,key='cb_pregao',visible=False,readonly=True)
-    ],
-    [
-        sg.Frame(
-        layout=[
-            [
-                sg.TabGroup(
-                    [[
-                    sg.Tab('Geral', pt.tabelaItens(cabecalho_geral[0],'tb_geral',larguras=cabecalho_geral[1]),key='tab_geral',visible=True),
-                    sg.Tab('Ganhos', pt.tabelaItens(cabecalho_ganhos[0],'tb_ganho',larguras=cabecalho_ganhos[1]),key='tab_ganho',visible=True)
-                    ]],enable_events=True,key='tg_item')
+    layout=[
+        [sg.Frame(title='',layout=[
+            [sg.Text('Órgão: ',(10,1),key='txt_uasg'),
+            sg.Combo(values=orgaos,size=(60,1),enable_events=True,key='cb_orgao',readonly=True)]
+            ]),
+        sg.Frame(title='',key='fr_pregao',visible=False,layout=[
+            [sg.Text(' Pregão: ',(10,1)),
+            sg.Combo(values=[],size=(10,1),enable_events=True,key='cb_pregao',readonly=True)]
+            ])
+        ],
+        [sg.Frame(title='',visible=False,key='fr_itens_participados',layout=[
+            [sg.TabGroup([
+                [sg.Tab('Geral', pt.tabelaItens(cabecalho_geral[0],'tb_geral',larguras=cabecalho_geral[1]),key='tab_geral',visible=True),
+                sg.Tab('Ganhos', pt.tabelaItens(cabecalho_ganhos[0],'tb_ganho',larguras=cabecalho_ganhos[1]),key='tab_ganho',visible=True)
+                ]],enable_events=True,key='tg_item')
             ],
-        ],title='Itens',visible=False,key='fr_itens_participados'),
+        ]),
     ],
     [pt.voltar()]
     ]

@@ -16,7 +16,14 @@ def abrir_pasta(initialdir='C:/Users/Licitacao/Desktop'):
 class Planilha:
     
     def __init__(self, caminho):
-        self.planilha = openpyxl.load_workbook(caminho,data_only=True)
+        while(True):
+            try:
+                self.planilha = openpyxl.load_workbook(caminho,data_only=True)
+                break
+            except:
+                sg.popup('Confira se a planilha está aberta, caso esteja favor fechar.')
+                self.planilha = openpyxl.load_workbook(caminho,data_only=True)
+                break
 
     def obter_pregao(self):
         wb = self.planilha['Controle']
@@ -51,25 +58,31 @@ class Operacoes:
         planilha = Planilha(pasta+'/'+arquivo_planilha)
         pregao = planilha.obter_pregao()
         itens = planilha.obter_itens_cotados()
-        print(pregao)
-        #if(pregao[3] != ''):
-        #    cnn.inserir_orgao(uasg=pregao[1],orgao=pregao[3])
-        #cnn.inserir_pregao(uasg = pregao[1], numero=pregao[0], data=pregao[2],fase='Proposta')
+        id_orgao = cnn.consulta_orgao(pregao[1])
+        if(id_orgao>=0):
+            cnn.inserir_pregao(id_orgao,pregao[0],pregao[2],"Proposta")
+            print('inserido novo pregao')
+        else:
+            #inserir o órgão no banco de dados
+            id_orgao = cnn.consulta_orgao(pregao[1])
+            cnn.inserir_pregao(id_orgao,pregao[0],pregao[2],"Proposta")
+            print('inserido novo orgao e pregao')
+            pass
+
         for item in itens:
-            print (item)
-            # cnn.inserir_items_planilha(
-            #     uasg = pregao[1],
-            #     pregao = pregao[0],
-            #     item=item[0],
-            #     marca=item[1],
-            #     valor=item[2],
-            #     quantidade=item[3],
-            #     frete=item[4],
-            #     categoria=item[5],
-            #     modelo=item[6],
-            #     fornecedor=item[7],
-            #     preco_custo=item[8],
-            #     )
+            cnn.inserir_items_planilha(
+                uasg = pregao[1],
+                pregao = pregao[0],
+                item=item[0],
+                marca=item[1],
+                valor=item[2],
+                quantidade=item[3],
+                frete=item[4],
+                categoria=item[5],
+                modelo=item[6],
+                fornecedor=item[7],
+                preco_custo=item[8],
+                )
         nomenclatura = adapter.padronizar_nome_pasta(pregao[2],pregao[0],pregao[1])
         renomear_arquivo(pasta, arquivo_planilha, nomenclatura)
         renomear_arquivo(pasta, arquivo_word, nomenclatura)

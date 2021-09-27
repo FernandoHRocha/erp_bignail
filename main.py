@@ -41,7 +41,7 @@ while True:
         if(event == 'bt_consulta_pregao'):
             janela_anterior=wds.janela_consulta
             window.Close()
-            evh.abrir_janela_consulta_pregao(window)
+            wds.janela_consulta_pregao()
     
     if(window.Title==wds.titulo_janelas['janela_cadastro']):
         if(event == 'bt_planilha'):
@@ -62,11 +62,11 @@ while True:
             pass
 
     if(window.Title==wds.titulo_janelas['janela_consulta_pregao']):
-        #janela_anterior=wds.janela_consulta_pregao
+        #wds.janela_consulta_pregao
         if(event == 'cb_orgao'):
-            print('oi')
-            pass
+            evh.escolher_orgao(window,values['cb_orgao'])
         if(event == 'cb_pregao'):
+            evh.apresentar_itens_pregao(window,values['cb_orgao'],values['cb_pregao'])
             pass
         if(event == 'tg_item'):#eventos tb_geral tb_ganho
             pass

@@ -13,11 +13,55 @@ def consulta_orgaos():
     consulta = []
     cursor.execute('exec sel_orgaos;')
     for row in cursor:
-        aux = []
-        aux.append(row[1])
-        aux.append(row[0])
+        aux = [row[0],row[1]]
         consulta.append(aux)
     return consulta
+
+def consulta_orgao(uasg):
+    """Retorna o código identificador do pregão caso ele exista, senão retorna false."""
+    consulta = []
+    cursor.execute("select id_orgao from orgao where uasg = '"+uasg+"'  ORDER BY id_orgao OFFSET 0 ROW FETCH NEXT 1 ROW ONLY;")
+    for row in cursor:
+        consulta.append(row[0])
+    return consulta[0] if len(consulta)>0 else -1
+
+def consulta_pregoes(uasg):
+    """Consulta os pregões participados por órgão."""
+    cursor.execute("exec sel_pregoes @uasg = '"+uasg+"'")
+    consulta = []
+    for row in cursor:
+        consulta.append(row[0])
+    return consulta
+
+def consultar_pregao(uasg:str,pregao:str):
+    """Retorna o id do pregão."""
+    cursor.execute("select id_pregao from pregao where id_orgao = (select id_orgao from orgao where uasg = '"+uasg+"') and numero_pregao = '"+pregao+"'")
+    consulta = []
+    for row in cursor:
+        consulta.append(row[0])
+    return consulta[0]
+
+def consultar_itens_geral(uasg:str,pregao:str):
+    """Retorna uma lista de itens participados em um pregão."""
+    cursor.execute("select * from item where id_orgao = (select id_pregao from pregao where id_orgao = (select id_orgao from orgao where uasg = '"+uasg+"') and numero_pregao = '"+pregao+"');")
+    consulta=[]
+    for row in cursor:
+        consulta.append(row)
+    return consulta
+
+def inserir_items_planilha(uasg, pregao, item, modelo, valor, quantidade, fornecedor, marca, categoria,preco_custo, frete):
+    """Insere os itens do pregão."""
+    id_pregao = consultar_pregao(uasg, pregao)
+    query = "exec dbo.sp_inserir_item @frete="+validar(frete)+", @preco_custo="+validar(preco_custo)+", @item="+validar(item)+', @modelo="'+validar(modelo)+'", @valor='+validar(valor)+", @quantidade="+validar(quantidade)+", @id_pregao="+str(id_pregao)+', @fornecedor="'+validar(fornecedor)+'", @marca="'+validar(marca)+'", @categoria="'+validar(categoria)+'";'
+    cursor.execute(query)
+    conn.commit()
+
+def inserir_pregao(id_orgao,pregao,data,fase):
+    """Insere o pregão com base no id do órgão e no nome da fase."""
+    query = "insert into pregao (id_orgao, numero_pregao, data_abertura, id_fase_pregao) values ('"+validar(id_orgao)+"','"+validar(pregao)+"',(select convert(varchar, '"+validar(data)+":00', 120)),(select id_fase_pregao from fase_pregao where nome_fase = '"+validar(fase)+"'));"
+    cursor.execute(query)
+    conn.commit()
+    pass
 
 def consultaNomeOrgao(uasg):
     cursor.execute("exec sp_getNomeOrgao @uasg = '"+uasg+"'")
@@ -36,12 +80,6 @@ def listar_pregoes():#LISTA OS PREGÕES PELA DATA DE ABERTURA
         pregoes.append(aux)
     return pregoes
 
-def consulta_pregoes(uasg):
-    cursor.execute("exec sel_pregoes @uasg = '"+uasg+"'")
-    pregoes = []
-    for row in cursor:
-        pregoes.append(row[0])
-    return pregoes
 
 def inserir_orgao(uasg, orgao):
     query="INSERT INTO orgao (nome_orgao, uasg) VALUES ('"+ orgao+"','"+ uasg+"');"
@@ -53,20 +91,6 @@ def inserir_pregao(uasg, numero, data, fase):#INSERE UM NOVO PREGÃO NO BD
     while(len(str(numero))<6):
         numero = "0"+numero
     query = "exec dbo.sp_inserir_pregao @uasg = "+validar(uasg)+",@pregao ='"+validar(numero)+"',@data = '"+validar(data)+"', @fase = "+validar(fase)+";"
-    cursor.execute(query)
-    conn.commit()
-
-def obter_id_pregao(uasg, pregao):
-    resultado = ''
-    query = 'select id_pregao from pregao where pregao.id_orgao = (select id_orgao from orgao where uasg = '+uasg+') and pregao.numero_pregao = '+pregao
-    cursor.execute(query)
-    for x in cursor:
-        resultado = x[0]
-    return resultado
-
-def inserir_items_planilha(uasg, pregao, item, modelo, valor, quantidade, fornecedor, marca, categoria,preco_custo, frete):
-    id_pregao = obter_id_pregao(uasg, pregao)
-    query = "exec dbo.sp_inserir_item @frete="+validar(frete)+", @preco_custo="+validar(preco_custo)+", @item="+validar(item)+', @modelo="'+validar(modelo)+'", @valor='+validar(valor)+", @quantidade="+validar(quantidade)+", @id_pregao="+str(id_pregao)+', @fornecedor="'+validar(fornecedor)+'", @marca="'+validar(marca)+'", @categoria="'+validar(categoria)+'";'
     cursor.execute(query)
     conn.commit()
 
