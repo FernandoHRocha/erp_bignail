@@ -43,7 +43,7 @@ def consultar_pregao(uasg:str,pregao:str):
 
 def consultar_itens_geral(uasg:str,pregao:str):
     """Retorna uma lista de itens participados em um pregão."""
-    cursor.execute("select * from item where id_orgao = (select id_pregao from pregao where id_orgao = (select id_orgao from orgao where uasg = '"+uasg+"') and numero_pregao = '"+pregao+"');")
+    cursor.execute("select * from item where id_pregao = (select id_pregao from pregao where id_orgao = (select id_orgao from orgao where uasg = '"+uasg+"') and numero_pregao = '"+pregao+"');")
     consulta=[]
     for row in cursor:
         consulta.append(row)
