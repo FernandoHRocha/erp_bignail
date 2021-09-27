@@ -1,4 +1,4 @@
-from automation import automation_info as aui
+import credentials as aui
 from database import connection as cnn
 from tkinter import filedialog
 import PySimpleGUI as sg

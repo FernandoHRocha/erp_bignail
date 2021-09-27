@@ -8,7 +8,8 @@ def validar(campo):#NÃO PERMITE SQL INJECTION
     campo = str(campo).replace("'","").replace("--","")
     return campo
 
-def consulta_orgaos():#RETORNA UMA LISTA DE TODOS OS ÓRGÃOS CADASTRADOS E SUA RESPECTIVA UASG [uasg, nome_orgao]
+def consulta_orgaos():
+    """Retorna uma lista de todos os órgãos cadastrados e sua respectiva uasg."""
     consulta = []
     cursor.execute('exec sel_orgaos;')
     for row in cursor:
