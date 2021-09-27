@@ -5,6 +5,7 @@ from automation import automate as aut
 import PySimpleGUI as sg
 
 janela_anterior = wds.janela_menu
+titulo_janelas = wds.titulo_janelas
 
 wds.janela_menu()
 
@@ -20,7 +21,7 @@ while True:
             window.Close()
             janela_anterior()
 
-    if(window.Title==wds.titulo_janelas['janela_menu']):
+    if(window.Title==titulo_janelas['janela_menu']):
         if(event == 'bt_consultar'):
             janela_anterior=wds.janela_menu
             wds.janela_consulta()
@@ -31,7 +32,7 @@ while True:
             janela_anterior=wds.janela_menu
             wds.janela_comprasnet()
 
-    if(window.Title==wds.titulo_janelas['janela_consulta']):
+    if(window.Title==titulo_janelas['janela_consulta']):
         if(event == 'bt_submeter'):
             pass
         if(event == 'bt_disputar'):
@@ -43,7 +44,7 @@ while True:
             window.Close()
             wds.janela_consulta_pregao()
     
-    if(window.Title==wds.titulo_janelas['janela_cadastro']):
+    if(window.Title==titulo_janelas['janela_cadastro']):
         if(event == 'bt_planilha'):
             janela_anterior=wds.janela_cadastro
             aut.cadastrar_planilha()
@@ -52,7 +53,7 @@ while True:
         if(event == 'bt_pedido'):
             pass
 
-    if(window.Title==wds.titulo_janelas['janela_comprasnet']):
+    if(window.Title==titulo_janelas['janela_comprasnet']):
         if(event == 'bt_cadastrar'):
             janela_anterior=wds.janela_comprasnet
             aut.cadastrar_pregao()
@@ -61,7 +62,7 @@ while True:
         if(event == 'bt_disputar'):
             pass
 
-    if(window.Title==wds.titulo_janelas['janela_consulta_pregao']):
+    if(window.Title==titulo_janelas['janela_consulta_pregao']):
         #wds.janela_consulta_pregao
         if(event == 'cb_orgao'):
             evh.escolher_orgao(window,values['cb_orgao'])
@@ -72,6 +73,9 @@ while True:
             pass
         
     if(event == sg.WIN_CLOSED):
-        break
+        if(window.Title == titulo_janelas['janela_menu']):
+            break
+        else:
+            window.Close()
 
 window.close()

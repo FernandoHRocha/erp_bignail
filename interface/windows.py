@@ -28,7 +28,6 @@ def janela_consulta():
         [   sg.Button('Processos a Disputar',key='bt_disputar',enable_events=True, size=(20,1))],
         [   sg.Button('Processos em Julgamento',key='bt_julgamento',enable_events=True, size=(20,1))],
         [   sg.Button('Processos Participado',key='bt_consulta_pregao',enable_events=True, size=(20,1))],
-        [pt.voltar()]
         ]
     return sg.Window(title=titulo_janelas['janela_consulta'], layout=layout, finalize=True)
 
@@ -38,7 +37,6 @@ def janela_cadastro():
             sg.Button('Cadastrar Planilha',key='bt_planilha',enable_events=True, size=(20,1))],
         [   sg.Button('Registrar Pedido',key='bt_pedido',enable_events=True, size=(20,1))],
         [   sg.Button('Registrar Carona',key='bt_carona',enable_events=True, size=(20,1))],
-        [pt.voltar()]
         ]
     return sg.Window(titulo_janelas['janela_cadastro'], layout, finalize=True)
 
@@ -48,7 +46,6 @@ def janela_comprasnet():
             sg.Button('Cadastrar Pregão',key='bt_cadastrar',enable_events=True, size=(20,1))],
         [   sg.Button('Consultar Novidades',key='bt_consultar',enable_events=True, size=(20,1))],
         [   sg.Button('Participar de Disputa',key='bt_disputar',enable_events=True, size=(20,1))],
-        [pt.voltar()]
         ]
     return sg.Window(title=titulo_janelas['janela_comprasnet'], layout=layout, finalize=True)
 
