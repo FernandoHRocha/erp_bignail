@@ -58,7 +58,8 @@ def inserir_items_planilha(uasg, pregao, item, modelo, valor, quantidade, fornec
 
 def inserir_pregao(id_orgao,pregao,data,fase):
     """Insere o pregão com base no id do órgão e no nome da fase."""
-    query = "insert into pregao (id_orgao, numero_pregao, data_abertura, id_fase_pregao) values ('"+validar(id_orgao)+"','"+validar(pregao)+"',(select convert(varchar, '"+validar(data)+":00', 120)),(select id_fase_pregao from fase_pregao where nome_fase = '"+validar(fase)+"'));"
+    query = "insert into pregao (id_orgao, numero_pregao, data_abertura, id_fase_pregao) values ('"+validar(id_orgao)+"','"+validar(pregao)+"',convert(datetime,'"+validar(data)+":00',120),(select id_fase_pregao from fase_pregao where nome_fase = '"+validar(fase)+"'));"
+    print(query)
     cursor.execute(query)
     conn.commit()
     pass
@@ -85,14 +86,6 @@ def inserir_orgao(uasg, orgao):
     query="INSERT INTO orgao (nome_orgao, uasg) VALUES ('"+ orgao+"','"+ uasg+"');"
     #cursor.execute(query)
     #conn.commit()
-
-def inserir_pregao(uasg, numero, data, fase):#INSERE UM NOVO PREGÃO NO BD
-    numero = str(numero)
-    while(len(str(numero))<6):
-        numero = "0"+numero
-    query = "exec dbo.sp_inserir_pregao @uasg = "+validar(uasg)+",@pregao ='"+validar(numero)+"',@data = '"+validar(data)+"', @fase = "+validar(fase)+";"
-    cursor.execute(query)
-    conn.commit()
 
 def consultarCategorias():
     cursor.execute("select nome_categoria as Categoria from categoria order by nome_categoria")
