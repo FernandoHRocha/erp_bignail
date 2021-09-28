@@ -43,6 +43,14 @@ while True:
             janela_anterior=wds.janela_consulta
             window.Close()
             wds.janela_consulta_pregao()
+        if(event == 'bt_consulta_empenhos'):
+            janela_anterior=wds.janela_consulta
+            window.Close()
+            wds.janela_consulta_empenhos()
+        if(event == 'bt_consulta_reequilibrios'):
+            pass
+        if(event == 'bt_consulta_carona'):
+            pass
 
     if(window.Title==titulo_janelas['janela_consulta_pregao']):
         #wds.janela_consulta_pregao
@@ -70,12 +78,14 @@ while True:
 ###JANELAS DESTINADAS A PROCEDIMENTOS DE CADASTROS
 
     if(window.Title==titulo_janelas['janela_cadastro']):
-        if(event == 'bt_planilha'):
+        if(event == 'bt_cadastro_planilha'):
             janela_anterior=wds.janela_cadastro
             aut.cadastrar_planilha()
-        if(event == 'bt_carona'):
+        if(event == 'bt_cadastro_empenho'):
             pass
-        if(event == 'bt_pedido'):
+        if(event == 'bt_cadastro_carona'):
+            pass
+        if(event == 'bt_cadastro_reequilibrio'):
             pass
 
 ###JANELAS DESTINADAS AOS PROCESSOS DE AUTOMAÇÃO

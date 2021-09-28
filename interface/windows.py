@@ -8,7 +8,8 @@ titulo_janelas = {
     'janela_cadastro':'Cadastros',
     'janela_comprasnet':'Compras Net',
     'janela_consulta_pregao':'Consulta de processo participado',
-    'janela_consulta_pregoes':'Visão Geral dos processos'
+    'janela_consulta_pregoes':'Visão Geral dos processos',
+    'janela_consulta_empenhos':'Empenhos realizados'
 }
 
 sg.theme('DarkGrey5')
@@ -27,8 +28,11 @@ def janela_menu():
 def janela_consulta():
     """Retorna um sg.Window destinado a mostrar as opções de diferentes consultas disponíveis."""
     layout = [[
-            sg.Button('Processos Geral',key='bt_consulta_geral',enable_events=True, size=(20,1))],
-        [   sg.Button('Buscar Participado',key='bt_consulta_pregao',enable_events=True, size=(20,1))],
+            sg.Button('Listar Processos',key='bt_consulta_geral',enable_events=True, size=(20,1))],
+        [   sg.Button('Buscar Pregão',key='bt_consulta_pregao',enable_events=True, size=(20,1))],
+        [   sg.Button('Listar Empenhos',key='bt_consulta_empenhos',enable_events=True, size=(20,1))],
+        [   sg.Button('Pedidos de Reequilíbrio',key='bt_consulta_reequilibrios',enable_events=True, size=(20,1))],
+        [   sg.Button('Listar Caronas',key='bt_consulta_carona',enable_events=True, size=(20,1))],
         ]
     return sg.Window(title=titulo_janelas['janela_consulta'], layout=layout, finalize=True)
 
@@ -80,18 +84,40 @@ def janela_consulta_pregoes():
                 [[pt.aba_com_tabela_itens(cabecalho_generico,aba[0],aba[1]) for aba in abas]
                 ],enable_events=True,key='tg_item')
         ],
+        [
+            sg.Button('Alterar Fase',enable_events=True,key='bt_fase'),
+            sg.Button('Abrir Pasta',enable_events=True,key='bt_pasta')
+        ],
         [pt.bt_voltar()]
         ]
     return sg.Window(title=titulo_janelas['janela_consulta_pregoes'],layout=layout,finalize=True)
+
+def janela_consulta_empenhos():
+    """Retorna um sg.Window com tabela e abas para apresentação dos empenhos da empresa."""
+    cabecalho_generico = [
+        ['Data do Empenho','Valor Total','UASG','ÓRGÃO'],
+        [20,10,8,30]
+    ]
+    abas = ['pendentes','encerrados']
+    layout=[
+        [
+            sg.TabGroup(
+                [[pt.aba_com_tabela_itens(cabecalho_generico,aba,aba) for aba in abas]
+                ],enable_events=True,key='tg_item')
+        ],
+        [pt.bt_voltar()]
+        ]
+    return sg.Window(title=titulo_janelas['janela_consulta_empenhos'], layout=layout, finalize=True)
 
 ###JANELAS DESTINADAS A CADASTROS
 
 def janela_cadastro():
     """Retorna um sg.Window destinado a mostrar as opções de diferentes cadastros disponíveis."""
     layout = [[
-            sg.Button('Planilha de Cotação',key='bt_planilha',enable_events=True, size=(20,1))],
-        [   sg.Button('Registrar Pedido',key='bt_pedido',enable_events=True, size=(20,1))],
-        [   sg.Button('Registrar Carona',key='bt_carona',enable_events=True, size=(20,1))],
+            sg.Button('Planilha de Cotação',key='bt_cadastro_planilha',enable_events=True, size=(20,1))],
+        [   sg.Button('Registrar Empenho',key='bt_cadastro_empenho',enable_events=True, size=(20,1))],
+        [   sg.Button('Registrar Carona',key='bt_cadastro_carona',enable_events=True, size=(20,1))],
+        [   sg.Button('Registrar Reequilíbrio',key='bt_cadastro_reequilibrio',enable_events=True, size=(20,1))],
         ]
     return sg.Window(titulo_janelas['janela_cadastro'], layout, finalize=True)
 
