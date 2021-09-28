@@ -19,11 +19,51 @@ def data(title,key,visible):
         ],
         title=title,key=key,visible=visible,border_width=0)
 
-def voltar():
+def bt_voltar():
+    """Retorna um sg.Button padronizado para navegação entre janelas."""
     return sg.Button(button_text='Voltar',enable_events=True, key='bt_voltar',size=(10,1))
 
-def tabelaItens(cabecalho,key,larguras,visible=True):
+def tabela_itens(cabecalho,key,larguras,visible=True):
     return [[sg.Table(headings=cabecalho,values=cabecalho,enable_events=True,key=key,auto_size_columns=False,col_widths=larguras,visible=visible)]]
 
-def comboEstadoPregao(key):
+def tabela_itens_preenchida(cabecalho,valores,key,larguras,visible=True):
+    if valores:
+        return [[sg.Table(headings=cabecalho,values=valores,enable_events=True,key=key,auto_size_columns=False,col_widths=larguras,visible=visible)]]
+
+def combo_estado_pregao(key):
     return sg.Combo(values=['Proposta','Julgamento','Frustrado','Homologado','Adjudicado','Finalizado','Suspenso'],enable_events=True, key=key,size=(12,1))
+
+def frame_orgaos_pregao(orgaos):
+    """Retorna uma sg.frame com dois rótulos e duas caixas combo,
+    referente aos órgãos registrados (lista que deve ser passada
+    como parametro) e outra aos pregões."""
+    return [sg.Frame(title='',layout=[
+            [sg.Text('Órgão: ',(10,1),key='txt_uasg'),
+            sg.Combo(values=orgaos,size=(60,1),enable_events=True,key='cb_orgao',readonly=True)]
+            ]),
+        sg.Frame(title='',key='fr_pregao',visible=False,layout=[
+            [sg.Text(' Pregão: ',(10,1)),
+            sg.Combo(values=[],size=(10,1),enable_events=True,key='cb_pregao',readonly=True)]
+            ])]
+
+def aba_com_tabela_itens(cabecalho:list, texto:str, valores:list):
+    """Retorna a sg.Tab contendo uma tabela."""
+    if(len(valores)<1): valores = cabecalho
+    titulo = texto[0].upper()+texto[1:len(texto)]
+    return sg.Tab(titulo, tabela_itens_preenchida(cabecalho[0],valores,'tb_'+texto,larguras=cabecalho[1]),key='tab_'+texto,visible=True)
+
+def frame_item_para_pedido(item:str):
+    """Retorna um padrão onde os itens serão inseridos em um pedido."""
+    return [
+        sg.Frame(title='',key='fr_item',layout=[
+            [    sg.Text('Item: ',enable_events=False),
+                 sg.Text(item,enable_events=False),
+            ],
+            [
+                sg.Text('Quantidade: ',size=(15,1),enable_events=False),
+            ],
+            [
+                sg.InputText(size=(15,1),key='it_quantidade',enable_events=True),
+            ]
+        ])
+    ]

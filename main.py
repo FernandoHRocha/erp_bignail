@@ -32,18 +32,43 @@ while True:
             janela_anterior=wds.janela_menu
             wds.janela_comprasnet()
 
+###JANELAS DESTINADAS A PROCEDIMENTOS DE CONSULTAS
+
     if(window.Title==titulo_janelas['janela_consulta']):
-        if(event == 'bt_submeter'):
-            pass
-        if(event == 'bt_disputar'):
-            pass
-        if(event == 'bt_julgamento'):
-            pass
+        if(event == 'bt_consulta_geral'):
+            janela_anterior=wds.janela_consulta
+            window.Close()
+            wds.janela_consulta_pregoes()
         if(event == 'bt_consulta_pregao'):
             janela_anterior=wds.janela_consulta
             window.Close()
             wds.janela_consulta_pregao()
-    
+
+    if(window.Title==titulo_janelas['janela_consulta_pregao']):
+        #wds.janela_consulta_pregao
+        if(event == 'cb_orgao'):
+            evh.escolher_orgao(window,values['cb_orgao'])
+        if(event == 'cb_pregao'):
+            evh.apresentar_itens_pregao(window,values['cb_orgao'],values['cb_pregao'])
+        if(event == 'tg_item'):#eventos de mudança de aba tab_registrado tab_ganho
+            pass
+        if(event == 'tb_registrado'):
+            pass
+        if(event == 'tb_ganho'):
+            pass
+        if(event == 'bt_item_alterar'):
+            pass
+        if(event == 'bt_item_pedido'):
+            pass
+        if(event == 'bt_item_carona'):
+            pass
+
+    if(window.Title==titulo_janelas['janela_consulta_pregao']):
+        #wds.janela_consulta_pregoes
+        pass
+
+###JANELAS DESTINADAS A PROCEDIMENTOS DE CADASTROS
+
     if(window.Title==titulo_janelas['janela_cadastro']):
         if(event == 'bt_planilha'):
             janela_anterior=wds.janela_cadastro
@@ -53,6 +78,8 @@ while True:
         if(event == 'bt_pedido'):
             pass
 
+###JANELAS DESTINADAS AOS PROCESSOS DE AUTOMAÇÃO
+
     if(window.Title==titulo_janelas['janela_comprasnet']):
         if(event == 'bt_cadastrar'):
             janela_anterior=wds.janela_comprasnet
@@ -60,16 +87,6 @@ while True:
         if(event == 'bt_consultar'):
             pass
         if(event == 'bt_disputar'):
-            pass
-
-    if(window.Title==titulo_janelas['janela_consulta_pregao']):
-        #wds.janela_consulta_pregao
-        if(event == 'cb_orgao'):
-            evh.escolher_orgao(window,values['cb_orgao'])
-        if(event == 'cb_pregao'):
-            evh.apresentar_itens_pregao(window,values['cb_orgao'],values['cb_pregao'])
-            pass
-        if(event == 'tg_item'):#eventos tb_geral tb_ganho
             pass
         
     if(event == sg.WIN_CLOSED):

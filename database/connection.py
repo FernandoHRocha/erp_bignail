@@ -41,6 +41,24 @@ def consultar_pregao(uasg:str,pregao:str):
         consulta.append(row[0])
     return consulta[0]
 
+def consultar_pregoes_fase(fase:int=0):
+    """Retorna a lista de pregões ordenados pela data dado uma fase."""
+    query = ("select data_abertura, numero_pregao, uasg, nome_orgao from pregao "
+            "join orgao on pregao.id_orgao = orgao.id_orgao "
+            "where id_fase_pregao = '"+validar(fase)+"' "
+            "order by data_abertura;") if fase != 0 else ("select data_abertura, "
+            "numero_pregao, uasg, nome_orgao from pregao "
+            "join orgao on pregao.id_orgao = orgao.id_orgao "
+            "order by data_abertura;")
+    cursor.execute(query)
+    consulta = []
+    for row in cursor:
+        if len(row)<1:
+            return []
+        else:
+            consulta.append([str(valor) for valor in row])
+    return consulta
+
 def consultar_itens_geral(uasg:str,pregao:str):
     """Retorna uma lista de itens participados em um pregão."""
     cursor.execute(
