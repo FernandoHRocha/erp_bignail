@@ -48,9 +48,13 @@ while True:
             window.Close()
             wds.janela_consulta_empenhos()
         if(event == 'bt_consulta_reequilibrios'):
-            pass
+            janela_anterior=wds.janela_consulta
+            window.Close()
+            wds.janela_consulta_reequilibrio()
         if(event == 'bt_consulta_carona'):
-            pass
+            janela_anterior=wds.janela_consulta
+            window.Close()
+            wds.janela_consulta_carona()
 
     if(window.Title==titulo_janelas['janela_consulta_pregao']):
         #wds.janela_consulta_pregao
@@ -71,8 +75,14 @@ while True:
         if(event == 'bt_item_carona'):
             pass
 
-    if(window.Title==titulo_janelas['janela_consulta_pregao']):
+    if(window.Title==titulo_janelas['janela_consulta_pregoes']):
         #wds.janela_consulta_pregoes
+        pass
+    if(window.Title==titulo_janelas['janela_consulta_empenhos']):
+        pass
+    if(window.Title==titulo_janelas['janela_consulta_reequilibrio']):
+        pass
+    if(window.Title==titulo_janelas['janela_consulta_carona']):
         pass
 
 ###JANELAS DESTINADAS A PROCEDIMENTOS DE CADASTROS

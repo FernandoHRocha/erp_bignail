@@ -9,7 +9,10 @@ titulo_janelas = {
     'janela_comprasnet':'Compras Net',
     'janela_consulta_pregao':'Consulta de processo participado',
     'janela_consulta_pregoes':'Visão Geral dos processos',
-    'janela_consulta_empenhos':'Empenhos realizados'
+    'janela_consulta_empenhos':'Empenhos realizados',
+    'janela_consulta_reequilibrio':'Pedidos de Reequilíbrio Econômico',
+    'janela_consulta_carona':'Pedidos de Carona'
+
 }
 
 sg.theme('DarkGrey5')
@@ -103,11 +106,45 @@ def janela_consulta_empenhos():
         [
             sg.TabGroup(
                 [[pt.aba_com_tabela_itens(cabecalho_generico,aba,aba) for aba in abas]
-                ],enable_events=True,key='tg_item')
+                ],enable_events=True,key='tg_empenho')
         ],
         [pt.bt_voltar()]
         ]
     return sg.Window(title=titulo_janelas['janela_consulta_empenhos'], layout=layout, finalize=True)
+
+def janela_consulta_reequilibrio():
+    """Retorna um sg.Window com tabela e abas para apresentação dos pedidos de reequilíbrio econômico da empresa."""
+    cabecalho_generico = [
+        ['Data do Pedido','Item','UASG','ÓRGÃO'],
+        [20,10,8,30]
+    ]
+    abas = ['pendentes','enviados','aceitos','recusados']
+    layout=[
+        [
+            sg.TabGroup(
+                [[pt.aba_com_tabela_itens(cabecalho_generico,aba,aba) for aba in abas]
+                ],enable_events=True,key='tg_reequilibrio')
+        ],
+        [pt.bt_voltar()]
+        ]
+    return sg.Window(title=titulo_janelas['janela_consulta_reequilibrio'], layout=layout, finalize=True)
+
+def janela_consulta_carona():
+    """Retorna um sg.Window com tabela e abas para apresentação dos pedidos de carona recebidos pela empresa."""
+    cabecalho_generico = [
+        ['Data do Pedido','Item','Quantidade','UASG','ÓRGÃO','Órgão Requerente'],
+        [20,10,8,8,30,30]
+    ]
+    abas = ['aceitos','empenhados']
+    layout=[
+        [
+            sg.TabGroup(
+                [[pt.aba_com_tabela_itens(cabecalho_generico,aba,aba) for aba in abas]
+                ],enable_events=True,key='tg_carona')
+        ],
+        [pt.bt_voltar()]
+        ]
+    return sg.Window(title=titulo_janelas['janela_consulta_carona'], layout=layout, finalize=True)
 
 ###JANELAS DESTINADAS A CADASTROS
 
@@ -121,6 +158,9 @@ def janela_cadastro():
         ]
     return sg.Window(titulo_janelas['janela_cadastro'], layout, finalize=True)
 
+def janela_cadastro_empenho():
+    return
+    
 ###JANELAS DESTINADAS AOS PROCESSOS DE AUTOMAÇÃO
 
 def janela_comprasnet():
