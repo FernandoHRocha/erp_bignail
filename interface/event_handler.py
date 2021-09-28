@@ -28,4 +28,4 @@ def apresentar_itens_pregao(window:sg.Window, orgao:str, pregao:str):
             orgao = org[1]
             break
     itens = cnn.consultar_itens_geral(orgao,pregao)
-    print(itens)
+    window['tb_geral'].update(values=itens)

@@ -20,14 +20,14 @@ def consulta_orgaos():
 def consulta_orgao(uasg):
     """Retorna o código identificador do pregão caso ele exista, senão retorna false."""
     consulta = []
-    cursor.execute("select id_orgao from orgao where uasg = '"+uasg+"'  ORDER BY id_orgao OFFSET 0 ROW FETCH NEXT 1 ROW ONLY;")
+    cursor.execute("select id_orgao from orgao where uasg = '"+validar(uasg)+"'  ORDER BY id_orgao OFFSET 0 ROW FETCH NEXT 1 ROW ONLY;")
     for row in cursor:
         consulta.append(row[0])
     return consulta[0] if len(consulta)>0 else -1
 
 def consulta_pregoes(uasg):
     """Consulta os pregões participados por órgão."""
-    cursor.execute("exec sel_pregoes @uasg = '"+uasg+"'")
+    cursor.execute("exec sel_pregoes @uasg = '"+validar(uasg)+"'")
     consulta = []
     for row in cursor:
         consulta.append(row[0])
@@ -35,7 +35,7 @@ def consulta_pregoes(uasg):
 
 def consultar_pregao(uasg:str,pregao:str):
     """Retorna o id do pregão."""
-    cursor.execute("select id_pregao from pregao where id_orgao = (select id_orgao from orgao where uasg = '"+uasg+"') and numero_pregao = '"+pregao+"'")
+    cursor.execute("select id_pregao from pregao where id_orgao = (select id_orgao from orgao where uasg = '"+validar(uasg)+"') and numero_pregao = '"+validar(pregao)+"'")
     consulta = []
     for row in cursor:
         consulta.append(row[0])
@@ -43,10 +43,14 @@ def consultar_pregao(uasg:str,pregao:str):
 
 def consultar_itens_geral(uasg:str,pregao:str):
     """Retorna uma lista de itens participados em um pregão."""
-    cursor.execute("select * from item where id_pregao = (select id_pregao from pregao where id_orgao = (select id_orgao from orgao where uasg = '"+uasg+"') and numero_pregao = '"+pregao+"');")
+    cursor.execute(
+        "select id_item, item, modelo, quantidade, valor_ofertado, preco_custo, frete, fornecedor, nome_marca from item"
+        " join marca on item.id_marca = marca.id_marca"
+        " where id_pregao = (select id_pregao from pregao where id_orgao ="
+        " (select id_orgao from orgao where uasg = '"+validar(uasg)+"') and numero_pregao = '"+validar(pregao)+"');")
     consulta=[]
     for row in cursor:
-        consulta.append(row)
+        consulta.append([str(valor) for valor in row])
     return consulta
 
 def inserir_items_planilha(uasg, pregao, item, modelo, valor, quantidade, fornecedor, marca, categoria,preco_custo, frete):

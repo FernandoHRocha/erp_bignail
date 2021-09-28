@@ -55,8 +55,8 @@ def janela_consulta_pregao():
 
     sg.theme(theme)
     cabecalho_geral = [
-        ['ID','Item','Colocação','Produto','Nosso Preço','Melhor Preço','Estado'],
-        [5,4,4,20,10,10,15]
+        ['ID','Item','Modelo','Quantidade','Nosso Preço','Custo','Frete','Fornecedor','Marca'],
+        [5,4,20,10,12,12,10,20,15]
     ]
     cabecalho_ganhos = [
         ['ID','Item','Categoria','Produto','Marca/Modelo','Restam','Valor','Valor Total','Custo','Custo Total','Margem','Fornecedor'],
@@ -77,10 +77,11 @@ def janela_consulta_pregao():
             [sg.TabGroup([
                 [sg.Tab('Geral', pt.tabelaItens(cabecalho_geral[0],'tb_geral',larguras=cabecalho_geral[1]),key='tab_geral',visible=True),
                 sg.Tab('Ganhos', pt.tabelaItens(cabecalho_ganhos[0],'tb_ganho',larguras=cabecalho_ganhos[1]),key='tab_ganho',visible=True)
-                ]],enable_events=True,key='tg_item')
-            ],
+                ]],enable_events=True,key='tg_item')],
         ]),
-    ],
-    [pt.voltar()]
+        [sg.Button('Alterar fase.'),
+        sg.Button('')],
+        ],
+        [pt.voltar()]
     ]
     return sg.Window(title=titulo_janelas['janela_consulta_pregao'], layout=layout, finalize=True)
