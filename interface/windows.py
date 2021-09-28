@@ -4,14 +4,17 @@ from interface import event_handler as evh
 
 titulo_janelas = {
     'janela_menu':'BigNail ERP',
+    #menus principais
     'janela_consulta':'Consultas',
     'janela_cadastro':'Cadastros',
     'janela_comprasnet':'Compras Net',
+    #consultas
     'janela_consulta_pregao':'Consulta de processo participado',
     'janela_consulta_pregoes':'Visão Geral dos processos',
     'janela_consulta_empenhos':'Empenhos realizados',
     'janela_consulta_reequilibrio':'Pedidos de Reequilíbrio Econômico',
-    'janela_consulta_carona':'Pedidos de Carona'
+    'janela_consulta_carona':'Pedidos de Carona',
+    #cadastros
 
 }
 
@@ -160,7 +163,7 @@ def janela_cadastro():
 
 def janela_cadastro_empenho():
     return
-    
+
 ###JANELAS DESTINADAS AOS PROCESSOS DE AUTOMAÇÃO
 
 def janela_comprasnet():
