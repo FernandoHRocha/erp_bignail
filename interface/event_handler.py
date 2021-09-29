@@ -1,8 +1,10 @@
 from database import connection as cnn
 from interface import windows as wds
+import adapter
+import credentials
 import PySimpleGUI as sg
 import time
-import sys
+import os
 
 def atualizar_lista_orgao():
     """Retorna do banco de dados uma lista com o nome dos órgãos registrados."""
@@ -54,3 +56,19 @@ def atualizar_pregoes_gerais(window:sg.Window):
 
 def abrir_pasta_pregao(pregao:str,uasg:str,data:str):
     """Abre a pasta do pregão dentro do sistema."""
+    while(True):##funções temporarias após consolidação do banco de dados não será necessário
+        if(len(pregao)>=8):
+            break
+        else:
+            pregao = '0'+pregao
+    while(True):
+        if(len(uasg)>=6):
+            break
+        else:
+            pregao = '0' + uasg
+    path = credentials.pasta
+    data = data.replace('/','-')
+    data = data[0:10]+'_'+pregao+'_'+uasg
+    path += data
+    os.startfile(os.path.realpath(path))
+    #caminho = adapter.padronizar_nome_pasta(data,pregao,uasg)

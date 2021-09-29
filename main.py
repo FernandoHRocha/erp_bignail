@@ -84,8 +84,7 @@ while True:
         if(event == 'bt_alterar_fase'):
             tab = str(values['tg_pregoes']).replace('tab','tb')
             if(len(values[tab])>0):
-                lista = values[tab]
-                for linha in lista:
+                for linha in values[tab]:
                     pregao = window[tab].get()[linha]
                     evh.abrir_janela_alterar_fase_pregao(pregao[1],pregao[0])
                     window.Close()
@@ -93,13 +92,13 @@ while True:
                 sg.popup('Para alterar a fase de algum pregão é preciso selecionar um primeiro.')
 
         if(event == 'bt_pasta'):
-            tab = str(values['tg_pregaos'].replace('tab','tb'))
+            tab = str(values['tg_pregoes'].replace('tab','tb'))
             if (len(values[tab])>0):
-                lista = values[tab]
-                for linha in lista:
+                for linha in values[tab]:
                     pregao = window[tab].get()[linha]
-                    evh.
-            sg.popup('Abre a pasta do pregão.')
+                    evh.abrir_pasta_pregao(pregao[0],pregao[1],pregao[2])
+            else:
+                sg.popup('Primeiro selecione um pregão.')
 
     if(window.Title==titulo_janelas['janela_consulta_empenhos']):
         if(event == 'bt_registrar_empenho'):
