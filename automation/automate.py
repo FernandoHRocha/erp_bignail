@@ -9,7 +9,7 @@ import os
 
 def cadastrar_planilha():
     """Lê os dados da planilha, cadastra o pregão e os itens no banco de dados, renomeia pasta e arquivos."""
-    arh.Operacoes.cadastrar_planilha(arh.Operacoes)
+    arh.cadastrar_planilha()
 
 def cadastrar_pregao():
     """Cadastra os itens do pregão para participação no site ComprasNet."""

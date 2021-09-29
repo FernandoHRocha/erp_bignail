@@ -71,4 +71,3 @@ def abrir_pasta_pregao(pregao:str,uasg:str,data:str):
     data = data[0:10]+'_'+pregao+'_'+uasg
     path += data
     os.startfile(os.path.realpath(path))
-    #caminho = adapter.padronizar_nome_pasta(data,pregao,uasg)

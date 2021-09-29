@@ -1,8 +1,7 @@
-import credentials as aui
+import credentials
 from database import connection as cnn
 from tkinter import filedialog
 import PySimpleGUI as sg
-from datetime import datetime
 import openpyxl
 import os
 import adapter
@@ -42,53 +41,56 @@ class Planilha:
             item.append([str(wb.cell(linha,coluna).value) for coluna in colunas_registro])
         return item
 
-class Operacoes:
-    
-    def cadastrar_planilha(self):
-        try:
-            pasta = abrir_pasta()
-            for arquivo in os.listdir(pasta):
-                if arquivo.endswith('.xlsx'):
-                    arquivo_planilha = arquivo
-                if arquivo.endswith('.docx'):
-                    arquivo_word = arquivo
-        except:
-            sg.popup('Não foi possível abrir o arquivo.')
-            return
-        planilha = Planilha(pasta+'/'+arquivo_planilha)
-        pregao = planilha.obter_pregao()
-        itens = planilha.obter_itens_cotados()
-        id_orgao = cnn.consulta_orgao(pregao[1])
-        if(id_orgao>=0):
-            cnn.inserir_pregao(id_orgao,pregao[0],pregao[2],"Proposta")
-            print('inserido novo pregao')
-        else:
-            #inserir o órgão no banco de dados
-            id_orgao = cnn.consulta_orgao(pregao[1])
-            cnn.inserir_pregao(id_orgao,pregao[0],pregao[2],"Proposta")
-            print('inserido novo orgao e pregao')
-            pass
-
-        for item in itens:
-            cnn.inserir_items_planilha(
-                uasg = pregao[1],
-                pregao = pregao[0],
-                item=item[0],
-                marca=item[1],
-                valor=item[2],
-                quantidade=item[3],
-                frete=item[4],
-                categoria=item[5],
-                modelo=item[6],
-                fornecedor=item[7],
-                preco_custo=item[8],
-                )
-        nomenclatura = adapter.padronizar_nome_pasta(pregao[2],pregao[0],pregao[1])
-        renomear_arquivo(pasta, arquivo_planilha, nomenclatura)
-        renomear_arquivo(pasta, arquivo_word, nomenclatura)
-        sg.popup('Foram inseridos '+str(len(itens))+' itens no pregão de número '+pregao[0])
-        return
-
 def renomear_arquivo(pasta:str, arquivo:str, nomenclatura:str):
     """Renomea arquivo de acordo com a nomenclatura inserida."""
     os.rename(pasta +'/'+ arquivo, pasta +'/'+ nomenclatura +'_'+ arquivo)
+
+def mover_e_renomear_pasta(pasta:str,nomenclatura:str):
+    local = '/'.join(pasta.split('/')[:-1])+'/'
+    os.rename(pasta,local+nomenclatura)
+
+def cadastrar_planilha():
+    """Realiza a leitura da planilha de cotação, insere os dados em banco de dados e move a pasta para a pasta de pregões"""
+    try:
+        pasta = abrir_pasta()
+        pasta_proposta = pasta+'\proposta'
+        for arquivo in os.listdir(pasta_proposta):
+            if arquivo.endswith('.xlsx'):
+                arquivo_planilha = arquivo
+            if arquivo.endswith('.docx'):
+                arquivo_word = arquivo
+    except:
+        sg.popup('Não foi possível abrir o arquivo.')
+        return
+    
+    planilha = Planilha(pasta_proposta+'/'+arquivo_planilha)
+    pregao = planilha.obter_pregao()
+    itens = planilha.obter_itens_cotados()
+    id_orgao = cnn.consulta_orgao(pregao[1])
+    if(id_orgao>=0):
+        cnn.inserir_pregao(id_orgao,pregao[0],pregao[2],"Proposta")
+    else:
+        #inserir o órgão no banco de dados
+        id_orgao = cnn.consulta_orgao(pregao[1])
+        cnn.inserir_pregao(id_orgao,pregao[0],pregao[2],"Proposta")
+
+    for item in itens:
+        cnn.inserir_items_planilha(
+            uasg = pregao[1],
+            pregao = pregao[0],
+            item=item[0],
+            marca=item[1],
+            valor=item[2],
+            quantidade=item[3],
+            frete=item[4],
+            categoria=item[5],
+            modelo=item[6],
+            fornecedor=item[7],
+            preco_custo=item[8],
+            )
+    nomenclatura = adapter.padronizar_nome_pasta(pregao[2],pregao[0],pregao[1])
+    renomear_arquivo(pasta_proposta, arquivo_planilha, nomenclatura)
+    renomear_arquivo(pasta_proposta, arquivo_word, nomenclatura)
+    mover_e_renomear_pasta(pasta,nomenclatura[:-1])
+    sg.popup('Foram inseridos '+str(len(itens))+' itens no pregão de número '+pregao[0])
+    return
