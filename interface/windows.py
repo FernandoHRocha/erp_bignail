@@ -14,8 +14,11 @@ titulo_janelas = {
     'janela_consulta_empenhos':'Empenhos realizados',
     'janela_consulta_reequilibrio':'Pedidos de Reequilíbrio Econômico',
     'janela_consulta_carona':'Pedidos de Carona',
+    'janela_consulta_atas':'Atas de Processos',
     #cadastros
 
+    #auxiliares
+    'janela_consulta_pregao_alterar_fase':'Alteração de Fase'
 }
 
 sg.theme('DarkGrey5')
@@ -39,6 +42,7 @@ def janela_consulta():
         [   sg.Button('Listar Empenhos',key='bt_consulta_empenhos',enable_events=True, size=(20,1))],
         [   sg.Button('Pedidos de Reequilíbrio',key='bt_consulta_reequilibrios',enable_events=True, size=(20,1))],
         [   sg.Button('Listar Caronas',key='bt_consulta_carona',enable_events=True, size=(20,1))],
+        [   sg.Button('Atas de Processos',key='bt_consulta_atas',enable_events=True, size=(20,1))],
         ]
     return sg.Window(title=titulo_janelas['janela_consulta'], layout=layout, finalize=True)
 
@@ -68,7 +72,7 @@ def janela_consulta_pregao():
             ],
             [
                 sg.Button('Alterar item',enable_events=True,key='bt_item_alterar'),
-                sg.Button('Registrar Pedido',enable_events=True,key='bt_item_pedido'),
+                sg.Button('Registrar Empenho',enable_events=True,key='bt_item_empenho'),
                 sg.Button('Registrar Carona',enable_events=True,key='bt_item_carona'),
             ]
             ]),
@@ -80,18 +84,18 @@ def janela_consulta_pregao():
 def janela_consulta_pregoes():
     """Retorna um sg.Window com tabela e abas para apresentação dos pregões."""
     cabecalho_generico = [
-        ['Abertura','Nº Pregão','UASG','ÓRGÃO'],
-        [20,10,8,30]
+        ['Pregão','UASG','Abertura','ÓRGÃO'],
+        [10,8,20,30]
     ]
     abas = evh.lista_pregoes_gerais()
     layout=[
         [
             sg.TabGroup(
                 [[pt.aba_com_tabela_itens(cabecalho_generico,aba[0],aba[1]) for aba in abas]
-                ],enable_events=True,key='tg_item')
+                ],enable_events=True,key='tg_pregoes')
         ],
         [
-            sg.Button('Alterar Fase',enable_events=True,key='bt_fase'),
+            sg.Button('Alterar Fase',enable_events=True,key='bt_alterar_fase'),
             sg.Button('Abrir Pasta',enable_events=True,key='bt_pasta')
         ],
         [pt.bt_voltar()]
@@ -101,8 +105,8 @@ def janela_consulta_pregoes():
 def janela_consulta_empenhos():
     """Retorna um sg.Window com tabela e abas para apresentação dos empenhos da empresa."""
     cabecalho_generico = [
-        ['Data do Empenho','Valor Total','UASG','ÓRGÃO'],
-        [20,10,8,30]
+        ['Pregão','UASG','Data do Empenho','Valor Total','ÓRGÃO'],
+        [10,8,20,10,30]
     ]
     abas = ['pendentes','encerrados']
     layout=[
@@ -111,6 +115,9 @@ def janela_consulta_empenhos():
                 [[pt.aba_com_tabela_itens(cabecalho_generico,aba,aba) for aba in abas]
                 ],enable_events=True,key='tg_empenho')
         ],
+        [
+            sg.Button('Registrar Empenho',enable_events=True,key='bt_registrar_empenho'),
+        ],
         [pt.bt_voltar()]
         ]
     return sg.Window(title=titulo_janelas['janela_consulta_empenhos'], layout=layout, finalize=True)
@@ -118,8 +125,8 @@ def janela_consulta_empenhos():
 def janela_consulta_reequilibrio():
     """Retorna um sg.Window com tabela e abas para apresentação dos pedidos de reequilíbrio econômico da empresa."""
     cabecalho_generico = [
-        ['Data do Pedido','Item','UASG','ÓRGÃO'],
-        [20,10,8,30]
+        ['Pregão','UASG','Data do Pedido','Item','Valor Licitado','Novo Licitado'],
+        [10,8,20,10,15,15]
     ]
     abas = ['pendentes','enviados','aceitos','recusados']
     layout=[
@@ -128,6 +135,11 @@ def janela_consulta_reequilibrio():
                 [[pt.aba_com_tabela_itens(cabecalho_generico,aba,aba) for aba in abas]
                 ],enable_events=True,key='tg_reequilibrio')
         ],
+        [
+            sg.Button('Registrar Envio',enable_events=True,key='bt_registrar_envio'),
+            sg.Button('Registrar Aceite',enable_events=True,key='bt_registrar_aceite'),
+            sg.Button('Registrar Recusa',enable_events=True,key='bt_registrar_recusa'),
+        ],
         [pt.bt_voltar()]
         ]
     return sg.Window(title=titulo_janelas['janela_consulta_reequilibrio'], layout=layout, finalize=True)
@@ -135,8 +147,8 @@ def janela_consulta_reequilibrio():
 def janela_consulta_carona():
     """Retorna um sg.Window com tabela e abas para apresentação dos pedidos de carona recebidos pela empresa."""
     cabecalho_generico = [
-        ['Data do Pedido','Item','Quantidade','UASG','ÓRGÃO','Órgão Requerente'],
-        [20,10,8,8,30,30]
+        ['Pregão','UASG','Data do Pedido','Item','Quantidade','Órgão Requerente'],
+        [10,8,20,10,8,30]
     ]
     abas = ['aceitos','empenhados']
     layout=[
@@ -145,9 +157,32 @@ def janela_consulta_carona():
                 [[pt.aba_com_tabela_itens(cabecalho_generico,aba,aba) for aba in abas]
                 ],enable_events=True,key='tg_carona')
         ],
+        [
+            sg.Button('Registrar Carona',enable_events=True,key='bt_registrar_carona'),
+        ],
         [pt.bt_voltar()]
         ]
     return sg.Window(title=titulo_janelas['janela_consulta_carona'], layout=layout, finalize=True)
+
+def janela_consulta_atas():
+    """Retorna um sg.Window com tabela e abas para apresentação dos pregões ganhos e atas assinadas."""
+    cabecalho_generico = [
+        ['Pregão','UASG','Data de Assinatura'],
+        [10,8,20]
+    ]
+    abas = ['pendentes','assinadas']
+    layout=[
+        [
+            sg.TabGroup(
+                [[pt.aba_com_tabela_itens(cabecalho_generico,aba,aba) for aba in abas]
+                ],enable_events=True,key='tg_atas')
+        ],
+        [
+            sg.Button('Registrar assinatura de Ata',enable_events=True,key='bt_registrar_ata'),
+        ],
+        [pt.bt_voltar()]
+        ]
+    return sg.Window(title=titulo_janelas['janela_consulta_atas'], layout=layout, finalize=True)
 
 ###JANELAS DESTINADAS A CADASTROS
 
@@ -174,3 +209,26 @@ def janela_comprasnet():
         [   sg.Button('Participar de Disputa',key='bt_disputar',enable_events=True, size=(20,1))],
         ]
     return sg.Window(title=titulo_janelas['janela_comprasnet'], layout=layout, finalize=True)
+
+###JANELAS AUXILIARES
+
+def janela_consulta_pregao_alterar_fase(uasg:str,pregao:str,fases:list):
+    """Retorna um sg.Window com um menu suspenso de opções para alterar a fase do pregão."""
+    layout=[
+        [
+            sg.Text('Para o UASG '),
+            sg.Text(uasg,key='txt_uasg'),
+            sg.Text(' no pregão '),
+            sg.Text(pregao,key='txt_pregao'),
+        ],
+        [
+            sg.Text('Qual a nova fase do pregão?')
+        ],
+        [
+            sg.Combo(values=fases,size=(20,1),key='cb_alterar_fase',enable_events=True)
+        ],
+        [
+            sg.Button('Confirmar Alteração',key='bt_confirmar_fase')
+        ]
+    ]
+    return sg.Window(title=titulo_janelas['janela_consulta_pregao_alterar_fase'],layout=layout,finalize=True)

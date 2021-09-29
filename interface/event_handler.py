@@ -2,6 +2,7 @@ from database import connection as cnn
 from interface import windows as wds
 import PySimpleGUI as sg
 import time
+import sys
 
 def atualizar_lista_orgao():
     """Retorna do banco de dados uma lista com o nome dos órgãos registrados."""
@@ -38,3 +39,18 @@ def lista_pregoes_gerais():
         ['ganhos',cnn.consultar_pregoes_fase(4)],
         ['finalizados',cnn.consultar_pregoes_fase(6)]
     ]
+
+def abrir_janela_alterar_fase_pregao(uasg:str,pregao:str):
+    """Abre a janela para alteração de fase de pregão."""
+    wds.janela_consulta_pregao_alterar_fase(uasg,pregao,cnn.consultar_fases_pregoes())
+
+def atualizar_pregoes_gerais(window:sg.Window):
+    """Refaz a consulta ao banco de dados para atualizar as tabelas de pregões."""
+    window['tb_submeter'].update(values=cnn.consultar_pregoes_fase(1))
+    window['tb_proposta'].update(values=cnn.consultar_pregoes_fase(1))
+    window['tb_julgamento'].update(values=cnn.consultar_pregoes_fase(2))
+    window['tb_ganhos'].update(values=cnn.consultar_pregoes_fase(4))
+    window['tb_finalizados'].update(values=cnn.consultar_pregoes_fase(6))
+
+def abrir_pasta_pregao(pregao:str,uasg:str,data:str):
+    """Abre a pasta do pregão dentro do sistema."""

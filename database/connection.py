@@ -8,6 +8,8 @@ def validar(campo):#NÃO PERMITE SQL INJECTION
     campo = str(campo).replace("'","").replace("--","")
     return campo
 
+###CONSULTAS
+
 def consulta_orgaos():
     """Retorna uma lista de todos os órgãos cadastrados e sua respectiva uasg."""
     consulta = []
@@ -43,7 +45,7 @@ def consultar_pregao(uasg:str,pregao:str):
 
 def consultar_pregoes_fase(fase:int=0):
     """Retorna a lista de pregões ordenados pela data dado uma fase."""
-    query = ("select data_abertura, numero_pregao, uasg, nome_orgao from pregao "
+    query = ("select numero_pregao, uasg, data_abertura, nome_orgao from pregao "
             "join orgao on pregao.id_orgao = orgao.id_orgao "
             "where id_fase_pregao = '"+validar(fase)+"' "
             "order by data_abertura;") if fase != 0 else ("select data_abertura, "
@@ -70,6 +72,28 @@ def consultar_itens_geral(uasg:str,pregao:str):
     for row in cursor:
         consulta.append([str(valor) for valor in row])
     return consulta
+
+def consultar_fases_pregoes():
+    query="select nome_fase from fase_pregao"
+    cursor.execute(query)
+    consulta=[]
+    for row in cursor:
+        consulta.append(row[0])
+    return consulta
+
+###ALTERAÇÕES
+
+def alterar_fase_pregao(uasg:str,pregao:str,fase:str):
+    """Altera a fase de determinado pregão, necessário passar todos os argumentos."""
+    query = "select id_fase_pregao from fase_pregao where nome_fase = '"+validar(fase)+"';"
+    cursor.execute(query)
+    for row in cursor:
+        fase = str(row[0])
+        break
+    query = ("update pregao set id_fase_pregao = '"+fase+"'"
+            "where numero_pregao = '"+validar(pregao)+"' and id_orgao = (select id_orgao from orgao where orgao.uasg ='"+validar(uasg)+"');")
+    cursor.execute(query)
+    cursor.commit()
 
 def inserir_items_planilha(uasg, pregao, item, modelo, valor, quantidade, fornecedor, marca, categoria,preco_custo, frete):
     """Insere os itens do pregão."""

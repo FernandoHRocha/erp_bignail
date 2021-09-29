@@ -55,6 +55,10 @@ while True:
             janela_anterior=wds.janela_consulta
             window.Close()
             wds.janela_consulta_carona()
+        if(event == 'bt_consulta_atas'):
+            janela_anterior=wds.janela_consulta
+            window.Close()
+            wds.janela_consulta_atas()
 
     if(window.Title==titulo_janelas['janela_consulta_pregao']):
         #wds.janela_consulta_pregao
@@ -69,21 +73,53 @@ while True:
         if(event == 'tb_ganho'):
             pass
         if(event == 'bt_item_alterar'):
-            pass
-        if(event == 'bt_item_pedido'):
-            pass
+            sg.popup('Abre a tela de alteração das informações do item.')
+        if(event == 'bt_item_empenho'):
+            sg.popup('Registra o empenho dos itens selecionados e abre a pasta do pregão.')
         if(event == 'bt_item_carona'):
-            pass
+            sg.popup('Registra o aceite de carona dos itens selecionados e abre a pasta do pregão.')
 
     if(window.Title==titulo_janelas['janela_consulta_pregoes']):
         #wds.janela_consulta_pregoes
-        pass
+        if(event == 'bt_alterar_fase'):
+            tab = str(values['tg_pregoes']).replace('tab','tb')
+            if(len(values[tab])>0):
+                lista = values[tab]
+                for linha in lista:
+                    pregao = window[tab].get()[linha]
+                    evh.abrir_janela_alterar_fase_pregao(pregao[1],pregao[0])
+                    window.Close()
+            else:
+                sg.popup('Para alterar a fase de algum pregão é preciso selecionar um primeiro.')
+
+        if(event == 'bt_pasta'):
+            tab = str(values['tg_pregaos'].replace('tab','tb'))
+            if (len(values[tab])>0):
+                lista = values[tab]
+                for linha in lista:
+                    pregao = window[tab].get()[linha]
+                    evh.
+            sg.popup('Abre a pasta do pregão.')
+
     if(window.Title==titulo_janelas['janela_consulta_empenhos']):
-        pass
+        if(event == 'bt_registrar_empenho'):
+            sg.popup('Registra o empenho no banco de dados e abre a pasta do pregão.')
+
     if(window.Title==titulo_janelas['janela_consulta_reequilibrio']):
-        pass
+        if(event == 'bt_registrar_envio'):
+            sg.popup('Registra o envio do pedido no banco de dados e abre a pasta do pregão.')
+        if(event == 'bt_registrar_aceite'):
+            sg.popup('Registra a aceitação no banco de dados e abre a pasta do pregão.')
+        if(event == 'bt_registrar_recusa'):
+            sg.popup('Registra a recusa no banco de dados e abre a pasta do pregão.')
+
     if(window.Title==titulo_janelas['janela_consulta_carona']):
-        pass
+        if(event == 'bt_registrar_carona'):
+            sg.popup('Registra adesão à carona no banco de dados e abre a pasta do pregão.')
+
+    if(window.Title==titulo_janelas['janela_consulta_atas']):
+        if(event == 'bt_registrar_ata'):
+            sg.popup('Registra a assinatura no banco de dados e abre a pasta do pregão.')
 
 ###JANELAS DESTINADAS A PROCEDIMENTOS DE CADASTROS
 
@@ -108,7 +144,18 @@ while True:
             pass
         if(event == 'bt_disputar'):
             pass
-        
+
+###JANELAS DESTINADAS AOS PROCESSOS AUXILIARES
+
+    if(window.Title==titulo_janelas['janela_consulta_pregao_alterar_fase']):
+        if(event=='bt_confirmar_fase'):
+            if(values['cb_alterar_fase']==''):
+                sg.popup('Favor escolher um novo estado para o pregão.')
+            else:
+                cnn.alterar_fase_pregao(window['txt_uasg'].get(),window['txt_pregao'].get(),values['cb_alterar_fase'])
+                window.Close()
+                wds.janela_consulta_pregoes()
+
     if(event == sg.WIN_CLOSED):
         if(window.Title == titulo_janelas['janela_menu']):
             break
