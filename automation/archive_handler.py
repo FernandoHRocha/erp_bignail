@@ -26,11 +26,12 @@ class Planilha:
 
     def obter_pregao(self):
         wb = self.planilha['Controle']
-        pregao = []
-        pregao.append(adapter.padronizar_pregao(str(wb.cell(2,1).value)))
-        pregao.append(adapter.padronizar_uasg(str(wb.cell(2,2).value)))
-        pregao.append(adapter.padronizar_data_hora(str(wb.cell(2,3).value)[:10],str(wb.cell(2,4).value)[:5]))
-        pregao.append(str(wb.cell(2,5).value).upper())
+        pregao = {
+            'numero' : adapter.padronizar_pregao(str(wb.cell(2,1).value)),
+            'uasg' : adapter.padronizar_uasg(str(wb.cell(2,2).value)),
+            'data' : adapter.padronizar_data_hora(str(wb.cell(2,3).value)[:10],str(wb.cell(2,4).value)[:5]),
+            'orgao' : str(wb.cell(2,5).value).upper()
+        }
         return pregao
     
     def obter_itens_cotados(self):
@@ -66,18 +67,18 @@ def cadastrar_planilha():
     planilha = Planilha(pasta_proposta+'/'+arquivo_planilha)
     pregao = planilha.obter_pregao()
     itens = planilha.obter_itens_cotados()
-    id_orgao = cnn.consulta_orgao(pregao[1])
-    if(id_orgao>=0):
-        cnn.inserir_pregao(id_orgao,pregao[0],pregao[2],"Proposta")
+    if(cnn.verificar_orgao_existe(pregao['uasg'])):
+        if not cnn.inserir_pregao(pregao['uasg'],pregao['numero'],pregao['data'],"Proposta"):
+            sg.popup('O pregão já foi inserido anteriormente.')
+            return
     else:
-        #inserir o órgão no banco de dados
-        id_orgao = cnn.consulta_orgao(pregao[1])
-        cnn.inserir_pregao(id_orgao,pregao[0],pregao[2],"Proposta")
+        cnn.inserir_orgao(pregao['uasg'],pregao['orgao'])
+        cnn.inserir_pregao(pregao['uasg'],pregao['numero'],pregao['data'],"Proposta")
 
     for item in itens:
         cnn.inserir_items_planilha(
-            uasg = pregao[1],
-            pregao = pregao[0],
+            uasg = pregao['uasg'],
+            pregao = pregao['numero'],
             item=item[0],
             marca=item[1],
             valor=item[2],
@@ -88,9 +89,9 @@ def cadastrar_planilha():
             fornecedor=item[7],
             preco_custo=item[8],
             )
-    nomenclatura = adapter.padronizar_nome_pasta(pregao[2],pregao[0],pregao[1])
+    nomenclatura = adapter.padronizar_nome_pasta(pregao['data'],pregao['numero'],pregao['uasg'])
     renomear_arquivo(pasta_proposta, arquivo_planilha, nomenclatura)
     renomear_arquivo(pasta_proposta, arquivo_word, nomenclatura)
     mover_e_renomear_pasta(pasta,nomenclatura[:-1])
-    sg.popup('Foram inseridos '+str(len(itens))+' itens no pregão de número '+pregao[0])
+    sg.popup('Foram inseridos '+str(len(itens))+' itens no pregão de número '+pregao['numero'])
     return

@@ -81,6 +81,19 @@ def consultar_fases_pregoes():
         consulta.append(row[0])
     return consulta
 
+def verificar_pregao_existe(uasg:str,pregao:str):
+    """Retorna verdadeiro caso o pregão já esteja cadastrado em banco de dados e falso em caso contrário."""
+    query=("select id_pregao from pregao where numero_pregao = '"+validar(pregao)+"'"
+            " and id_orgao = (select id_orgao from orgao where uasg = '"+validar(uasg)+"');")
+    cursor.execute(query)
+    return True if (len(cursor.fetchall())>0) else False
+
+def verificar_orgao_existe(uasg:str):
+    """Retorna verdadeiro caso o pregão já esteja cadastrado em banco de dados e falso em caso contrário."""
+    query=("select id_orgao from orgao where uasg = '"+validar(uasg)+"';")
+    cursor.execute(query)
+    return True if (len(cursor.fetchall())>0) else False
+
 ###ALTERAÇÕES
 
 def alterar_fase_pregao(uasg:str,pregao:str,fase:str):
@@ -95,6 +108,8 @@ def alterar_fase_pregao(uasg:str,pregao:str,fase:str):
     cursor.execute(query)
     cursor.commit()
 
+###INSERÇÕES
+
 def inserir_items_planilha(uasg, pregao, item, modelo, valor, quantidade, fornecedor, marca, categoria,preco_custo, frete):
     """Insere os itens do pregão."""
     id_pregao = consultar_pregao(uasg, pregao)
@@ -102,13 +117,26 @@ def inserir_items_planilha(uasg, pregao, item, modelo, valor, quantidade, fornec
     cursor.execute(query)
     conn.commit()
 
-def inserir_pregao(id_orgao,pregao,data,fase):
+def inserir_pregao(uasg:str,pregao:str,data:str,fase:str):
     """Insere o pregão com base no id do órgão e no nome da fase."""
-    query = "insert into pregao (id_orgao, numero_pregao, data_abertura, id_fase_pregao) values ('"+validar(id_orgao)+"','"+validar(pregao)+"',convert(datetime,'"+validar(data)+":00',120),(select id_fase_pregao from fase_pregao where nome_fase = '"+validar(fase)+"'));"
-    print(query)
-    cursor.execute(query)
-    conn.commit()
-    pass
+    if not verificar_pregao_existe(uasg,pregao):
+        query = ("insert into pregao (id_orgao, numero_pregao, data_abertura, id_fase_pregao) "
+                "values ((select id_orgao from orgao where uasg = '"+validar(uasg)+"'),'"+validar(pregao)+"',convert(datetime,'"+validar(data)+":00',120),(select id_fase_pregao from fase_pregao where nome_fase = '"+validar(fase)+"'));")
+        cursor.execute(query)
+        conn.commit()
+        return True
+    else:
+        return False
+
+def inserir_orgao(uasg:str,orgao:str):
+    """Insere um novo órgão no banco de dados."""
+    if not verificar_orgao_existe(uasg):
+        query=("insert into orgao (nome_orgao, uasg) VALUES ('"+validar(uasg)+"','"+validar(orgao)+"');")
+        cursor.execute(query)
+        conn.commit()
+        return True
+    else:
+        return False
 
 def consultaNomeOrgao(uasg):
     cursor.execute("exec sp_getNomeOrgao @uasg = '"+uasg+"'")
