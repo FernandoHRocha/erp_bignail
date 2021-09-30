@@ -1,5 +1,5 @@
 import PySimpleGUI as sg
-from PySimpleGUI.PySimpleGUI import Text
+from PySimpleGUI.PySimpleGUI import Checkbox, Text
 
 def data(title,key,visible):
     horas = ['08:00','08:30','09:00','09:30','10:00','10:30','11:00','11:30','12:00','12:30','13:00','13:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30','18:00','18:30']
@@ -67,3 +67,18 @@ def frame_item_para_pedido(item:str):
             ]
         ])
     ]
+
+def frame_item_homologar(item:str,modelo:str,unidades:str):
+    """Retorna um sg.Frame para incluir itens em homologação."""
+    item = str(item)
+    modelo = str(modelo)
+    unidades = str(unidades)
+    return sg.Frame(title=' Item '+str(item)+' ',layout=
+            [
+                [
+                    sg.Checkbox(unidades+' x do modelo: '+modelo,key='check_'+item,default=False,enable_events=True)
+                ],
+                [
+                    sg.InputText(size=(15,1), enable_events=True, key='it_'+item,visible=False)
+                ]
+            ])

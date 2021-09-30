@@ -81,6 +81,15 @@ def consultar_fases_pregoes():
         consulta.append(row[0])
     return consulta
 
+def consultar_itens_homologar(uasg:str,pregao:str):
+    """Retorna número, quantidade e modelo dos itens de um pregão."""
+    query = ("select item, modelo, quantidade from item where id_pregao = (select id_pregao from pregao "
+            "where numero_pregao = '"+validar(pregao)+"' and id_orgao = (select id_orgao from orgao where "
+            "uasg = '"+validar(uasg)+"'))")
+    cursor.execute(query)
+    consulta=[list(row) for row in cursor.fetchall()]
+    return consulta
+
 def verificar_pregao_existe(uasg:str,pregao:str):
     """Retorna verdadeiro caso o pregão já esteja cadastrado em banco de dados e falso em caso contrário."""
     query=("select id_pregao from pregao where numero_pregao = '"+validar(pregao)+"'"
@@ -176,8 +185,8 @@ def consultarMarcas():
     return marcas
 
 def consultar_itens_pregao(uasg,pregao):
-    id_pregao = obter_id_pregao(uasg, pregao)
-    cursor.execute('select item, quantidade, nome_marca, modelo, valor_ofertado, nome_fase from item left join pregao on pregao.id_pregao = item.id_pregao join marca on item.id_marca = marca.id_marca join fase_pregao on pregao.id_fase_pregao = fase_pregao.id_fase_pregao where item.id_pregao = '+str(id_pregao)+';')
+    #id_pregao = obter_id_pregao(uasg, pregao)
+    #cursor.execute('select item, quantidade, nome_marca, modelo, valor_ofertado, nome_fase from item left join pregao on pregao.id_pregao = item.id_pregao join marca on item.id_marca = marca.id_marca join fase_pregao on pregao.id_fase_pregao = fase_pregao.id_fase_pregao where item.id_pregao = '+str(id_pregao)+';')
     item=[]
     for x in cursor:
         aux=[]

@@ -1,3 +1,4 @@
+from tkinter import Text
 import PySimpleGUI as sg
 from interface import patterns as pt
 from interface import event_handler as evh
@@ -16,7 +17,7 @@ titulo_janelas = {
     'janela_consulta_carona':'Pedidos de Carona',
     'janela_consulta_atas':'Atas de Processos',
     #cadastros
-
+    'janela_cadastro_homologacao':'Homologar Pregão',
     #auxiliares
     'janela_consulta_pregao_alterar_fase':'Alteração de Fase'
 }
@@ -96,7 +97,8 @@ def janela_consulta_pregoes():
         ],
         [
             sg.Button('Alterar Fase',enable_events=True,key='bt_alterar_fase'),
-            sg.Button('Abrir Pasta',enable_events=True,key='bt_pasta')
+            sg.Button('Abrir Pasta',enable_events=True,key='bt_pasta'),
+            sg.Button('Homologar Pregão',enable_events=True,key='bt_homologar'),
         ],
         [pt.bt_voltar()]
         ]
@@ -195,6 +197,22 @@ def janela_cadastro():
         [   sg.Button('Registrar Reequilíbrio',key='bt_cadastro_reequilibrio',enable_events=True, size=(20,1))],
         ]
     return sg.Window(titulo_janelas['janela_cadastro'], layout, finalize=True)
+
+def janela_cadastro_homologacao(uasg:str,pregao:str,itens:list):
+    """Retorna um sg.Window para homologação do pregão."""
+    layout=[
+        [
+            sg.Column(
+                [
+                    [pt.frame_item_homologar(item[0],item[1],item[2]) for item in itens]
+                ],size=(400,600),scrollable=True, vertical_scroll_only=True)
+        ],
+        [
+            sg.Button('Cancelar',enable_events=True,key='bt_cancelar'),
+            sg.Button('Concluir',enable_events=True,key='bt_concluir'),
+        ]
+    ]
+    return sg.Window(title=titulo_janelas['janela_cadastro_homologacao'],layout=layout,finalize=True)
 
 def janela_cadastro_empenho():
     return

@@ -92,13 +92,24 @@ while True:
                 sg.popup('Para alterar a fase de algum pregão é preciso selecionar um primeiro.')
 
         if(event == 'bt_pasta'):
-            tab = str(values['tg_pregoes'].replace('tab','tb'))
+            tab = str(values['tg_pregoes']).replace('tab','tb')
             if (len(values[tab])>0):
                 for linha in values[tab]:
                     pregao = window[tab].get()[linha]
                     evh.abrir_pasta_pregao(pregao[0],pregao[1],pregao[2])
             else:
                 sg.popup('Primeiro selecione um pregão.')
+        
+        if(event == 'bt_homologar'):
+            tab = str(values['tg_pregoes']).replace('tab','tb')
+            if (len(values[tab])>0):
+                for linha in values[tab]:
+                    pregao = window[tab].get()[linha]
+                    evh.abrir_janela_homologacao_itens(pregao[1],pregao[0])
+                    #chamar a tela de seleção de itens para homologação
+            else:
+                sg.popup('Primeiro selecione um pregão.')
+            pass
 
     if(window.Title==titulo_janelas['janela_consulta_empenhos']):
         if(event == 'bt_registrar_empenho'):
@@ -132,6 +143,10 @@ while True:
             pass
         if(event == 'bt_cadastro_reequilibrio'):
             pass
+    if(window.Title==titulo_janelas['janela_cadastro_homologacao']):
+        if('check_' in event):
+            item = str(event).replace('check_','it_')
+            window[item].update(visible=True)
 
 ###JANELAS DESTINADAS AOS PROCESSOS DE AUTOMAÇÃO
 

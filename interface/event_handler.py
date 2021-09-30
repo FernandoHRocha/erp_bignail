@@ -71,3 +71,8 @@ def abrir_pasta_pregao(pregao:str,uasg:str,data:str):
     data = data[0:10]+'_'+pregao+'_'+uasg
     path += data
     os.startfile(os.path.realpath(path))
+
+def abrir_janela_homologacao_itens(uasg:str, pregao:str):
+    """Faz a chamada dos itens do pregão ao banco de dados e abre a janela de itens a homologar."""
+    itens = cnn.consultar_itens_homologar(uasg, pregao)
+    wds.janela_cadastro_homologacao(uasg,pregao,itens)
