@@ -77,15 +77,26 @@ def abrir_janela_homologacao_itens(uasg:str, pregao:str):
     itens = cnn.consultar_itens_homologar(uasg, pregao)
     wds.janela_cadastro_homologacao(uasg,pregao,itens)
 
-def confirmar_dados_homologacao_itens(values:dict):
+def confirmar_dados_homologacao_itens(uasg:str,pregao:str,values:dict):
     """Verifica e converte os valores dos itens para homologacao."""
+    itens_homologar=[]
     for item in values.keys():
         if 'check' in item:
-            valor = values[str(item).replace('check','it')]
             if values[item]:
+                codigo_item = item.replace('check_','')
+                valor = values[str(item).replace('check','it')]
                 if valor.replace(',','',1).isdigit():
-                    print('Digito')
-                    print(round(float(valor.replace(',','.',1)),2))
+                    aux = []
+                    aux.append(codigo_item)
+                    valor = str(round(float(valor.replace(',','.',1)),2))
+                    if (len(valor.split('.')[1])<2):
+                        valor = valor + '0'
+                    aux.append(valor)
+                    itens_homologar.append(aux)
+                    print(valor)
                 else:
-                    return sg.popup('Favor corrigir o valor do item '+item.replace('check_',''))
+                    return sg.popup('Favor corrigir o valor do item '+codigo_item)
+    cnn.alterar_fase_pregao(uasg,pregao,'Homologado')
+    for item in itens_homologar:
+        cnn.inserir_item_ganho(uasg,pregao,item[0],item[1])
     return sg.popup('Dados ok.')

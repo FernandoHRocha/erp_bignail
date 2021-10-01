@@ -109,7 +109,11 @@ while True:
                     evh.abrir_janela_homologacao_itens(pregao[1],pregao[0])
             else:
                 sg.popup('Primeiro selecione um pregão.')
-            pass
+        if(event == 'tg_pregoes'):
+            if(values['tg_pregoes'] == 'tab_ganhos' or values['tg_pregoes'] == 'tab_finalizados'):
+                window['bt_homologar'].update(visible=False)
+            else:
+                window['bt_homologar'].update(visible=True)
 
     if(window.Title==titulo_janelas['janela_consulta_empenhos']):
         if(event == 'bt_registrar_empenho'):
@@ -150,7 +154,7 @@ while True:
                 frame_input = str(event).replace('check_','fr_it_')
                 window[frame_input].update(visible=True) if values[event] else window[frame_input].update(visible=False)
         if (event=='bt_concluir'):
-            evh.confirmar_dados_homologacao_itens(values)
+            evh.confirmar_dados_homologacao_itens(window['txt_uasg'].get(), window['txt_pregao'].get(), values)
 
 ###JANELAS DESTINADAS AOS PROCESSOS DE AUTOMAÇÃO
 
