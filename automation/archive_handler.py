@@ -67,7 +67,7 @@ def cadastrar_planilha():
     planilha = Planilha(pasta_proposta+'/'+arquivo_planilha)
     pregao = planilha.obter_pregao()
     itens = planilha.obter_itens_cotados()
-    if(cnn.verificar_orgao_existe(pregao['uasg'])):
+    if(cnn.consultar_id_orgao(pregao['uasg'])!='-1'):
         if not cnn.inserir_pregao(pregao['uasg'],pregao['numero'],pregao['data'],"Proposta"):
             sg.popup('O pregão já foi inserido anteriormente.')
             return

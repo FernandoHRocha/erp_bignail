@@ -14,16 +14,15 @@ def consultar_id_orgao(uasg):
     """Retorna o código identificador do pregão caso ele exista, senão retorna -1."""
     consulta = []
     cursor.execute("select id_orgao from orgao where uasg = '"+validar(uasg)+"'  ORDER BY id_orgao OFFSET 0 ROW FETCH NEXT 1 ROW ONLY;")
-    for row in cursor:
-        consulta.append(row[0])
-    return str(consulta[0]) if len(consulta)>0 else '-1'
+    resultado = cursor.fetchone()
+    return str(resultado[0]) if resultado!=None else '-1'
 
 def consultar_id_pregao(uasg:str,pregao:str):
     """Retorna o id do pregão, caso não exista retorna -1."""
-    id_uasg = consultar_id_orgao(uasg)
-    cursor.execute("select id_pregao from pregao where id_orgao = '"+validar(id_uasg)+"';")
+    id_orgao = consultar_id_orgao(uasg)
+    cursor.execute("select id_pregao from pregao where id_orgao = '"+validar(id_orgao)+"';")
     resultado = cursor.fetchone()
-    return str(resultado[0]) if (len(resultado)>0) else '-1'
+    return str(resultado[0]) if resultado!=None else '-1'
 
 def consultar_id_item(item:str,uasg:str,pregao:str):
     """Retorna o id de um item. Caso não exista retorna o valor -1"""
@@ -31,7 +30,7 @@ def consultar_id_item(item:str,uasg:str,pregao:str):
     query=( "select id_item from item where item = '"+validar(item)+"' and id_pregao = '"+validar(id_pregao)+"';")
     cursor.execute(query)
     resultado = cursor.fetchone()
-    return str(resultado[0]) if (len(resultado)>0) else '-1'
+    return str(resultado[0]) if resultado!=None else '-1'
 
 ###CONSULTAS-------------------------------------------------------
 
@@ -132,9 +131,10 @@ def inserir_items_planilha(uasg, pregao, item, modelo, valor, quantidade, fornec
 
 def inserir_pregao(uasg:str,pregao:str,data:str,fase:str):
     """Insere o pregão com base no id do órgão e no nome da fase."""
-    if consultar_id_pregao(uasg,pregao)<0:
+    id_orgao = consultar_id_orgao(uasg)
+    if consultar_id_pregao(uasg,pregao)=='-1':
         query = ("insert into pregao (id_orgao, numero_pregao, data_abertura, id_fase_pregao) "
-                "values ((select id_orgao from orgao where uasg = '"+validar(uasg)+"'),'"+validar(pregao)+"',convert(datetime,'"+validar(data)+":00',120),(select id_fase_pregao from fase_pregao where nome_fase = '"+validar(fase)+"'));")
+                "values ('"+validar(id_orgao)+"','"+validar(pregao)+"',convert(datetime,'"+validar(data)+":00',120),(select id_fase_pregao from fase_pregao where nome_fase = '"+validar(fase)+"'));")
         cursor.execute(query)
         conn.commit()
         return True
@@ -143,7 +143,7 @@ def inserir_pregao(uasg:str,pregao:str,data:str,fase:str):
 
 def inserir_orgao(uasg:str,orgao:str):
     """Insere um novo órgão no banco de dados."""
-    if consultar_id_orgao(uasg)<0:
+    if consultar_id_orgao(uasg)!='-1':
         query=("insert into orgao (nome_orgao, uasg) VALUES ('"+validar(uasg)+"','"+validar(orgao)+"');")
         cursor.execute(query)
         conn.commit()
