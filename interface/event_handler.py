@@ -93,10 +93,14 @@ def confirmar_dados_homologacao_itens(uasg:str,pregao:str,values:dict):
                         valor = valor + '0'
                     aux.append(valor)
                     itens_homologar.append(aux)
-                    print(valor)
                 else:
                     return sg.popup('Favor corrigir o valor do item '+codigo_item)
+    
     cnn.alterar_fase_pregao(uasg,pregao,'Homologado')
     for item in itens_homologar:
         cnn.inserir_item_ganho(uasg,pregao,item[0],item[1])
-    return sg.popup('Dados ok.')
+    return sg.popup('O pregão foi homologado.')
+
+def abrir_janela_itens_empenhar(uasg:str,pregao:str):
+    """Coleta as informações dos itens do pregão e chama a janela para empenho."""
+    return wds.janela_cadastro_itens_empenhar(uasg,pregao,cnn.consultar_itens_empenhar(uasg,pregao))

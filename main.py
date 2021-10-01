@@ -91,14 +91,15 @@ while True:
             else:
                 sg.popup('Para alterar a fase de algum pregão é preciso selecionar um primeiro.')
 
-        if('bt_pasta' in event):
-            tab = str(values['tg_pregoes']).replace('tab','tb')
-            if (len(values[tab])>0):
-                for linha in values[tab]:
-                    pregao = window[tab].get()[linha]
-                    evh.abrir_pasta_pregao(pregao[0],pregao[1],pregao[2])
-            else:
-                sg.popup('Primeiro selecione um pregão.')
+        if(event):
+            if('bt_pasta' in event):
+                tab = str(values['tg_pregoes']).replace('tab','tb')
+                if (len(values[tab])>0):
+                    for linha in values[tab]:
+                        pregao = window[tab].get()[linha]
+                        evh.abrir_pasta_pregao(pregao[0],pregao[1],pregao[2])
+                else:
+                    sg.popup('Primeiro selecione um pregão.')
         
         if(event == 'bt_homologar'):
             tab = str(values['tg_pregoes']).replace('tab','tb')
@@ -109,6 +110,19 @@ while True:
                     evh.abrir_janela_homologacao_itens(pregao[1],pregao[0])
             else:
                 sg.popup('Primeiro selecione um pregão.')
+
+        if(event == 'bt_registrar_empenho'):
+            tab = str(values['tg_pregoes']).replace('tab','tb')
+            if (len(values[tab])>0):
+                window.Close()
+                for linha in values[tab]:
+                    pregao = window[tab].get()[linha]
+                    evh.abrir_janela_itens_empenhar(pregao[1],pregao[0])
+            else:
+                sg.popup('Primeiro selecione um pregão.')
+        
+        if(event == 'bt_registrar_carona'):pass
+
         if(event == 'tg_pregoes'):
             if(values['tg_pregoes'] == 'tab_ganhos' or values['tg_pregoes'] == 'tab_finalizados'):
                 window['cl_julgamento'].update(visible=False)
@@ -158,6 +172,13 @@ while True:
         if (event=='bt_concluir'):
             evh.confirmar_dados_homologacao_itens(window['txt_uasg'].get(), window['txt_pregao'].get(), values)
 
+    if(window.Title==titulo_janelas['janela_cadastro_itens_empenhar']):
+        if event:
+            if('check_' in event):
+                frame_input = str(event).replace('check_','fr_it_')
+                window[frame_input].update(visible=True) if values[event] else window[frame_input].update(visible=False)
+        if (event=='bt_concluir'):
+            sg.popup('Itens incluidos')
 ###JANELAS DESTINADAS AOS PROCESSOS DE AUTOMAÇÃO
 
     if(window.Title==titulo_janelas['janela_comprasnet']):

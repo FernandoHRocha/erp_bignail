@@ -98,6 +98,17 @@ def consultar_itens_homologar(uasg:str,pregao:str):
     consulta=[list(row) for row in cursor.fetchall()]
     return consulta
 
+def consultar_itens_empenhar(uasg:str,pregao:str):
+    """Retorna as informações dos itens ganhos para empenhar."""
+    id_pregao = consultar_id_pregao(uasg,pregao)
+    query=( "select id_item, nome_marca, modelo, quantidade, valor_ganho from resultado_item "
+            "join item on item.id_item = resultado_item.id_resultado "
+            "join marca on item.id_marca = marca.id_marca "
+            "where item.id_pregao = '"+validar(id_pregao)+"';")
+    cursor.execute(query)
+    consulta=[list(row) for row in cursor.fetchall()]
+    return consulta
+
 ###ALTERAÇÕES-------------------------------------
 
 def alterar_fase_pregao(uasg:str,pregao:str,fase:str):

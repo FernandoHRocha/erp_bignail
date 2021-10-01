@@ -18,8 +18,9 @@ titulo_janelas = {
     'janela_consulta_atas':'Atas de Processos',
     #cadastros
     'janela_cadastro_homologacao':'Homologar Pregão',
+    'janela_cadastro_itens_empenhar':'Empenhar itens',
     #auxiliares
-    'janela_consulta_pregao_alterar_fase':'Alteração de Fase'
+    'janela_consulta_pregao_alterar_fase':'Alteração de Fase',
 }
 
 sg.theme('DarkGrey5')
@@ -230,6 +231,44 @@ def janela_cadastro_homologacao(uasg:str,pregao:str,itens:list):
         ]
     ]
     return sg.Window(title=titulo_janelas['janela_cadastro_homologacao'],layout=layout,finalize=True)
+
+def janela_cadastro_itens_empenhar(uasg:str,pregao:str,itens:list):
+    """Retorna um sg.Window para escolher os itens a serem empenhados."""
+    data_empenho =[
+        [
+            sg.Text(' Dia '),sg.InputText('',size=(2,1),key='it_dia'),
+            sg.Text(' mês '),sg.InputText('',size=(2,1),key='it_mes'),
+            sg.Text(' ano '),sg.InputText('',size=(4,1),key='it_ano'),
+        ]
+    ]
+    numero_empenho =[
+        [
+            sg.Text(' Número do empenho '),sg.InputText('',size=(20,1),key='it_numero_empenho'),
+        ]
+    ]
+    dados_empenho=[
+        [sg.Frame(title='Data de Envio ',layout=data_empenho)],
+        [sg.Frame(title='Nota de Empenho ',layout=numero_empenho)],
+    ]
+    layout=[
+        [
+            sg.Text('Registrar Empenho - Pregão '),
+            sg.Text(pregao,key='txt_pregao'),
+            sg.Text(' do Uasg '),
+            sg.Text(uasg,key='txt_uasg')
+        ],
+        [
+            sg.Column(  layout=[[pt.frame_item_empenhar(item)] for item in itens],
+                        size=(400,600),scrollable=True, vertical_scroll_only=True)
+        ],
+        [
+            dados_empenho
+        ],
+        [
+            sg.Button('Concluir',enable_events=True,key='bt_concluir'),
+        ]
+    ]
+    return sg.Window(title=titulo_janelas['janela_cadastro_itens_empenhar'],layout=layout,finalize=True)
 
 def janela_cadastro_empenho():
     return

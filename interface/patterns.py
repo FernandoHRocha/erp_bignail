@@ -52,22 +52,6 @@ def aba_com_tabela_itens(cabecalho:list, texto:str, valores:list):
     titulo = texto[0].upper()+texto[1:len(texto)]
     return sg.Tab(titulo, tabela_itens_preenchida(cabecalho[0],valores,'tb_'+texto,larguras=cabecalho[1]),key='tab_'+texto,visible=True)
 
-def frame_item_para_pedido(item:str):
-    """Retorna um padrão onde os itens serão inseridos em um pedido."""
-    return [
-        sg.Frame(title='',key='fr_item',layout=[
-            [    sg.Text('Item: ',enable_events=False),
-                 sg.Text(item,enable_events=False),
-            ],
-            [
-                sg.Text('Quantidade: ',size=(15,1),enable_events=False),
-            ],
-            [
-                sg.InputText(size=(15,1),key='it_quantidade',enable_events=True),
-            ]
-        ])
-    ]
-
 def frame_item_homologar(item:str,modelo:str,unidades:str):
     """Retorna um sg.Frame para incluir itens em homologação."""
     item = str(item)
@@ -84,6 +68,32 @@ def frame_item_homologar(item:str,modelo:str,unidades:str):
                         sg.Text('Valor Ganhor R$'),
                         sg.InputText(size=(15,1), enable_events=True, key='it_'+item)
                     ]
+                ]),
+            ]
+        ])
+
+def frame_item_empenhar(itens:list):
+    """Retorna um sg.Frame para incluir itens em nota de empenho."""
+    item = str(itens[0])
+    marca = str(itens[1])
+    modelo = str(itens[2])
+    unidades = str(itens[3])
+    valor = str(itens[4]).replace('.',',')
+    return sg.Frame(title=' Item '+str(item)+' ',layout=
+        [
+            [
+                sg.Checkbox(marca+' - '+modelo,key='check_'+item,default=False,enable_events=True)
+            ],
+            [
+                sg.Frame('',border_width=0,key='fr_it_'+item,visible=False,layout=[
+                    [
+                        sg.Text('Valor Ganhor R$'),
+                        sg.Text(valor),
+                    ],
+                    [
+                        sg.InputText(size=(6,1), enable_events=True, key='it_'+item),
+                        sg.Text(' de '+unidades+' unidades.'),
+                    ],
                 ]),
             ]
         ])
