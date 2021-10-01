@@ -91,7 +91,7 @@ while True:
             else:
                 sg.popup('Para alterar a fase de algum pregão é preciso selecionar um primeiro.')
 
-        if(event == 'bt_pasta'):
+        if('bt_pasta' in event):
             tab = str(values['tg_pregoes']).replace('tab','tb')
             if (len(values[tab])>0):
                 for linha in values[tab]:
@@ -111,9 +111,11 @@ while True:
                 sg.popup('Primeiro selecione um pregão.')
         if(event == 'tg_pregoes'):
             if(values['tg_pregoes'] == 'tab_ganhos' or values['tg_pregoes'] == 'tab_finalizados'):
-                window['bt_homologar'].update(visible=False)
+                window['cl_julgamento'].update(visible=False)
+                window['cl_ganho'].update(visible=True)
             else:
-                window['bt_homologar'].update(visible=True)
+                window['cl_julgamento'].update(visible=True)
+                window['cl_ganho'].update(visible=False)
 
     if(window.Title==titulo_janelas['janela_consulta_empenhos']):
         if(event == 'bt_registrar_empenho'):

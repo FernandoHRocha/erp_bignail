@@ -8,6 +8,31 @@ def validar(campo):#NÃO PERMITE SQL INJECTION
     campo = str(campo).replace("'","").replace("--","")
     return campo
 
+###CONSULTAS A IDENTIFICADORES------------------------------------
+
+def consultar_id_orgao(uasg):
+    """Retorna o código identificador do pregão caso ele exista, senão retorna -1."""
+    consulta = []
+    cursor.execute("select id_orgao from orgao where uasg = '"+validar(uasg)+"'  ORDER BY id_orgao OFFSET 0 ROW FETCH NEXT 1 ROW ONLY;")
+    for row in cursor:
+        consulta.append(row[0])
+    return str(consulta[0]) if len(consulta)>0 else '-1'
+
+def consultar_id_pregao(uasg:str,pregao:str):
+    """Retorna o id do pregão, caso não exista retorna -1."""
+    id_uasg = consultar_id_orgao(uasg)
+    cursor.execute("select id_pregao from pregao where id_orgao = '"+validar(id_uasg)+"';")
+    resultado = cursor.fetchone()
+    return str(resultado[0]) if (len(resultado)>0) else '-1'
+
+def consultar_id_item(item:str,uasg:str,pregao:str):
+    """Retorna o id de um item. Caso não exista retorna o valor -1"""
+    id_pregao = consultar_id_pregao(uasg,pregao)
+    query=( "select id_item from item where item = '"+validar(item)+"' and id_pregao = '"+validar(id_pregao)+"';")
+    cursor.execute(query)
+    resultado = cursor.fetchone()
+    return str(resultado[0]) if (len(resultado)>0) else '-1'
+
 ###CONSULTAS-------------------------------------------------------
 
 def consulta_orgaos():
@@ -19,14 +44,6 @@ def consulta_orgaos():
         consulta.append(aux)
     return consulta
 
-def consulta_orgao(uasg):
-    """Retorna o código identificador do pregão caso ele exista, senão retorna false."""
-    consulta = []
-    cursor.execute("select id_orgao from orgao where uasg = '"+validar(uasg)+"'  ORDER BY id_orgao OFFSET 0 ROW FETCH NEXT 1 ROW ONLY;")
-    for row in cursor:
-        consulta.append(row[0])
-    return consulta[0] if len(consulta)>0 else -1
-
 def consulta_pregoes(uasg):
     """Consulta os pregões participados por órgão."""
     cursor.execute("exec sel_pregoes @uasg = '"+validar(uasg)+"'")
@@ -34,13 +51,6 @@ def consulta_pregoes(uasg):
     for row in cursor:
         consulta.append(row[0])
     return consulta
-
-def consultar_pregao(uasg:str,pregao:str):
-    """Retorna o id do pregão."""
-    cursor.execute("select id_pregao from pregao where id_orgao = (select id_orgao from orgao where uasg = '"+validar(uasg)+"') and numero_pregao = '"+validar(pregao)+"'")
-    consulta = []
-    resultado = cursor.fetchone()
-    return resultado[0] if (len(resultado)>0) else -1
 
 def consultar_pregoes_fase(fase:int=0):
     """Retorna a lista de pregões ordenados pela data dado uma fase."""
@@ -82,34 +92,11 @@ def consultar_fases_pregoes():
 
 def consultar_itens_homologar(uasg:str,pregao:str):
     """Retorna número, quantidade e modelo dos itens de um pregão."""
-    query = ("select item, modelo, quantidade from item where id_pregao = (select id_pregao from pregao "
-            "where numero_pregao = '"+validar(pregao)+"' and id_orgao = (select id_orgao from orgao where "
-            "uasg = '"+validar(uasg)+"'))")
+    id_pregao = consultar_id_pregao(uasg, pregao)
+    query = ("select item, modelo, quantidade from item where id_pregao = '"+validar(id_pregao)+"';")
     cursor.execute(query)
     consulta=[list(row) for row in cursor.fetchall()]
     return consulta
-
-def verificar_pregao_existe(uasg:str,pregao:str):
-    """Retorna verdadeiro caso o pregão já esteja cadastrado em banco de dados e falso em caso contrário."""
-    query=("select id_pregao from pregao where numero_pregao = '"+validar(pregao)+"'"
-            " and id_orgao = (select id_orgao from orgao where uasg = '"+validar(uasg)+"');")
-    cursor.execute(query)
-    return True if (len(cursor.fetchall())>0) else False
-
-def verificar_orgao_existe(uasg:str):
-    """Retorna verdadeiro caso o pregão já esteja cadastrado em banco de dados e falso em caso contrário."""
-    query=("select id_orgao from orgao where uasg = '"+validar(uasg)+"';")
-    cursor.execute(query)
-    return True if (len(cursor.fetchall())>0) else False
-
-def consultar_id_item(item:str,uasg:str,pregao:str):
-    """Retorna o id de um item. Caso não exista retorna o valor -1"""
-    query=( "select id_item from item where item = '"+validar(item)+"' and id_pregao = "
-            "(select id_pregao from pregao where pregao.numero_pregao = '"+validar(pregao)+"' and "
-            "pregao.id_orgao = ( select id_orgao from orgao where uasg = '"+validar(uasg)+"'))")
-    cursor.execute(query)
-    resultado = cursor.fetchone()
-    return resultado[0] if (len(resultado)>0) else -1
 
 ###ALTERAÇÕES-------------------------------------
 
@@ -127,14 +114,14 @@ def alterar_fase_pregao(uasg:str,pregao:str,fase:str):
 
 def inserir_items_planilha(uasg, pregao, item, modelo, valor, quantidade, fornecedor, marca, categoria,preco_custo, frete):
     """Insere os itens do pregão."""
-    id_pregao = consultar_pregao(uasg, pregao)
+    id_pregao = consultar_id_pregao(uasg, pregao)
     query = "exec dbo.sp_inserir_item @frete="+validar(frete)+", @preco_custo="+validar(preco_custo)+", @item="+validar(item)+', @modelo="'+validar(modelo)+'", @valor='+validar(valor)+", @quantidade="+validar(quantidade)+", @id_pregao="+str(id_pregao)+', @fornecedor="'+validar(fornecedor)+'", @marca="'+validar(marca)+'", @categoria="'+validar(categoria)+'";'
     cursor.execute(query)
     conn.commit()
 
 def inserir_pregao(uasg:str,pregao:str,data:str,fase:str):
     """Insere o pregão com base no id do órgão e no nome da fase."""
-    if not verificar_pregao_existe(uasg,pregao):
+    if consultar_id_pregao(uasg,pregao)<0:
         query = ("insert into pregao (id_orgao, numero_pregao, data_abertura, id_fase_pregao) "
                 "values ((select id_orgao from orgao where uasg = '"+validar(uasg)+"'),'"+validar(pregao)+"',convert(datetime,'"+validar(data)+":00',120),(select id_fase_pregao from fase_pregao where nome_fase = '"+validar(fase)+"'));")
         cursor.execute(query)
@@ -145,7 +132,7 @@ def inserir_pregao(uasg:str,pregao:str,data:str,fase:str):
 
 def inserir_orgao(uasg:str,orgao:str):
     """Insere um novo órgão no banco de dados."""
-    if not verificar_orgao_existe(uasg):
+    if consultar_id_orgao(uasg)<0:
         query=("insert into orgao (nome_orgao, uasg) VALUES ('"+validar(uasg)+"','"+validar(orgao)+"');")
         cursor.execute(query)
         conn.commit()

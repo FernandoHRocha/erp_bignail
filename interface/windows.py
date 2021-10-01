@@ -89,6 +89,22 @@ def janela_consulta_pregoes():
         [10,8,20,30]
     ]
     abas = evh.lista_pregoes_gerais()
+    coluna1=[
+        [sg.Button('Abrir Pasta',enable_events=True,key='bt_pasta',size=(20,1))],
+        [sg.Button('Alterar Fase',enable_events=True,key='bt_alterar_fase',size=(20,1))],
+        [sg.Button('Homologar Pregão',enable_events=True,key='bt_homologar',size=(20,1)),]
+    ]
+    coluna2=[
+        [sg.Button('Abrir Pasta',enable_events=True,key='bt_pasta',size=(20,1))],
+        [sg.Button('Registrar Empenho',enable_events=True,key='bt_registrar_empenho',size=(20,1))],
+        [sg.Button('Registrar Carona',enable_events=True,key='bt_registrar_carona',size=(20,1)),]
+    ]
+    menu_opcoes = [
+        [
+            sg.Column(coluna1,key='cl_julgamento'),
+            sg.Column(coluna2,key='cl_ganho',visible=False)
+        ]
+    ]
     layout=[
         [
             sg.TabGroup(
@@ -96,9 +112,7 @@ def janela_consulta_pregoes():
                 ],enable_events=True,key='tg_pregoes')
         ],
         [
-            sg.Button('Alterar Fase',enable_events=True,key='bt_alterar_fase'),
-            sg.Button('Abrir Pasta',enable_events=True,key='bt_pasta'),
-            sg.Button('Homologar Pregão',enable_events=True,key='bt_homologar'),
+            sg.Frame(title=' Opções ',layout=menu_opcoes,border_width=0)
         ],
         [pt.bt_voltar()]
         ]
