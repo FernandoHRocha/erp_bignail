@@ -202,13 +202,16 @@ def janela_cadastro_homologacao(uasg:str,pregao:str,itens:list):
     """Retorna um sg.Window para homologação do pregão."""
     layout=[
         [
-            sg.Column(
-                [
-                    [pt.frame_item_homologar(item[0],item[1],item[2]) for item in itens]
-                ],size=(400,600),scrollable=True, vertical_scroll_only=True)
+            sg.Text('Homologando o Pregão '),
+            sg.Text(pregao,key='txt_pregao'),
+            sg.Text(' do Uasg '),
+            sg.Text(uasg,key='txt_uasg')
         ],
         [
-            sg.Button('Cancelar',enable_events=True,key='bt_cancelar'),
+            sg.Column(  layout=[[pt.frame_item_homologar(item[0],item[1],item[2])] for item in itens],
+                        size=(400,600),scrollable=True, vertical_scroll_only=True)
+        ],
+        [
             sg.Button('Concluir',enable_events=True,key='bt_concluir'),
         ]
     ]

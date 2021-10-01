@@ -8,7 +8,7 @@ def validar(campo):#NÃO PERMITE SQL INJECTION
     campo = str(campo).replace("'","").replace("--","")
     return campo
 
-###CONSULTAS
+###CONSULTAS-------------------------------------------------------
 
 def consulta_orgaos():
     """Retorna uma lista de todos os órgãos cadastrados e sua respectiva uasg."""
@@ -103,7 +103,16 @@ def verificar_orgao_existe(uasg:str):
     cursor.execute(query)
     return True if (len(cursor.fetchall())>0) else False
 
-###ALTERAÇÕES
+def consultar_id_item(item:str,uasg:str,pregao:str):
+    """Retorna o id de um item. Caso não exista retorna o valor -1"""
+    query=( "select id_item from item where item = '"+validar(item)+"' and id_pregao = "
+            "(select id_pregao from pregao where pregao.numero_pregao = '"+validar(pregao)+"' and "
+            "pregao.id_orgao = ( select id_orgao from orgao where uasg = '"+validar(uasg)+"'))")
+    cursor.execute(query)
+    resultado = cursor.fetchone()
+    return resultado[0] if (len(resultado)>0) else -1
+
+###ALTERAÇÕES-------------------------------------
 
 def alterar_fase_pregao(uasg:str,pregao:str,fase:str):
     """Altera a fase de determinado pregão, necessário passar todos os argumentos."""
@@ -117,7 +126,7 @@ def alterar_fase_pregao(uasg:str,pregao:str,fase:str):
     cursor.execute(query)
     cursor.commit()
 
-###INSERÇÕES
+###INSERÇÕES---------------------------------------
 
 def inserir_items_planilha(uasg, pregao, item, modelo, valor, quantidade, fornecedor, marca, categoria,preco_custo, frete):
     """Insere os itens do pregão."""
@@ -146,6 +155,14 @@ def inserir_orgao(uasg:str,orgao:str):
         return True
     else:
         return False
+
+def inserir_item_ganho(uasg:str,pregao:str,item:str,valor:str):
+    """Insere o item como ganho no banco de dados."""
+    id_item = consultar_id_item(item,uasg,pregao)
+    query=( "insert into resultado_item (colocacao, valor_ganho, id_resultado) values ("
+            "'"+validar(item)+"','"+validar(valor)+"','"+validar(id_item)+"')")
+    cursor.execute(query)
+    conn.commit()
 
 def consultaNomeOrgao(uasg):
     cursor.execute("exec sp_getNomeOrgao @uasg = '"+uasg+"'")

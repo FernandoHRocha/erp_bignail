@@ -76,3 +76,16 @@ def abrir_janela_homologacao_itens(uasg:str, pregao:str):
     """Faz a chamada dos itens do pregão ao banco de dados e abre a janela de itens a homologar."""
     itens = cnn.consultar_itens_homologar(uasg, pregao)
     wds.janela_cadastro_homologacao(uasg,pregao,itens)
+
+def confirmar_dados_homologacao_itens(values:dict):
+    """Verifica e converte os valores dos itens para homologacao."""
+    for item in values.keys():
+        if 'check' in item:
+            valor = values[str(item).replace('check','it')]
+            if values[item]:
+                if valor.replace(',','',1).isdigit():
+                    print('Digito')
+                    print(round(float(valor.replace(',','.',1)),2))
+                else:
+                    return sg.popup('Favor corrigir o valor do item '+item.replace('check_',''))
+    return sg.popup('Dados ok.')

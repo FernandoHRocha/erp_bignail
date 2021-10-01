@@ -103,10 +103,10 @@ while True:
         if(event == 'bt_homologar'):
             tab = str(values['tg_pregoes']).replace('tab','tb')
             if (len(values[tab])>0):
+                window.Close()
                 for linha in values[tab]:
                     pregao = window[tab].get()[linha]
                     evh.abrir_janela_homologacao_itens(pregao[1],pregao[0])
-                    #chamar a tela de seleção de itens para homologação
             else:
                 sg.popup('Primeiro selecione um pregão.')
             pass
@@ -143,10 +143,14 @@ while True:
             pass
         if(event == 'bt_cadastro_reequilibrio'):
             pass
+
     if(window.Title==titulo_janelas['janela_cadastro_homologacao']):
-        if('check_' in event):
-            item = str(event).replace('check_','it_')
-            window[item].update(visible=True)
+        if event:
+            if('check_' in event):
+                frame_input = str(event).replace('check_','fr_it_')
+                window[frame_input].update(visible=True) if values[event] else window[frame_input].update(visible=False)
+        if (event=='bt_concluir'):
+            evh.confirmar_dados_homologacao_itens(values)
 
 ###JANELAS DESTINADAS AOS PROCESSOS DE AUTOMAÇÃO
 

@@ -74,11 +74,16 @@ def frame_item_homologar(item:str,modelo:str,unidades:str):
     modelo = str(modelo)
     unidades = str(unidades)
     return sg.Frame(title=' Item '+str(item)+' ',layout=
+        [
             [
-                [
-                    sg.Checkbox(unidades+' x do modelo: '+modelo,key='check_'+item,default=False,enable_events=True)
-                ],
-                [
-                    sg.InputText(size=(15,1), enable_events=True, key='it_'+item,visible=False)
-                ]
-            ])
+                sg.Checkbox(unidades+' un. do modelo: '+modelo,key='check_'+item,default=False,enable_events=True)
+            ],
+            [
+                sg.Frame('',border_width=0,key='fr_it_'+item,visible=False,layout=[
+                    [
+                        sg.Text('Valor Ganhor R$'),
+                        sg.InputText(size=(15,1), enable_events=True, key='it_'+item)
+                    ]
+                ]),
+            ]
+        ])
