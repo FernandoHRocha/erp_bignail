@@ -27,3 +27,13 @@ def padronizar_nome_pasta(data:str,pregao:str,uasg:str):
     data = datetime.strftime(datetime.strptime(data,r'%Y-%m-%d %H:%M'),r'%Y-%m-%d')
     codigo = data+'_'+pregao+'_'+uasg
     return codigo
+
+def conferir_se_inteiro_e_menor(numero:str,teto:int):
+    """Confere se o parametro numero é um inteiro e menor ou igual ao valor teto."""
+    if(numero.isdigit()):
+        if(0 < int(numero) <= teto):
+            return int(numero)
+        else:
+            return False
+    else:
+        return False

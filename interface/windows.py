@@ -228,10 +228,7 @@ def janela_cadastro_homologacao(uasg:str,pregao:str,itens:list):
             sg.Column(  layout=[[pt.frame_item_homologar(item[0],item[1],item[2])] for item in itens],
                         size=(400,600),scrollable=True, vertical_scroll_only=True)
         ],
-        [
-            sg.Button('Cancelar',enable_events=True,key='bt_cancelar',size=(20,1)),
-            sg.Button('Concluir',enable_events=True,key='bt_concluir',size=(20,1)),
-        ]
+        pt.botos_concluir_cancelar_operacao(),
     ]
     return sg.Window(title=titulo_janelas['janela_cadastro_homologacao'],layout=layout,finalize=True)
 
@@ -246,12 +243,12 @@ def janela_cadastro_itens_empenhar(uasg:str,pregao:str,itens:list):
     ]
     numero_empenho =[
         [
-            sg.Text(' Número do empenho '),sg.InputText('',size=(20,1),key='it_numero_empenho'),
+            sg.Text(' Número do empenho '),sg.InputText('',size=(20,1),key='it_codigo_empenho'),
         ]
     ]
     dados_empenho=[
-        [sg.Frame(title='Data de Envio ',layout=data_empenho)],
-        [sg.Frame(title='Nota de Empenho ',layout=numero_empenho)],
+        [sg.Frame(title=' Data de Recebimento do Empenho ',layout=data_empenho)],
+        [sg.Frame(title=' Código da Nota de Empenho ',layout=numero_empenho)],
     ]
     layout=[
         [
@@ -267,9 +264,7 @@ def janela_cadastro_itens_empenhar(uasg:str,pregao:str,itens:list):
         [
             dados_empenho
         ],
-        [
-            sg.Button('Concluir',enable_events=True,key='bt_concluir'),
-        ]
+        pt.botos_concluir_cancelar_operacao(),
     ]
     return sg.Window(title=titulo_janelas['janela_cadastro_itens_empenhar'],layout=layout,finalize=True)
 

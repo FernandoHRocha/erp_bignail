@@ -97,3 +97,10 @@ def frame_item_empenhar(itens:list):
                 ]),
             ]
         ])
+
+def botos_concluir_cancelar_operacao():
+    """Retorna um array com dois sg.Button para finalizar operações com Cancelar e Concluir."""
+    return [
+        sg.Button('Cancelar',enable_events=True,key='bt_cancelar',size=(20,1)),
+        sg.Button('Concluir',enable_events=True,key='bt_concluir',size=(20,1)),
+    ]

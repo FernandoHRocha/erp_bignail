@@ -106,3 +106,13 @@ def confirmar_dados_homologacao_itens(uasg:str,pregao:str,values:dict):
 def abrir_janela_itens_empenhar(uasg:str,pregao:str):
     """Coleta as informações dos itens do pregão e chama a janela para empenho."""
     return wds.janela_cadastro_itens_empenhar(uasg,pregao,cnn.consultar_itens_empenhar(uasg,pregao))
+
+def empenhar_itens(uasg:str,pregao:str,dia:str,mes:str,ano:str,codigo_empenho:str):
+    data_empenho =(
+        str(adapter.conferir_se_inteiro_e_menor(dia,31))+'-'+
+        str(adapter.conferir_se_inteiro_e_menor(mes,12))+'-'+
+        str(adapter.conferir_se_inteiro_e_menor(ano,2030)))
+    if str(False) in data_empenho:
+        return sg.popup('Favor corrigir a data do empenho.')
+    else:
+        return sg.popup('Data correta')

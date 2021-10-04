@@ -157,3 +157,13 @@ def inserir_item_ganho(uasg:str,pregao:str,item:str,valor:str):
             "'1','"+validar(valor)+"','"+validar(id_item)+"')")
     cursor.execute(query)
     conn.commit()
+
+def inserir_empenho_solicitado(uasg:str,pregao:str,data:str,nota:str):
+    """Insere um empenho no banco de dados na fase Solicitado."""
+    id_orgao = consultar_id_orgao(uasg)
+    id_pregao = consultar_id_pregao(uasg,pregao)
+    query = (   "insert into empenho (data_empenho,nota_empenho, id_pregao, id_fase, id_orgao) values"
+                "('"+validar(data)+"','"+validar(nota)+"','"+validar(id_pregao)+"','1','"+validar(id_orgao)+"')")
+    cursor.execute(query)
+    conn.commit()
+

@@ -124,11 +124,14 @@ while True:
         if(event == 'bt_registrar_carona'):pass
 
         if(event == 'tg_pregoes'):
-            if(values['tg_pregoes'] == 'tab_ganhos' or values['tg_pregoes'] == 'tab_finalizados'):
+            if(values['tg_pregoes'] in ['tab_homologado','tab_finalizado']):
                 window['cl_julgamento'].update(visible=False)
                 window['cl_ganho'].update(visible=True)
-            else:
+            elif(values['tg_pregoes'] in ['tab_proposta','tab_julgamento','tab_frustrado']):
                 window['cl_julgamento'].update(visible=True)
+                window['cl_ganho'].update(visible=False)
+            else:
+                window['cl_julgamento'].update(visible=False)
                 window['cl_ganho'].update(visible=False)
 
     if(window.Title==titulo_janelas['janela_consulta_empenhos']):
@@ -171,6 +174,13 @@ while True:
                 window[frame_input].update(visible=True) if values[event] else window[frame_input].update(visible=False)
         if (event=='bt_concluir'):
             evh.confirmar_dados_homologacao_itens(window['txt_uasg'].get(), window['txt_pregao'].get(), values)
+            janela_anterior=wds.janela_consulta
+            window.Close()
+            wds.janela_consulta_pregoes()
+        if(event=='bt_cancelar'):
+            janela_anterior=wds.janela_consulta
+            window.Close()
+            wds.janela_consulta_pregoes()
 
     if(window.Title==titulo_janelas['janela_cadastro_itens_empenhar']):
         if event:
@@ -178,7 +188,12 @@ while True:
                 frame_input = str(event).replace('check_','fr_it_')
                 window[frame_input].update(visible=True) if values[event] else window[frame_input].update(visible=False)
         if (event=='bt_concluir'):
-            sg.popup('Itens incluidos')
+            evh.empenhar_itens(window['txt_uasg'].get(), window['txt_pregao'].get(), values['it_dia'],values['it_mes'],values['it_ano'],values['it_codigo_empenho'])
+
+        if(event=='bt_cancelar'):
+            janela_anterior=wds.janela_consulta
+            window.Close()
+            wds.janela_consulta_pregoes()
 ###JANELAS DESTINADAS AOS PROCESSOS DE AUTOMAÇÃO
 
     if(window.Title==titulo_janelas['janela_comprasnet']):
