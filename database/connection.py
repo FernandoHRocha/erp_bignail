@@ -99,8 +99,8 @@ def consultar_itens_homologar(uasg:str,pregao:str):
 def consultar_itens_empenhar(uasg:str,pregao:str):
     """Retorna as informações dos itens ganhos para empenhar."""
     id_pregao = consultar_id_pregao(uasg,pregao)
-    query=( "select id_item, nome_marca, modelo, quantidade, valor_ganho from resultado_item "
-            "join item on item.id_item = resultado_item.id_resultado "
+    query=( "select item.id_item, nome_marca, modelo, quantidade, valor_ganho from resultado_item "
+            "join item on item.id_item = resultado_item.id_item "
             "join marca on item.id_marca = marca.id_marca "
             "where item.id_pregao = '"+validar(id_pregao)+"';")
     cursor.execute(query)
@@ -157,51 +157,3 @@ def inserir_item_ganho(uasg:str,pregao:str,item:str,valor:str):
             "'1','"+validar(valor)+"','"+validar(id_item)+"')")
     cursor.execute(query)
     conn.commit()
-
-def consultaNomeOrgao(uasg):
-    cursor.execute("exec sp_getNomeOrgao @uasg = '"+uasg+"'")
-    nome =''
-    for row in cursor:
-        nome = row[0]
-    return nome
-
-def listar_pregoes():#LISTA OS PREGÕES PELA DATA DE ABERTURA
-    cursor.execute('exec sp_listPregoes')
-    pregoes =[]
-    for row in cursor:
-        aux =[]
-        for col in row:
-            aux.append(col)
-        pregoes.append(aux)
-    return pregoes
-
-
-def inserir_orgao(uasg, orgao):
-    query="INSERT INTO orgao (nome_orgao, uasg) VALUES ('"+ orgao+"','"+ uasg+"');"
-    #cursor.execute(query)
-    #conn.commit()
-
-def consultarCategorias():
-    cursor.execute("select nome_categoria as Categoria from categoria order by nome_categoria")
-    categorias = []
-    for row in cursor:
-        categorias.append(row[0])
-    return categorias
-
-def consultarMarcas():
-    marcas=[]
-    cursor.execute('select nome_marca as Marca from marca order by nome_marca')
-    for row in cursor:
-        marcas.append(row[0])
-    return marcas
-
-def consultar_itens_pregao(uasg,pregao):
-    #id_pregao = obter_id_pregao(uasg, pregao)
-    #cursor.execute('select item, quantidade, nome_marca, modelo, valor_ofertado, nome_fase from item left join pregao on pregao.id_pregao = item.id_pregao join marca on item.id_marca = marca.id_marca join fase_pregao on pregao.id_fase = fase_pregao.id_fase where item.id_pregao = '+str(id_pregao)+';')
-    item=[]
-    for x in cursor:
-        aux=[]
-        for y in x:
-            aux.append(str(y))
-        item.append(aux)
-    return item
