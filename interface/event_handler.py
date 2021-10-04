@@ -34,11 +34,20 @@ def apresentar_itens_pregao(window:sg.Window, orgao:str, pregao:str):
     window['tb_ganho'].update(values=cnn.consultar_itens_ganhos(orgao,pregao))
 
 def lista_pregoes_gerais():
-    """Retorna uma lista com a categoria dos pregões e a consulta ao banco de dados."""
+    """Retorna uma lista com a categoria dos pregões e os respectivos dados."""
     retorno =[]
     fases=cnn.consultar_fases_pregoes()
     for fase in fases:
         aux = [fase,cnn.consultar_pregoes_fase(fase)]
+        retorno.append(aux)
+    return retorno
+
+def lista_empenhos_gerais():
+    """Retorna uma lista com a categoria dos empenhos e os respectivos empenhos."""
+    retorno=[]
+    fases = cnn.consultar_fases_empenhos()
+    for fase in fases:
+        aux = [fase,cnn.consultar_empenhos_fase(fase)]
         retorno.append(aux)
     return retorno
 

@@ -129,6 +129,27 @@ def consultar_itens_empenhar(uasg:str,pregao:str):
     consulta=[list(row) for row in cursor.fetchall()]
     return consulta
 
+def consultar_fases_empenhos():
+    query=("select nome_fase from fase_empenho")
+    cursor.execute(query)
+    consulta=[row[0].lower() for row in cursor.fetchall()]
+    return consulta
+
+def consultar_empenhos_fase(fase:str=''):
+    """Retorna dados dos empenhos, passando a fase como argumento a busca será filtrada pela fase."""
+    query=( "select numero_pregao, uasg, data_empenho, nota_empenho, sum(quantidade * valor_unitario) from empenho "
+            "join pregao on empenho.id_pregao = pregao.id_pregao "
+            "join orgao on orgao.id_orgao = pregao.id_orgao "
+            "join fase_empenho on fase_empenho.id_fase = empenho.id_fase "
+            "join item_empenho on item_empenho.id_empenho = empenho.id_empenho ")
+    group = ("group by data_empenho, nota_empenho, uasg, pregao.numero_pregao")
+    if(fase!=''):
+        query=query+("where fase_empenho.nome_fase = '"+validar(fase)+"' ")
+    query=query+group
+    cursor.execute(query)
+    consulta=[list(row) for row in cursor.fetchall()]
+    return consulta
+
 ###ALTERAÇÕES-------------------------------------
 
 def alterar_fase_pregao(uasg:str,pregao:str,fase:str):

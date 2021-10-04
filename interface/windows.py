@@ -124,15 +124,15 @@ def janela_consulta_pregoes():
 def janela_consulta_empenhos():
     """Retorna um sg.Window com tabela e abas para apresentação dos empenhos da empresa."""
     cabecalho_generico = [
-        ['Pregão','UASG','Data do Empenho','Valor Total','ÓRGÃO'],
-        [10,8,20,10,30]
+        ['Pregão','UASG','Data do Empenho','Nota','Valor Total'],
+        [10,8,20,10,11]
     ]
-    abas = ['pendentes','encerrados']
+    abas = evh.lista_empenhos_gerais()
     layout=[
         [
             sg.TabGroup(
-                [[pt.aba_com_tabela_itens(cabecalho_generico,aba,aba) for aba in abas]
-                ],enable_events=True,key='tg_empenho')
+                [[pt.aba_com_tabela_itens(cabecalho_generico,aba[0],aba[1]) for aba in abas]
+                ],enable_events=True,key='tg_empenhos')
         ],
         [
             sg.Button('Registrar Empenho',enable_events=True,key='bt_registrar_empenho'),
