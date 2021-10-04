@@ -92,7 +92,9 @@ def frame_item_empenhar(itens:list):
                     ],
                     [
                         sg.InputText(size=(6,1), enable_events=True, key='it_'+item),
-                        sg.Text(' de '+unidades+' unidades.'),
+                        sg.Text(' de '),
+                        sg.Text(unidades,key='txt_quantidade_'+item),
+                        sg.Text(' unidades.'),
                     ],
                 ]),
             ]

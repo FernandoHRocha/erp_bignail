@@ -188,7 +188,7 @@ while True:
                 frame_input = str(event).replace('check_','fr_it_')
                 window[frame_input].update(visible=True) if values[event] else window[frame_input].update(visible=False)
         if (event=='bt_concluir'):
-            evh.empenhar_itens(window['txt_uasg'].get(), window['txt_pregao'].get(), values['it_dia'],values['it_mes'],values['it_ano'],values['it_codigo_empenho'])
+            evh.empenhar_itens(window, values)
 
         if(event=='bt_cancelar'):
             janela_anterior=wds.janela_consulta

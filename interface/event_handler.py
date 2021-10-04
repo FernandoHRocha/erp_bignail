@@ -107,12 +107,34 @@ def abrir_janela_itens_empenhar(uasg:str,pregao:str):
     """Coleta as informações dos itens do pregão e chama a janela para empenho."""
     return wds.janela_cadastro_itens_empenhar(uasg,pregao,cnn.consultar_itens_empenhar(uasg,pregao))
 
-def empenhar_itens(uasg:str,pregao:str,dia:str,mes:str,ano:str,codigo_empenho:str):
-    data_empenho =(
-        str(adapter.conferir_se_inteiro_e_menor(dia,31))+'-'+
-        str(adapter.conferir_se_inteiro_e_menor(mes,12))+'-'+
-        str(adapter.conferir_se_inteiro_e_menor(ano,2030)))
+def empenhar_itens(window:sg.Window,values:list):
+    dia = str(adapter.conferir_se_inteiro_e_menor(values['it_dia'],31))
+    mes =  str(adapter.conferir_se_inteiro_e_menor(values['it_mes'],12))
+    ano = str(adapter.conferir_se_inteiro_e_menor(values['it_ano'],2040))
+    codigo_empenho = values['it_codigo_empenho']
+    uasg = window['txt_uasg'].get()
+    pregao = window['txt_pregao'].get()
+    data_empenho = dia+'-'+mes+'-'+ano
     if str(False) in data_empenho:
         return sg.popup('Favor corrigir a data do empenho.')
+    itens_homologar=[]
+    for item in values.keys():
+        if 'check' in item:
+            if values[item]:
+                codigo_item = item.replace('check_','')
+                valor = values[str(item).replace('check','it')]
+                quantidade_item = window[str(item).replace('check','txt_quantidade')].get()
+                if valor.isdigit():
+                    aux = []
+                    aux.append(codigo_item)
+                    if (int(quantidade_item) < int(valor) or int(valor) < 1):
+                        return sg.popup('Verifique a quantidade para o item '+codigo_item)
+                    aux.append(valor)
+                    itens_homologar.append(aux)
+                else:
+                    return sg.popup('Favor corrigir o valor do item '+codigo_item)
     else:
-        return sg.popup('Data correta')
+        if(len(itens_homologar)<1):
+            sg.popup('Para registrar um empenho é necessário que pelo menos um item seja empenhado.')
+        else:
+            pass
