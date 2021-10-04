@@ -92,6 +92,6 @@ def cadastrar_planilha():
     nomenclatura = adapter.padronizar_nome_pasta(pregao['data'],pregao['numero'],pregao['uasg'])
     renomear_arquivo(pasta_proposta, arquivo_planilha, nomenclatura)
     renomear_arquivo(pasta_proposta, arquivo_word, nomenclatura)
-    mover_e_renomear_pasta(pasta,nomenclatura[:-1])
+    mover_e_renomear_pasta(pasta,nomenclatura)
     sg.popup('Foram inseridos '+str(len(itens))+' itens no pregão de número '+pregao['numero'])
     return
