@@ -88,7 +88,7 @@ def frame_item_empenhar(itens:list):
                 sg.Frame('',border_width=0,key='fr_it_'+item,visible=False,layout=[
                     [
                         sg.Text('Valor Ganhor R$'),
-                        sg.Text(valor),
+                        sg.InputText(default_text=valor,size=(11,1),enable_events=True,key='it_valor_'+item),
                     ],
                     [
                         sg.InputText(size=(6,1), enable_events=True, key='it_'+item),

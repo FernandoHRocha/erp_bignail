@@ -28,6 +28,16 @@ def consultar_id_item(item:str,uasg:str,pregao:str):
     """Retorna o id de um item. Caso não exista retorna o valor -1"""
     id_pregao = consultar_id_pregao(uasg,pregao)
     query=( "select id_item from item where item = '"+validar(item)+"' and id_pregao = '"+validar(id_pregao)+"';")
+    print(query)
+    cursor.execute(query)
+    resultado = cursor.fetchone()
+    return str(resultado[0]) if resultado!=None else '-1'
+
+def consultar_id_empenho(uasg:str,pregao:str,nota_empenho:str):
+    id_pregao = consultar_id_pregao(uasg,pregao)
+    query=( "select id_empenho from empenho "
+            "where id_pregao = '"+validar(id_pregao)+"' "
+            "and nota_empenho = '"+validar(nota_empenho)+"';")
     cursor.execute(query)
     resultado = cursor.fetchone()
     return str(resultado[0]) if resultado!=None else '-1'
@@ -99,7 +109,7 @@ def consultar_itens_homologar(uasg:str,pregao:str):
 def consultar_itens_empenhar(uasg:str,pregao:str):
     """Retorna as informações dos itens ganhos para empenhar."""
     id_pregao = consultar_id_pregao(uasg,pregao)
-    query=( "select item.id_item, nome_marca, modelo, quantidade, valor_ganho from resultado_item "
+    query=( "select item.item, nome_marca, modelo, quantidade, valor_ganho from resultado_item "
             "join item on item.id_item = resultado_item.id_item "
             "join marca on item.id_marca = marca.id_marca "
             "where item.id_pregao = '"+validar(id_pregao)+"';")
@@ -164,6 +174,27 @@ def inserir_empenho_solicitado(uasg:str,pregao:str,data:str,nota:str):
     id_pregao = consultar_id_pregao(uasg,pregao)
     query = (   "insert into empenho (data_empenho,nota_empenho, id_pregao, id_fase, id_orgao) values"
                 "('"+validar(data)+"','"+validar(nota)+"','"+validar(id_pregao)+"','1','"+validar(id_orgao)+"')")
-    cursor.execute(query)
-    conn.commit()
+    try:
+        cursor.execute(query)
+        conn.commit()
+        return True
+    except:
+        return False
 
+def inserir_itens_em_empenho(uasg:str,pregao:str,nota_empenho:str,itens:list):
+    """Insere itens em uma nota de empenho.
+    Cada item da lista deve conter código, quantidade, valor.
+    Necessariamente nessa ordem."""
+    id_empenho = consultar_id_empenho(uasg,pregao,nota_empenho)
+    try:
+        for item in itens:
+            id_item = consultar_id_item(item[0],uasg,pregao)
+            query = (   "insert into item_empenho (quantidade, valor_unitario, id_empenho, id_item) "
+                        "values ('"+validar(item[1])+"','"+validar(item[2])+"','"+validar(id_empenho)+"','"+validar(id_item)+"');")
+            print(query)
+            cursor.execute(query)
+            conn.commit()
+        else:
+            return True
+    except:
+        return False
