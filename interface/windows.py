@@ -57,8 +57,8 @@ def janela_consulta_pregao():
         [5,4,20,10,12,12,10,20,15]
     ]
     cabecalho_ganhos = [
-        ['ID','Item','Categoria','Produto','Marca/Modelo','Restam','Valor','Valor Total','Custo','Custo Total','Margem','Fornecedor'],
-        [5,4,15,20,30,6,10,10,10,10,8,15]
+        ['ID','Item','Marca','Modelo','Quant.','Valor Unit.','Valor Total','Custo','Frete','Fornecedor'],
+        [5,3,15,20,5,11,11,11,11,15]
     ]
 
     layout=[
@@ -267,9 +267,6 @@ def janela_cadastro_itens_empenhar(uasg:str,pregao:str,itens:list):
         pt.botos_concluir_cancelar_operacao(),
     ]
     return sg.Window(title=titulo_janelas['janela_cadastro_itens_empenhar'],layout=layout,finalize=True)
-
-def janela_cadastro_empenho():
-    return
 
 ###JANELAS DESTINADAS AOS PROCESSOS DE AUTOMAÇÃO
 

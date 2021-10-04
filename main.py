@@ -194,6 +194,7 @@ while True:
             janela_anterior=wds.janela_consulta
             window.Close()
             wds.janela_consulta_pregoes()
+
 ###JANELAS DESTINADAS AOS PROCESSOS DE AUTOMAÇÃO
 
     if(window.Title==titulo_janelas['janela_comprasnet']):

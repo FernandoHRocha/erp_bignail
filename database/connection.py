@@ -83,13 +83,25 @@ def consultar_pregoes_fase(fase:str):
 def consultar_itens_geral(uasg:str,pregao:str):
     """Retorna uma lista de itens participados em um pregão."""
     cursor.execute(
-        "select id_item, item, modelo, quantidade, valor_ofertado, preco_custo, frete, fornecedor, nome_marca from item"
-        " join marca on item.id_marca = marca.id_marca"
-        " where id_pregao = (select id_pregao from pregao where id_orgao ="
-        " (select id_orgao from orgao where uasg = '"+validar(uasg)+"') and numero_pregao = '"+validar(pregao)+"');")
+        "select id_item, item, modelo, quantidade, valor_ofertado, preco_custo, frete, fornecedor, nome_marca from item "
+        "join marca on item.id_marca = marca.id_marca "
+        "where id_pregao = (select id_pregao from pregao where id_orgao = "
+        "(select id_orgao from orgao where uasg = '"+validar(uasg)+"') and numero_pregao = '"+validar(pregao)+"');")
     consulta=[]
     for row in cursor:
         consulta.append([str(valor) for valor in row])
+    return consulta
+
+def consultar_itens_ganhos(uasg:str,pregao:str):
+    """Retorna uma lista de itens classificados em primeiro lugar."""
+    query=("select item.id_item, item, nome_marca, modelo, quantidade, valor_ganho, (quantidade * valor_ganho) as valor_total, preco_custo, frete, fornecedor from item "
+        "join marca on item.id_marca = marca.id_marca "
+        "join resultado_item on resultado_item.id_item = item.id_item "
+        "where id_pregao = (select id_pregao from pregao where id_orgao = "
+        "(select id_orgao from orgao where uasg = '"+validar(uasg)+"') and numero_pregao = '"+validar(pregao)+"') "
+        " and resultado_item.colocacao = '1'")
+    cursor.execute(query)
+    consulta=[list(row) for row in cursor.fetchall()]
     return consulta
 
 def consultar_fases_pregoes():

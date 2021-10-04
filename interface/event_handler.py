@@ -31,6 +31,7 @@ def apresentar_itens_pregao(window:sg.Window, orgao:str, pregao:str):
             orgao = org[1]
             break
     window['tb_registrado'].update(values=cnn.consultar_itens_geral(orgao,pregao))
+    window['tb_ganho'].update(values=cnn.consultar_itens_ganhos(orgao,pregao))
 
 def lista_pregoes_gerais():
     """Retorna uma lista com a categoria dos pregões e a consulta ao banco de dados."""
