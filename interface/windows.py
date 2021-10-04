@@ -90,21 +90,17 @@ def janela_consulta_pregoes():
         [10,8,20,30]
     ]
     abas = evh.lista_pregoes_gerais()
-    coluna1=[
-        [sg.Button('Abrir Pasta',enable_events=True,key='bt_pasta',size=(20,1))],
+    coluna1=[#APLICADO PARA PREGÕES EM FASE DE PROPOSTA, JULGAMENTO E FRUSTRADO
         [sg.Button('Alterar Fase',enable_events=True,key='bt_alterar_fase',size=(20,1))],
         [sg.Button('Homologar Pregão',enable_events=True,key='bt_homologar',size=(20,1)),]
     ]
-    coluna2=[
-        [sg.Button('Abrir Pasta',enable_events=True,key='bt_pasta',size=(20,1))],
+    coluna2=[#APLICADO PARA PREGÕES HOMOLOGADOS
         [sg.Button('Registrar Empenho',enable_events=True,key='bt_registrar_empenho',size=(20,1))],
         [sg.Button('Registrar Carona',enable_events=True,key='bt_registrar_carona',size=(20,1)),]
     ]
     menu_opcoes = [
-        [
             sg.Column(coluna1,key='cl_julgamento'),
-            sg.Column(coluna2,key='cl_ganho',visible=False)
-        ]
+            sg.Column(coluna2,key='cl_ganho',visible=False),
     ]
     layout=[
         [
@@ -113,7 +109,13 @@ def janela_consulta_pregoes():
                 ],enable_events=True,key='tg_pregoes')
         ],
         [
-            sg.Frame(title=' Opções ',layout=menu_opcoes,border_width=0)
+            sg.Frame(title=' Opções ',border_width=0,layout=
+            [
+                [
+                    sg.Button('Abrir Pasta',enable_events=True,key='bt_pasta',size=(20,1))
+                ],
+                    menu_opcoes
+            ])
         ],
         [pt.bt_voltar()]
         ]
@@ -227,7 +229,8 @@ def janela_cadastro_homologacao(uasg:str,pregao:str,itens:list):
                         size=(400,600),scrollable=True, vertical_scroll_only=True)
         ],
         [
-            sg.Button('Concluir',enable_events=True,key='bt_concluir'),
+            sg.Button('Cancelar',enable_events=True,key='bt_cancelar',size=(20,1)),
+            sg.Button('Concluir',enable_events=True,key='bt_concluir',size=(20,1)),
         ]
     ]
     return sg.Window(title=titulo_janelas['janela_cadastro_homologacao'],layout=layout,finalize=True)
