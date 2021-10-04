@@ -34,13 +34,12 @@ def apresentar_itens_pregao(window:sg.Window, orgao:str, pregao:str):
 
 def lista_pregoes_gerais():
     """Retorna uma lista com a categoria dos pregões e a consulta ao banco de dados."""
-    return [
-        ['submeter',cnn.consultar_pregoes_fase(1)],
-        ['proposta',cnn.consultar_pregoes_fase(1)],
-        ['julgamento',cnn.consultar_pregoes_fase(2)],
-        ['ganhos',cnn.consultar_pregoes_fase(4)],
-        ['finalizados',cnn.consultar_pregoes_fase(6)]
-    ]
+    retorno =[]
+    fases=cnn.consultar_fases_pregoes()
+    for fase in fases:
+        aux = [fase,cnn.consultar_pregoes_fase(fase)]
+        retorno.append(aux)
+    return retorno
 
 def abrir_janela_alterar_fase_pregao(uasg:str,pregao:str):
     """Abre a janela para alteração de fase de pregão."""
@@ -70,7 +69,10 @@ def abrir_pasta_pregao(pregao:str,uasg:str,data:str):
     data = data.replace('/','-')
     data = data[0:10]+'_'+pregao+'_'+uasg
     path += data
-    os.startfile(os.path.realpath(path))
+    try:
+        os.startfile(os.path.realpath(path))
+    except:
+        sg.popup('Não foi possível encontrar a pasta.')
 
 def abrir_janela_homologacao_itens(uasg:str, pregao:str):
     """Faz a chamada dos itens do pregão ao banco de dados e abre a janela de itens a homologar."""
