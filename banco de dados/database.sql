@@ -87,7 +87,7 @@ CREATE TABLE carona (
 		FOREIGN KEY (id_orgao)
 		REFERENCES orgao (id_orgao)
 		ON DELETE NO ACTION
-		ON UPDATE CASCADE,
+		ON UPDATE NO ACTION,
 	CONSTRAINT FK_fase_carona
 		FOREIGN KEY (id_fase)
 		REFERENCES fase_carona (id_fase)
@@ -108,8 +108,8 @@ CREATE TABLE item_carona (
 	CONSTRAINT FK_carona_item_carona
 		FOREIGN KEY (id_carona)
 		REFERENCES carona (id_carona)
-		ON DELETE CASCADE
-		ON UPDATE CASCADE,
+		ON DELETE NO ACTION
+		ON UPDATE NO ACTION,
 );
 
 CREATE TABLE resultado_item (
@@ -144,7 +144,7 @@ CONSTRAINT FK_orgao_empenho
 	FOREIGN KEY (id_orgao)
 	REFERENCES orgao (id_orgao)
 	ON DELETE NO ACTION
-	ON UPDATE CASCADE,
+	ON UPDATE NO ACTION,
 CONSTRAINT FK_fase_empenho
 	FOREIGN KEY (id_fase)
 	REFERENCES fase_empenho (id_fase)
@@ -168,7 +168,7 @@ CONSTRAINT FK_item_item_empenho
 	FOREIGN KEY (id_item)
 	REFERENCES item (id_item)
 	ON DELETE NO ACTION
-	ON UPDATE CASCADE,
+	ON UPDATE NO ACTION,
 );
 
 CREATE TABLE fase_reequilibrio (
@@ -191,7 +191,7 @@ CREATE TABLE reequilibrio (
 		FOREIGN KEY (id_orgao)
 		REFERENCES orgao (id_orgao)
 		ON DELETE NO ACTION
-		ON UPDATE CASCADE,
+		ON UPDATE NO ACTION,
 	CONSTRAINT FK_fase_reequilibrio
 		FOREIGN KEY (id_fase)
 		REFERENCES fase_reequilibrio (id_fase)
