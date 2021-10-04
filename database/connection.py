@@ -51,12 +51,13 @@ def consulta_pregoes(uasg):
         consulta.append(row[0])
     return consulta
 
-def consultar_pregoes_fase(fase:int=0):
-    """Retorna a lista de pregões ordenados pela data dado uma fase."""
+def consultar_pregoes_fase(fase:str):
+    """Retorna a lista de pregões ordenados pela data filtrado por fase.
+    Passado parametro nulo, retorna todos."""
     query = ("select numero_pregao, uasg, data_abertura, nome_orgao from pregao "
             "join orgao on pregao.id_orgao = orgao.id_orgao "
-            "where id_fase_pregao = '"+validar(fase)+"' "
-            "order by data_abertura;") if fase != 0 else ("select data_abertura, "
+            "where id_fase = (select id_fase from fase_pregao where nome_fase = '"+validar(fase)+"') "
+            "order by data_abertura;") if fase != '' else ("select data_abertura, "
             "numero_pregao, uasg, nome_orgao from pregao "
             "join orgao on pregao.id_orgao = orgao.id_orgao "
             "order by data_abertura;")
@@ -84,9 +85,7 @@ def consultar_itens_geral(uasg:str,pregao:str):
 def consultar_fases_pregoes():
     query="select nome_fase from fase_pregao"
     cursor.execute(query)
-    consulta=[]
-    for row in cursor:
-        consulta.append(row[0])
+    consulta=[row[0].lower() for row in cursor.fetchall()]
     return consulta
 
 def consultar_itens_homologar(uasg:str,pregao:str):
@@ -112,10 +111,10 @@ def consultar_itens_empenhar(uasg:str,pregao:str):
 
 def alterar_fase_pregao(uasg:str,pregao:str,fase:str):
     """Altera a fase de determinado pregão, necessário passar todos os argumentos."""
-    query = "select id_fase_pregao from fase_pregao where nome_fase = '"+validar(fase)+"';"
+    query = "select id_fase from fase_pregao where nome_fase = '"+validar(fase)+"';"
     cursor.execute(query)
     fase = str(cursor.fetchone()[0])
-    query = ("update pregao set id_fase_pregao = '"+fase+"'"
+    query = ("update pregao set id_fase = '"+fase+"'"
             "where numero_pregao = '"+validar(pregao)+"' and id_orgao = (select id_orgao from orgao where orgao.uasg ='"+validar(uasg)+"');")
     cursor.execute(query)
     cursor.commit()
@@ -133,8 +132,8 @@ def inserir_pregao(uasg:str,pregao:str,data:str,fase:str):
     """Insere o pregão com base no id do órgão e no nome da fase."""
     id_orgao = consultar_id_orgao(uasg)
     if consultar_id_pregao(uasg,pregao)=='-1':
-        query = ("insert into pregao (id_orgao, numero_pregao, data_abertura, id_fase_pregao) "
-                "values ('"+validar(id_orgao)+"','"+validar(pregao)+"',convert(datetime,'"+validar(data)+":00',120),(select id_fase_pregao from fase_pregao where nome_fase = '"+validar(fase)+"'));")
+        query = ("insert into pregao (id_orgao, numero_pregao, data_abertura, id_fase) "
+                "values ('"+validar(id_orgao)+"','"+validar(pregao)+"',convert(datetime,'"+validar(data)+":00',120),(select id_fase from fase_pregao where nome_fase = '"+validar(fase)+"'));")
         cursor.execute(query)
         conn.commit()
         return True
@@ -151,12 +150,10 @@ def inserir_orgao(uasg:str,orgao:str):
     else:
         return False
 
-
-
 def inserir_item_ganho(uasg:str,pregao:str,item:str,valor:str):
     """Insere o item como ganho no banco de dados."""
     id_item = consultar_id_item(item,uasg,pregao)
-    query=( "insert into resultado_item (colocacao, valor_ganho, id_resultado) values ("
+    query=( "insert into resultado_item (colocacao, valor_ganho, id_item) values ("
             "'1','"+validar(valor)+"','"+validar(id_item)+"')")
     cursor.execute(query)
     conn.commit()
@@ -200,7 +197,7 @@ def consultarMarcas():
 
 def consultar_itens_pregao(uasg,pregao):
     #id_pregao = obter_id_pregao(uasg, pregao)
-    #cursor.execute('select item, quantidade, nome_marca, modelo, valor_ofertado, nome_fase from item left join pregao on pregao.id_pregao = item.id_pregao join marca on item.id_marca = marca.id_marca join fase_pregao on pregao.id_fase_pregao = fase_pregao.id_fase_pregao where item.id_pregao = '+str(id_pregao)+';')
+    #cursor.execute('select item, quantidade, nome_marca, modelo, valor_ofertado, nome_fase from item left join pregao on pregao.id_pregao = item.id_pregao join marca on item.id_marca = marca.id_marca join fase_pregao on pregao.id_fase = fase_pregao.id_fase where item.id_pregao = '+str(id_pregao)+';')
     item=[]
     for x in cursor:
         aux=[]
