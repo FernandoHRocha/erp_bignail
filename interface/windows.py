@@ -45,7 +45,6 @@ def janela_consulta():
         [   sg.Button('Listar Empenhos',key='bt_consulta_empenhos',enable_events=True, size=(20,1))],
         [   sg.Button('Pedidos de Reequilíbrio',key='bt_consulta_reequilibrios',enable_events=True, size=(20,1))],
         [   sg.Button('Listar Caronas',key='bt_consulta_carona',enable_events=True, size=(20,1))],
-        [   sg.Button('Atas de Processos',key='bt_consulta_atas',enable_events=True, size=(20,1))],
         ]
     return sg.Window(title=titulo_janelas['janela_consulta'], layout=layout, finalize=True)
 
@@ -137,6 +136,7 @@ def janela_consulta_empenhos():
         ],
         [
             sg.Button('Consultar Itens',enable_events=True,key='bt_consultar'),
+            sg.Button('Alterar Fase',enable_events=True,key='bt_alterar_fase'),
         ],
         [pt.bt_voltar()]
         ]
@@ -179,6 +179,7 @@ def janela_consulta_carona():
         ],
         [
             sg.Button('Consultar',enable_events=True,key='bt_consultar'),
+            sg.Button('Alterar Fase',enable_events=True,key='bt_alterar_fase'),
         ],
         [pt.bt_voltar()]
         ]
@@ -275,7 +276,7 @@ def janela_cadastro_itens_carona(uasg:str,pregao:str,itens:list):
         ],
         [
             sg.Column(  layout=[[pt.frame_item_empenhar(item)] for item in itens],
-                        size=(400,600),scrollable=True, vertical_scroll_only=True)
+                        size=(800,600),scrollable=True, vertical_scroll_only=True)
         ],
         [
             sg.Text('Caso um mesmo órgão realize mais pedidos de carona para o mesmo pregão,\nconsidere datas diferentes para cada um.')

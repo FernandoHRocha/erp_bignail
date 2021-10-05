@@ -55,10 +55,6 @@ while True:
             janela_anterior=wds.janela_consulta
             window.Close()
             wds.janela_consulta_carona()
-        if(event == 'bt_consulta_atas'):
-            janela_anterior=wds.janela_consulta
-            window.Close()
-            wds.janela_consulta_atas()
 
     if(window.Title==titulo_janelas['janela_consulta_pregao']):
         #wds.janela_consulta_pregao
@@ -145,6 +141,8 @@ while True:
     if(window.Title==titulo_janelas['janela_consulta_empenhos']):
         if(event == 'bt_consultar'):
             sg.popup('Abre a consulta aos itens do empenho.')
+        if(event == 'bt_alterar_fase'):
+            sg.popup('Mostra opções para alterar a fase do empenho.')
 
     if(window.Title==titulo_janelas['janela_consulta_reequilibrio']):
         if(event == 'bt_registrar_envio'):
@@ -157,6 +155,8 @@ while True:
     if(window.Title==titulo_janelas['janela_consulta_carona']):
         if(event == 'bt_consultar'):
             sg.popup('Abre a consulta aos itens da carona.')
+        if(event == 'bt_alterar_fase'):
+            sg.popup('Mostra opções para alterar a fase da carona.')
 
 ###JANELAS DESTINADAS A PROCEDIMENTOS DE CADASTROS
 
