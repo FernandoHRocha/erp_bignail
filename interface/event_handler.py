@@ -167,7 +167,7 @@ def abrir_janela_itens_carona(uasg:str,pregao:str):
     return wds.janela_cadastro_itens_carona(uasg,pregao,cnn.consultar_itens_homologados(uasg,pregao))
 
 def caronar_itens(window:sg.Window,values:list):
-    """Valida dados dos itens, data, e insere ao banco de dados."""
+    """Valida os dados dos itens, a data e insere ao banco de dados."""
     dia = str(adapter.conferir_se_inteiro_e_menor(values['it_dia'],31))
     mes =  str(adapter.conferir_se_inteiro_e_menor(values['it_mes'],12))
     ano = str(adapter.conferir_se_inteiro_e_menor(values['it_ano'],2040))
@@ -177,6 +177,8 @@ def caronar_itens(window:sg.Window,values:list):
     data_carona = dia+'-'+mes+'-'+ano
     if str(False) in data_carona:
         return sg.popup('Favor corrigir a data do empenho.')
+    if (not str(orgao) != ''):
+        return sg.popup('Favor escolher o Órgão solicitante da carona.')
     itens_caronar=[]
     for item in values.keys():
         if 'check' in item:
@@ -201,13 +203,13 @@ def caronar_itens(window:sg.Window,values:list):
                 itens_caronar.append(aux)
     else:
         if(len(itens_caronar)<1):
-            sg.popup('Para registrar um empenho é necessário que pelo menos um item seja empenhado.')
+            sg.popup('Para registrar uma carona é necessário que pelo menos um item seja selecionado.')
         else:
             if (not cnn.inserir_carona(uasg,pregao,data_carona,orgao)):
-                sg.popup('Não foi possível registrar o empenho.')
+                sg.popup('Não foi possível registrar a carona.')
             else:
-                if(not cnn.inserir_itens_em_empenho(uasg,pregao,itens_caronar)):
-                    sg.popup('Houve um problema para registrar os itens do empenho.')
+                if(not cnn.inserir_itens_em_carona(uasg,pregao,orgao,data_carona,itens_caronar)):
+                    sg.popup('Houve um problema para registrar os itens da carona.')
                 else:
-                    sg.popup('Empenho registrado com sucesso!')
+                    sg.popup('Carona registrado com sucesso!')
                     window.Close()

@@ -12,7 +12,7 @@ wds.janela_menu()
 while True:
     window, event, values = sg.read_all_windows()
 
-    print(window.Title, event, values)
+    #print(window.Title, event, values)
 
     if event == 'bt_voltar':
         if janela_anterior == 'janela_menu':

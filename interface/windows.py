@@ -278,9 +278,11 @@ def janela_cadastro_itens_carona(uasg:str,pregao:str,itens:list):
             sg.Text(' ano '),sg.InputText('',size=(4,1),key='it_ano'),
         ]
     ]
+
     dados_carona =[
-        [sg.Frame(title=' Data de Adesão a Carona ',layout=data_carona)],
+        [sg.Frame(title=' Data de Adesão a Carona ',layout=data_carona)]
     ]
+
     layout=[
         [
             sg.Text('Registrar Empenho - Pregão '),
@@ -296,8 +298,9 @@ def janela_cadastro_itens_carona(uasg:str,pregao:str,itens:list):
                         size=(400,600),scrollable=True, vertical_scroll_only=True)
         ],
         [
-            data_carona
+            sg.Text('Caso um mesmo órgão realize mais pedidos de carona para o mesmo pregão,\nconsidere datas diferentes para cada um.')
         ],
+        dados_carona,
         pt.botoes_concluir_cancelar_operacao(),
     ]
     return sg.Window(title=titulo_janelas['janela_cadastro_itens_carona'],layout=layout,finalize=True)

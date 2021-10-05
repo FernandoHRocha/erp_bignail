@@ -33,7 +33,6 @@ def consultar_id_item(item:str,uasg:str,pregao:str):
     """Retorna o id de um item. Caso não exista retorna o valor -1."""
     id_pregao = consultar_id_pregao(uasg,pregao)
     query=( "select id_item from item where item = '"+validar(item)+"' and id_pregao = '"+validar(id_pregao)+"';")
-    print(query)
     cursor.execute(query)
     resultado = cursor.fetchone()
     return str(resultado[0]) if resultado!=None else '-1'
@@ -59,8 +58,8 @@ def consultar_id_carona(uasg:str,pregao:str,orgao:str,data:str):
     """Retorna o id da carona. Caso não exista retorna o valor -1."""
     id_orgao = consultar_id_orgao_nome(orgao)
     id_pregao = consultar_id_pregao(uasg,pregao)
-    query=( "select id_carona from carona where id_orgao = '"+validar(id_orgao)+"', "
-            "id_pregao = '"+validar(id_pregao)+"', data_carona = '"+validar(data)+"';")
+    query=( "select id_carona from carona where id_orgao = '"+validar(id_orgao)+"' and "
+            "id_pregao = '"+validar(id_pregao)+"' and data_carona = '"+validar(data)+"';")
     cursor.execute(query)
     resultado = cursor.fetchone()
     return str(resultado[0]) if resultado!=None else '-1'
@@ -249,12 +248,22 @@ def inserir_carona(uasg:str,pregao:str,data:str,orgao:str,fase:str=''):
     except:
         return False
 
-def inserir_item_em_carona(uasg:str,pregao:str,orgao:str,data:str,itens:list):
+def inserir_itens_em_carona(uasg:str,pregao:str,orgao:str,data:str,itens:list):
     """Insere os itens na carona do referido pregão
-    Cada item da lista deve conter código e quantidade.
+    Cada item da lista deve conter código, quantidade e valor.
     Necessariamente nessa ordem."""
     id_carona = consultar_id_carona(uasg,pregao,orgao,data)
-    query=("")
+    try:
+        for item in itens:
+            id_item = consultar_id_item(item[0],uasg,pregao)
+            query=( "insert into item_carona (id_item, id_carona, quantidade, valor_ganho) "
+                    "values ('"+validar(id_item)+"','"+validar(id_carona)+"','"+validar(item[1])+"','"+validar(item[2])+"')")
+            cursor.execute(query)
+        else:
+            conn.commit()
+            return True
+    except:
+        return False
 
 def inserir_empenho_solicitado(uasg:str,pregao:str,data:str,nota:str):
     """Insere um empenho no banco de dados na fase Solicitado."""
@@ -279,7 +288,6 @@ def inserir_itens_em_empenho(uasg:str,pregao:str,nota_empenho:str,itens:list):
             id_item = consultar_id_item(item[0],uasg,pregao)
             query = (   "insert into item_empenho (quantidade, valor_unitario, id_empenho, id_item) "
                         "values ('"+validar(item[1])+"','"+validar(item[2])+"','"+validar(id_empenho)+"','"+validar(id_item)+"');")
-            print(query)
             cursor.execute(query)
             conn.commit()
         else:
