@@ -144,7 +144,10 @@ def consultar_itens_homologados(uasg:str,pregao:str):
     """Retorna as informações dos itens ganhos para empenhar.
     -> item, marca, modelo, quantidade, valor_ganho"""
     id_pregao = consultar_id_pregao(uasg,pregao)
-    query=( "select item.item, nome_marca, modelo, quantidade, valor_ganho from resultado_item "
+    query=( "select item.item, nome_marca, item.modelo, total.quantidade, valor_ofertado from resultado_item join "
+            "(select id_item, sum(quantidade) as quantidade from "
+            "(select id_item, quantidade*(-1) as quantidade from item_empenho union all select id_item, quantidade*(-1) as quantidade from item_carona union all select id_item, quantidade from item) t "
+            "group by id_item) as total on total.id_item = resultado_item.id_item "
             "join item on item.id_item = resultado_item.id_item "
             "join marca on item.id_marca = marca.id_marca "
             "where item.id_pregao = '"+validar(id_pregao)+"';")
