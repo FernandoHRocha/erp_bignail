@@ -46,7 +46,16 @@ def lista_empenhos_gerais():
     retorno=[]
     fases = cnn.consultar_fases_empenhos()
     for fase in fases:
-        aux = [fase,cnn.consultar_empenhos_fase(fase)]
+        aux = [fase,cnn.consultar_empenhos_pela_fase(fase)]
+        retorno.append(aux)
+    return retorno
+
+def lista_caronas_gerais():
+    """Retorna uma lista com a categoria das caronas e os respectivos pedidos."""
+    retorno=[]
+    fases = cnn.consultar_fases_carona()
+    for fase in fases:
+        aux = [fase,cnn.consultar_caronas_pela_fase(fase)]
         retorno.append(aux)
     return retorno
 

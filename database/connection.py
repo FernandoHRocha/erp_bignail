@@ -161,7 +161,7 @@ def consultar_fases_empenhos():
     consulta=[row[0].lower() for row in cursor.fetchall()]
     return consulta
 
-def consultar_empenhos_fase(fase:str=''):
+def consultar_empenhos_pela_fase(fase:str=''):
     """Retorna dados dos empenhos, passando a fase como argumento a busca será filtrada pela fase."""
     query=( "select numero_pregao, uasg, data_empenho, nota_empenho, sum(quantidade * valor_unitario) from empenho "
             "join pregao on empenho.id_pregao = pregao.id_pregao "
@@ -181,6 +181,22 @@ def consultar_fases_carona():
     query=("select nome_fase from fase_carona")
     cursor.execute(query)
     consulta=[row[0].lower() for row in cursor.fetchall()]
+    return consulta
+
+def consultar_caronas_pela_fase(fase:str=''):
+    """Retorna dados das caronas, passando a fase como argumento a busca será filtrada pela fase."""
+    query=( "select c.id_carona, numero_pregao, o.uasg, data_carona, og.nome_orgao from carona as c "
+            "join pregao as p on p.id_pregao = c.id_pregao "
+            "join orgao as o on o.id_orgao = p.id_orgao "
+            "join orgao as og on og.id_orgao = c.id_orgao "
+            "join item_carona as ic on ic.id_carona = c.id_carona "
+            "join fase_carona as fc on fc.id_fase = c.id_fase ")
+    group = ("group by c.id_carona, numero_pregao, o.uasg, data_carona, og.nome_orgao")
+    if(fase!=''):
+        query=query+("where fc.nome_fase = '"+validar(fase)+"' ")
+    query=query+group
+    cursor.execute(query)
+    consulta=[list(row) for row in cursor.fetchall()]
     return consulta
 
 ###ALTERAÇÕES-------------------------------------

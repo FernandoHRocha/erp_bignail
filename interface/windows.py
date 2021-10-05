@@ -125,8 +125,8 @@ def janela_consulta_pregoes():
 def janela_consulta_empenhos():
     """Retorna um sg.Window com tabela e abas para apresentação dos empenhos da empresa."""
     cabecalho_generico = [
-        ['Pregão','UASG','Data do Empenho','Nota','Valor Total'],
-        [10,8,20,10,11]
+        ['id','Pregão','UASG','Data do Empenho','Nota','Valor Total'],
+        [0,10,8,20,10,11]
     ]
     abas = evh.lista_empenhos_gerais()
     layout=[
@@ -136,7 +136,7 @@ def janela_consulta_empenhos():
                 ],enable_events=True,key='tg_empenhos')
         ],
         [
-            sg.Button('Registrar Empenho',enable_events=True,key='bt_registrar_empenho'),
+            sg.Button('Consultar Itens',enable_events=True,key='bt_consultar'),
         ],
         [pt.bt_voltar()]
         ]
@@ -167,42 +167,22 @@ def janela_consulta_reequilibrio():
 def janela_consulta_carona():
     """Retorna um sg.Window com tabela e abas para apresentação dos pedidos de carona recebidos pela empresa."""
     cabecalho_generico = [
-        ['Pregão','UASG','Data do Pedido','Item','Quantidade','Órgão Requerente'],
-        [10,8,20,10,8,30]
+        ['id','Pregão','UASG','Data do Pedido','Órgão Requerente'],
+        [0,10,8,20,30]
     ]
-    abas = ['aceitos','empenhados']
+    abas = evh.lista_caronas_gerais()
     layout=[
         [
             sg.TabGroup(
-                [[pt.aba_com_tabela_itens(cabecalho_generico,aba,aba) for aba in abas]
+                [[pt.aba_com_tabela_itens(cabecalho_generico,aba[0],aba[1]) for aba in abas]
                 ],enable_events=True,key='tg_carona')
         ],
         [
-            sg.Button('Registrar Carona',enable_events=True,key='bt_registrar_carona'),
+            sg.Button('Consultar',enable_events=True,key='bt_consultar'),
         ],
         [pt.bt_voltar()]
         ]
     return sg.Window(title=titulo_janelas['janela_consulta_carona'], layout=layout, finalize=True)
-
-def janela_consulta_atas():
-    """Retorna um sg.Window com tabela e abas para apresentação dos pregões ganhos e atas assinadas."""
-    cabecalho_generico = [
-        ['Pregão','UASG','Data de Assinatura'],
-        [10,8,20]
-    ]
-    abas = ['pendentes','assinadas']
-    layout=[
-        [
-            sg.TabGroup(
-                [[pt.aba_com_tabela_itens(cabecalho_generico,aba,aba) for aba in abas]
-                ],enable_events=True,key='tg_atas')
-        ],
-        [
-            sg.Button('Registrar assinatura de Ata',enable_events=True,key='bt_registrar_ata'),
-        ],
-        [pt.bt_voltar()]
-        ]
-    return sg.Window(title=titulo_janelas['janela_consulta_atas'], layout=layout, finalize=True)
 
 ###JANELAS DESTINADAS A CADASTROS
 

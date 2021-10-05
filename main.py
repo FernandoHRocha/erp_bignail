@@ -12,7 +12,7 @@ wds.janela_menu()
 while True:
     window, event, values = sg.read_all_windows()
 
-    #print(window.Title, event, values)
+    print(window.Title, event, values)
 
     if event == 'bt_voltar':
         if janela_anterior == 'janela_menu':
@@ -143,8 +143,8 @@ while True:
                 window['cl_ganho'].update(visible=False)
 
     if(window.Title==titulo_janelas['janela_consulta_empenhos']):
-        if(event == 'bt_registrar_empenho'):
-            sg.popup('Registra o empenho no banco de dados e abre a pasta do pregão.')
+        if(event == 'bt_consultar'):
+            sg.popup('Abre a consulta aos itens do empenho.')
 
     if(window.Title==titulo_janelas['janela_consulta_reequilibrio']):
         if(event == 'bt_registrar_envio'):
@@ -155,12 +155,8 @@ while True:
             sg.popup('Registra a recusa no banco de dados e abre a pasta do pregão.')
 
     if(window.Title==titulo_janelas['janela_consulta_carona']):
-        if(event == 'bt_registrar_carona'):
-            sg.popup('Registra adesão à carona no banco de dados e abre a pasta do pregão.')
-
-    if(window.Title==titulo_janelas['janela_consulta_atas']):
-        if(event == 'bt_registrar_ata'):
-            sg.popup('Registra a assinatura no banco de dados e abre a pasta do pregão.')
+        if(event == 'bt_consultar'):
+            sg.popup('Abre a consulta aos itens da carona.')
 
 ###JANELAS DESTINADAS A PROCEDIMENTOS DE CADASTROS
 
