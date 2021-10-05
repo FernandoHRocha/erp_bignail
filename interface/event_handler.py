@@ -6,6 +6,14 @@ import PySimpleGUI as sg
 import time
 import os
 
+def conferir_campos_de_data(values:dict):
+    """Retorna uma string com a data se os campos forem válidados com sucesso, caso contrátio retorna False."""
+    dia = str(adapter.conferir_se_inteiro_e_menor(values['it_dia'],31))
+    mes =  str(adapter.conferir_se_inteiro_e_menor(values['it_mes'],12))
+    ano = str(adapter.conferir_se_inteiro_e_menor(values['it_ano'],2040))
+    data = dia+'-'+mes+'-'+ano
+    return False if str(False) in data else data
+
 def atualizar_lista_orgao():
     """Retorna do banco de dados uma lista com o nome dos órgãos registrados."""
     _orgao =[]
@@ -94,11 +102,15 @@ def abrir_pasta_pregao(pregao:str,uasg:str,data:str):
 
 def abrir_janela_homologacao_itens(uasg:str, pregao:str):
     """Faz a chamada dos itens do pregão ao banco de dados e abre a janela de itens a homologar."""
-    itens = cnn.consultar_itens_homologar(uasg, pregao)
-    wds.janela_cadastro_homologacao(uasg,pregao,itens)
+    wds.janela_cadastro_homologacao(uasg,pregao,cnn.consultar_itens_homologar(uasg, pregao))
 
-def confirmar_dados_homologacao_itens(uasg:str,pregao:str,values:dict):
+def homologar_pregao_e_itens(window:sg.Window,values:dict):
     """Verifica e converte os valores dos itens para homologacao."""
+    uasg = window['txt_uasg'].get()
+    pregao = window['txt_pregao'].get()
+    data_ata = conferir_campos_de_data(values)
+    if not data_ata:
+        return sg.popup('Favor conferir a data de assinatura da ata.')
     itens_homologar=[]
     for item in values.keys():
         if 'check' in item:
@@ -115,11 +127,15 @@ def confirmar_dados_homologacao_itens(uasg:str,pregao:str,values:dict):
                     itens_homologar.append(aux)
                 else:
                     return sg.popup('Favor corrigir o valor do item '+codigo_item)
-    
-    cnn.alterar_fase_pregao(uasg,pregao,'Homologado')
-    for item in itens_homologar:
-        cnn.inserir_item_ganho(uasg,pregao,item[0],item[1])
-    return sg.popup('O pregão foi homologado.')
+    else:
+        if(len(itens_homologar)<1):
+            return sg.popup('Para homologar um pregão é necessário que pelo menos um item seja empenhado.')
+        if not cnn.alterar_fase_pregao(uasg,pregao,'Homologado'):
+            return sg.popup('Não foi possível alterar a fase do pregão.')
+        if not cnn.inserir_itens_ganho(uasg,pregao,itens_homologar):
+            return sg.popup('Não foi possível inserir os itens como homologados.')
+        sg.popup('O pregão foi homologado.')
+        window.Close()
 
 def abrir_janela_itens_empenhar(uasg:str,pregao:str):
     """Coleta as informações dos itens do pregão e chama a janela para empenho."""
@@ -127,14 +143,11 @@ def abrir_janela_itens_empenhar(uasg:str,pregao:str):
 
 def empenhar_itens(window:sg.Window,values:list):
     """Valida dados dos itens, data, e insere ao banco de dados."""
-    dia = str(adapter.conferir_se_inteiro_e_menor(values['it_dia'],31))
-    mes =  str(adapter.conferir_se_inteiro_e_menor(values['it_mes'],12))
-    ano = str(adapter.conferir_se_inteiro_e_menor(values['it_ano'],2040))
     nota_empenho = values['it_codigo_empenho']
     uasg = window['txt_uasg'].get()
     pregao = window['txt_pregao'].get()
-    data_empenho = dia+'-'+mes+'-'+ano
-    if str(False) in data_empenho:
+    data_empenho = conferir_campos_de_data(values)
+    if not data_empenho:
         return sg.popup('Favor corrigir a data do empenho.')
     itens_homologar=[]
     for item in values.keys():
@@ -177,15 +190,12 @@ def abrir_janela_itens_carona(uasg:str,pregao:str):
 
 def caronar_itens(window:sg.Window,values:list):
     """Valida os dados dos itens, a data e insere ao banco de dados."""
-    dia = str(adapter.conferir_se_inteiro_e_menor(values['it_dia'],31))
-    mes =  str(adapter.conferir_se_inteiro_e_menor(values['it_mes'],12))
-    ano = str(adapter.conferir_se_inteiro_e_menor(values['it_ano'],2040))
     uasg = window['txt_uasg'].get()
     pregao = window['txt_pregao'].get()
     orgao = values['cb_orgao']
-    data_carona = dia+'-'+mes+'-'+ano
-    if str(False) in data_carona:
-        return sg.popup('Favor corrigir a data do empenho.')
+    data_carona = conferir_campos_de_data(values)
+    if not data_carona:
+        return sg.popup('Favor corrigir a data da carona.')
     if (not str(orgao) != ''):
         return sg.popup('Favor escolher o Órgão solicitante da carona.')
     itens_caronar=[]
@@ -222,3 +232,4 @@ def caronar_itens(window:sg.Window,values:list):
                 else:
                     sg.popup('Carona registrado com sucesso!')
                     window.Close()
+

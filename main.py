@@ -177,10 +177,7 @@ while True:
                 frame_input = str(event).replace('check_','fr_it_')
                 window[frame_input].update(visible=True) if values[event] else window[frame_input].update(visible=False)
         if (event=='bt_concluir'):
-            evh.confirmar_dados_homologacao_itens(window['txt_uasg'].get(), window['txt_pregao'].get(), values)
-            janela_anterior=wds.janela_consulta
-            window.Close()
-            wds.janela_consulta_pregoes()
+            evh.homologar_pregao_e_itens(window, values)
         if(event=='bt_cancelar'):
             janela_anterior=wds.janela_consulta
             window.Close()
@@ -193,7 +190,6 @@ while True:
                 window[frame_input].update(visible=True) if values[event] else window[frame_input].update(visible=False)
         if (event=='bt_concluir'):
             evh.empenhar_itens(window, values)
-
         if(event=='bt_cancelar'):
             janela_anterior=wds.janela_consulta
             window.Close()

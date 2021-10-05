@@ -8,7 +8,7 @@ def validar(campo):#NÃO PERMITE SQL INJECTION
     campo = str(campo).replace("'","").replace("--","")
     return campo
 
-###CONSULTAS A IDENTIFICADORES------------------------------------
+###CONSULTAS A IDENTIFICADORES
 
 def consultar_id_orgao(uasg):
     """Retorna o código identificador do pregão caso ele exista, senão retorna -1."""
@@ -26,6 +26,13 @@ def consultar_id_pregao(uasg:str,pregao:str):
     """Retorna o id do pregão, caso não exista retorna -1."""
     id_orgao = consultar_id_orgao(uasg)
     cursor.execute("select id_pregao from pregao where id_orgao = '"+validar(id_orgao)+"';")
+    resultado = cursor.fetchone()
+    return str(resultado[0]) if resultado!=None else '-1'
+
+def consultar_id_fase_pregao(fase:str):
+    """Retorna o id da fase do pregão. Caso não exista, retorna -1"""
+    query=("select id_fase from fase_pregao where nome_fase = '"+validar(fase)+"';")
+    cursor.execute(query)
     resultado = cursor.fetchone()
     return str(resultado[0]) if resultado!=None else '-1'
 
@@ -64,7 +71,7 @@ def consultar_id_carona(uasg:str,pregao:str,orgao:str,data:str):
     resultado = cursor.fetchone()
     return str(resultado[0]) if resultado!=None else '-1'
 
-###CONSULTAS-------------------------------------------------------
+###CONSULTAS
 
 def consulta_orgaos():
     """Retorna uma lista de todos os órgãos cadastrados e sua respectiva uasg."""
@@ -199,19 +206,24 @@ def consultar_caronas_pela_fase(fase:str=''):
     consulta=[list(row) for row in cursor.fetchall()]
     return consulta
 
-###ALTERAÇÕES-------------------------------------
+
+###ALTERAÇÕES
 
 def alterar_fase_pregao(uasg:str,pregao:str,fase:str):
     """Altera a fase de determinado pregão, necessário passar todos os argumentos."""
-    query = "select id_fase from fase_pregao where nome_fase = '"+validar(fase)+"';"
-    cursor.execute(query)
-    fase = str(cursor.fetchone()[0])
-    query = ("update pregao set id_fase = '"+fase+"'"
-            "where numero_pregao = '"+validar(pregao)+"' and id_orgao = (select id_orgao from orgao where orgao.uasg ='"+validar(uasg)+"');")
-    cursor.execute(query)
-    cursor.commit()
+    id_fase = consultar_id_fase_pregao(fase)
+    if id_fase == '-1':
+        return False
+    try:
+        query = ("update pregao set id_fase = '"+id_fase+"'"
+                "where numero_pregao = '"+validar(pregao)+"' and id_orgao = (select id_orgao from orgao where orgao.uasg ='"+validar(uasg)+"');")
+        cursor.execute(query)
+        cursor.commit()
+        return True
+    except:
+        return False
 
-###INSERÇÕES---------------------------------------
+###INSERÇÕES
 
 def inserir_items_planilha(uasg, pregao, item, modelo, valor, quantidade, fornecedor, marca, categoria,preco_custo, frete):
     """Insere os itens do pregão."""
@@ -242,13 +254,20 @@ def inserir_orgao(uasg:str,orgao:str):
     else:
         return False
 
-def inserir_item_ganho(uasg:str,pregao:str,item:str,valor:str):
+def inserir_itens_ganho(uasg:str,pregao:str,itens:list):
     """Insere o item como ganho no banco de dados."""
-    id_item = consultar_id_item(item,uasg,pregao)
-    query=( "insert into resultado_item (colocacao, valor_ganho, id_item) values ("
-            "'1','"+validar(valor)+"','"+validar(id_item)+"')")
-    cursor.execute(query)
-    conn.commit()
+    for item in itens:
+        id_item = consultar_id_item(item[0],uasg,pregao)
+        if (id_item == '-1'):
+            return False
+        query=( "insert into resultado_item (colocacao, valor_ganho, id_item) values ("
+                "'1','"+validar(item[1])+"','"+validar(id_item)+"')")
+        cursor.execute(query)
+    try:
+        conn.commit()
+        return True
+    except:
+        return False
 
 def inserir_carona(uasg:str,pregao:str,data:str,orgao:str,fase:str=''):
     """Insere uma nova carona no banco de dados."""

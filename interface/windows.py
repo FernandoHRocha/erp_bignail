@@ -199,6 +199,16 @@ def janela_cadastro():
 
 def janela_cadastro_homologacao(uasg:str,pregao:str,itens:list):
     """Retorna um sg.Window para homologação do pregão."""
+    data_ata =[
+        [
+            sg.Text('Data de assinatura da Ata')
+        ],
+        [
+            sg.Text(' Dia '),sg.InputText('',size=(2,1),key='it_dia'),
+            sg.Text(' mês '),sg.InputText('',size=(2,1),key='it_mes'),
+            sg.Text(' ano '),sg.InputText('',size=(4,1),key='it_ano'),
+        ]
+    ]
     layout=[
         [
             sg.Text('Homologando o Pregão '),
@@ -210,6 +220,7 @@ def janela_cadastro_homologacao(uasg:str,pregao:str,itens:list):
             sg.Column(  layout=[[pt.frame_item_homologar(item[0],item[1],item[2])] for item in itens],
                         size=(400,600),scrollable=True, vertical_scroll_only=True)
         ],
+        data_ata,
         pt.botoes_concluir_cancelar_operacao(),
     ]
     return sg.Window(title=titulo_janelas['janela_cadastro_homologacao'],layout=layout,finalize=True)
