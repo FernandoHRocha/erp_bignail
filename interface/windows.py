@@ -19,6 +19,7 @@ titulo_janelas = {
     #cadastros
     'janela_cadastro_homologacao':'Homologar Pregão',
     'janela_cadastro_itens_empenhar':'Empenhar itens',
+    'janela_cadastro_itens_carona':'Cadastrar Carona de Itens',
     #auxiliares
     'janela_consulta_pregao_alterar_fase':'Alteração de Fase',
 }
@@ -50,7 +51,7 @@ def janela_consulta():
 
 def janela_consulta_pregao():
     """Retorna um sg.Window contendo uma frame com a busca de pregão, e uma frame com tabela e botões."""
-    orgaos = evh.atualizar_lista_orgao()
+    #orgaos = evh.atualizar_lista_orgao()
 
     cabecalho_registrado = [
         ['ID','Item','Modelo','Quantidade','Nosso Preço','Custo','Frete','Fornecedor','Marca'],
@@ -62,7 +63,7 @@ def janela_consulta_pregao():
     ]
 
     layout=[
-        pt.frame_orgaos_pregao(orgaos),
+        pt.frame_orgaos_pregao(evh.atualizar_lista_orgao()),
         [sg.Frame(title='',visible=False,key='fr_itens_participados',layout=[
             [
             sg.TabGroup([
@@ -228,7 +229,7 @@ def janela_cadastro_homologacao(uasg:str,pregao:str,itens:list):
             sg.Column(  layout=[[pt.frame_item_homologar(item[0],item[1],item[2])] for item in itens],
                         size=(400,600),scrollable=True, vertical_scroll_only=True)
         ],
-        pt.botos_concluir_cancelar_operacao(),
+        pt.botoes_concluir_cancelar_operacao(),
     ]
     return sg.Window(title=titulo_janelas['janela_cadastro_homologacao'],layout=layout,finalize=True)
 
@@ -264,9 +265,42 @@ def janela_cadastro_itens_empenhar(uasg:str,pregao:str,itens:list):
         [
             dados_empenho
         ],
-        pt.botos_concluir_cancelar_operacao(),
+        pt.botoes_concluir_cancelar_operacao(),
     ]
     return sg.Window(title=titulo_janelas['janela_cadastro_itens_empenhar'],layout=layout,finalize=True)
+
+def janela_cadastro_itens_carona(uasg:str,pregao:str,itens:list):
+    """Retorna um sg.Window para escolher os itens a serem registrados em carona."""
+    data_carona =[
+        [
+            sg.Text(' Dia '),sg.InputText('',size=(2,1),key='it_dia'),
+            sg.Text(' mês '),sg.InputText('',size=(2,1),key='it_mes'),
+            sg.Text(' ano '),sg.InputText('',size=(4,1),key='it_ano'),
+        ]
+    ]
+    dados_carona =[
+        [sg.Frame(title=' Data de Adesão a Carona ',layout=data_carona)],
+    ]
+    layout=[
+        [
+            sg.Text('Registrar Empenho - Pregão '),
+            sg.Text(pregao,key='txt_pregao'),
+            sg.Text(' do Uasg '),
+            sg.Text(uasg,key='txt_uasg')
+        ],
+        [
+            sg.Combo(values=evh.atualizar_lista_orgao(),size=(100,1),enable_events=True,key='cb_orgao',readonly=True)
+        ],
+        [
+            sg.Column(  layout=[[pt.frame_item_empenhar(item)] for item in itens],
+                        size=(400,600),scrollable=True, vertical_scroll_only=True)
+        ],
+        [
+            data_carona
+        ],
+        pt.botoes_concluir_cancelar_operacao(),
+    ]
+    return sg.Window(title=titulo_janelas['janela_cadastro_itens_carona'],layout=layout,finalize=True)
 
 ###JANELAS DESTINADAS AOS PROCESSOS DE AUTOMAÇÃO
 

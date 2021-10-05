@@ -121,7 +121,15 @@ while True:
             else:
                 sg.popup('Primeiro selecione um pregão.')
         
-        if(event == 'bt_registrar_carona'):pass
+        if(event == 'bt_registrar_carona'):
+            tab = str(values['tg_pregoes']).replace('tab','tb')
+            if (len(values[tab])>0):
+                window.Close()
+                for linha in values[tab]:
+                    pregao = window[tab].get()[linha]
+                    evh.abrir_janela_itens_carona(pregao[1],pregao[0])
+            else:
+                sg.popup('Primeiro selecione um pregão.')
 
         if(event == 'tg_pregoes'):
             if(values['tg_pregoes'] in ['tab_homologado','tab_finalizado']):
@@ -189,6 +197,19 @@ while True:
                 window[frame_input].update(visible=True) if values[event] else window[frame_input].update(visible=False)
         if (event=='bt_concluir'):
             evh.empenhar_itens(window, values)
+
+        if(event=='bt_cancelar'):
+            janela_anterior=wds.janela_consulta
+            window.Close()
+            wds.janela_consulta_pregoes()
+
+    if(window.Title==titulo_janelas['janela_cadastro_itens_carona']):
+        if event:
+            if('check_' in event):
+                frame_input = str(event).replace('check_','fr_it_')
+                window[frame_input].update(visible=True) if values[event] else window[frame_input].update(visible=False)
+        if (event=='bt_concluir'):
+            evh.caronar_itens(window, values)
 
         if(event=='bt_cancelar'):
             janela_anterior=wds.janela_consulta

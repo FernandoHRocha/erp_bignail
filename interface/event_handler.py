@@ -13,7 +13,6 @@ def atualizar_lista_orgao():
         _orgao.append(org[0])
     return _orgao
 
-
 def escolher_orgao(window:sg.Window, orgao:str):
     """Preenche um combo box com os pregões participados pelo órgão indicado."""
     window['fr_pregao'].update(visible=True)
@@ -115,9 +114,10 @@ def confirmar_dados_homologacao_itens(uasg:str,pregao:str,values:dict):
 
 def abrir_janela_itens_empenhar(uasg:str,pregao:str):
     """Coleta as informações dos itens do pregão e chama a janela para empenho."""
-    return wds.janela_cadastro_itens_empenhar(uasg,pregao,cnn.consultar_itens_empenhar(uasg,pregao))
+    return wds.janela_cadastro_itens_empenhar(uasg,pregao,cnn.consultar_itens_homologados(uasg,pregao))
 
 def empenhar_itens(window:sg.Window,values:list):
+    """Valida dados dos itens, data, e insere ao banco de dados."""
     dia = str(adapter.conferir_se_inteiro_e_menor(values['it_dia'],31))
     mes =  str(adapter.conferir_se_inteiro_e_menor(values['it_mes'],12))
     ano = str(adapter.conferir_se_inteiro_e_menor(values['it_ano'],2040))
@@ -157,6 +157,56 @@ def empenhar_itens(window:sg.Window,values:list):
                 sg.popup('Não foi possível registrar o empenho.')
             else:
                 if(not cnn.inserir_itens_em_empenho(uasg,pregao,nota_empenho,itens_homologar)):
+                    sg.popup('Houve um problema para registrar os itens do empenho.')
+                else:
+                    sg.popup('Empenho registrado com sucesso!')
+                    window.Close()
+
+def abrir_janela_itens_carona(uasg:str,pregao:str):
+    """Coleta as informações dos itens do pregão e chama a janela para carona."""
+    return wds.janela_cadastro_itens_carona(uasg,pregao,cnn.consultar_itens_homologados(uasg,pregao))
+
+def caronar_itens(window:sg.Window,values:list):
+    """Valida dados dos itens, data, e insere ao banco de dados."""
+    dia = str(adapter.conferir_se_inteiro_e_menor(values['it_dia'],31))
+    mes =  str(adapter.conferir_se_inteiro_e_menor(values['it_mes'],12))
+    ano = str(adapter.conferir_se_inteiro_e_menor(values['it_ano'],2040))
+    uasg = window['txt_uasg'].get()
+    pregao = window['txt_pregao'].get()
+    orgao = values['cb_orgao']
+    data_carona = dia+'-'+mes+'-'+ano
+    if str(False) in data_carona:
+        return sg.popup('Favor corrigir a data do empenho.')
+    itens_caronar=[]
+    for item in values.keys():
+        if 'check' in item:
+            if values[item]:
+                codigo_item = item.replace('check_','')
+                quantidade = values[str(item).replace('check','it')]
+                quantidade_max = window[str(item).replace('check','txt_quantidade')].get()
+                valor = values[str(item).replace('check','it_valor')]
+                aux = []
+                aux.append(codigo_item)
+                if quantidade.isdigit():
+                    if (int(quantidade_max) < int(quantidade) or int(quantidade) < 1):
+                        return sg.popup('Verifique a quantidade para o item '+codigo_item)
+                    aux.append(quantidade)
+                if valor.replace(',','',1).isdigit():
+                    valor = str(round(float(valor.replace(',','.',1)),2))
+                    if (len(valor.split('.')[1])<2):
+                        valor = valor + '0'
+                    aux.append(valor)
+                else:
+                    return sg.popup('Favor corrigir o valor do item '+codigo_item)
+                itens_caronar.append(aux)
+    else:
+        if(len(itens_caronar)<1):
+            sg.popup('Para registrar um empenho é necessário que pelo menos um item seja empenhado.')
+        else:
+            if (not cnn.inserir_carona(uasg,pregao,data_carona,orgao)):
+                sg.popup('Não foi possível registrar o empenho.')
+            else:
+                if(not cnn.inserir_itens_em_empenho(uasg,pregao,itens_caronar)):
                     sg.popup('Houve um problema para registrar os itens do empenho.')
                 else:
                     sg.popup('Empenho registrado com sucesso!')

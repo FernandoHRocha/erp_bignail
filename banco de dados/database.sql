@@ -74,7 +74,7 @@ CREATE TABLE fase_carona (
 
 CREATE TABLE carona (
 	id_carona int IDENTITY(1,1) PRIMARY KEY,
-	data_carona date,
+	data_carona date NOT NULL,
 	id_pregao int NOT NULL,
 	id_orgao int NOT NULL,
 	id_fase int NOT NULL,
@@ -98,6 +98,7 @@ CREATE TABLE carona (
 CREATE TABLE item_carona (
 	id_item_carona int IDENTITY(1,1) PRIMARY KEY,
 	quantidade int NOT NULL,
+	valor_ganho decimal (11,2),
 	id_carona int NOT NULL,
 	id_item int NOT NULL,
 	CONSTRAINT FK_item_item_carona
