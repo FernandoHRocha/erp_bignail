@@ -76,7 +76,7 @@ while True:
             sg.popup('Registra o aceite de carona dos itens selecionados e abre a pasta do pregão.')
 
     if(window.Title==titulo_janelas['janela_consulta_pregoes']):
-        #wds.janela_consulta_pregoes
+
         if(event == 'bt_alterar_fase'):
             pregoes = evh.consultar_dados_selecionados_tabela_pregao(window,values)
             if pregoes:
@@ -95,16 +95,19 @@ while True:
             pregoes = evh.consultar_dados_selecionados_tabela_pregao(window,values)
             if pregoes:
                 [evh.abrir_janela_homologacao_itens(pregao[1],pregao[0]) for pregao in pregoes]
+                window.Close()
 
         if(event == 'bt_registrar_empenho'):
             pregoes = evh.consultar_dados_selecionados_tabela_pregao(window,values)
             if pregoes:
                     [evh.abrir_janela_itens_empenhar(pregao[1],pregao[0]) for pregao in pregoes]
+                    window.Close()
         
         if(event == 'bt_registrar_carona'):
             pregoes = evh.consultar_dados_selecionados_tabela_pregao(window,values)
             if pregoes:
                 [evh.abrir_janela_itens_carona(pregao[1],pregao[0]) for pregao in pregoes]
+                window.Close()
 
         if(event == 'tg_pregoes'):
             if(values['tg_pregoes'] in ['tab_homologado','tab_finalizado']):
@@ -120,8 +123,8 @@ while True:
     if(window.Title==titulo_janelas['janela_consulta_empenhos']):
         if(event == 'bt_consultar'):
             sg.popup('Abre a consulta aos itens do empenho.')
-        if(event == 'bt_alterar_fase'):
-            sg.popup('Mostra opções para alterar a fase do empenho.')
+        if(event == 'bt_registrar_entrega'):
+            sg.popup('Em qual data a entrega foi realizada?')
 
     if(window.Title==titulo_janelas['janela_consulta_reequilibrio']):
         if(event == 'bt_registrar_envio'):
@@ -134,7 +137,7 @@ while True:
     if(window.Title==titulo_janelas['janela_consulta_carona']):
         if(event == 'bt_consultar'):
             sg.popup('Abre a consulta aos itens da carona.')
-        if(event == 'bt_alterar_fase'):
+        if(event == 'bt_empenhar'):
             sg.popup('Mostra opções para alterar a fase da carona.')
 
     if(window.Title==titulo_janelas['janela_consulta_itens_pregao']):
@@ -158,8 +161,13 @@ while True:
             if('check_' in event):
                 frame_input = str(event).replace('check_','fr_it_')
                 window[frame_input].update(visible=True) if values[event] else window[frame_input].update(visible=False)
+        
         if (event=='bt_concluir'):
             evh.homologar_pregao_e_itens(window, values)
+            janela_anterior=wds.janela_consulta
+            window.Close()
+            wds.janela_consulta_pregoes()
+        
         if(event=='bt_cancelar'):
             janela_anterior=wds.janela_consulta
             window.Close()
@@ -170,8 +178,13 @@ while True:
             if('check_' in event):
                 frame_input = str(event).replace('check_','fr_it_')
                 window[frame_input].update(visible=True) if values[event] else window[frame_input].update(visible=False)
+        
         if (event=='bt_concluir'):
             evh.empenhar_itens(window, values)
+            janela_anterior=wds.janela_consulta
+            window.Close()
+            wds.janela_consulta_pregoes()
+        
         if(event=='bt_cancelar'):
             janela_anterior=wds.janela_consulta
             window.Close()
@@ -182,8 +195,12 @@ while True:
             if('check_' in event):
                 frame_input = str(event).replace('check_','fr_it_')
                 window[frame_input].update(visible=True) if values[event] else window[frame_input].update(visible=False)
+        
         if (event=='bt_concluir'):
             evh.caronar_itens(window, values)
+            janela_anterior=wds.janela_consulta
+            window.Close()
+            wds.janela_consulta_pregoes()
 
         if(event=='bt_cancelar'):
             janela_anterior=wds.janela_consulta

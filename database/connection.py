@@ -71,6 +71,13 @@ def consultar_id_carona(uasg:str,pregao:str,orgao:str,data:str):
     resultado = cursor.fetchone()
     return str(resultado[0]) if resultado!=None else '-1'
 
+def consultar_id_fase_empenho(fase:str):
+    """Retorna o id da fase do empenho. Caso não exista retorna o valor -1."""
+    query=("select id_fase from fase_empenho where nome_fase = '"+validar(fase)+"'")
+    cursor.execute(query)
+    resultado = cursor.fetchone()
+    return str(resultado[0]) if resultado != None else '-1'
+
 ###CONSULTAS
 
 def consulta_orgaos():
@@ -151,7 +158,7 @@ def consultar_itens_homologados(uasg:str,pregao:str):
     """Retorna as informações dos itens ganhos para empenhar.
     -> item, marca, modelo, quantidade, valor_ganho"""
     id_pregao = consultar_id_pregao(uasg,pregao)
-    query=( "select item.item, nome_marca, item.modelo, total.quantidade, valor_ofertado from resultado_item join "
+    query=( "select item.item, nome_marca, item.modelo, total.quantidade, valor_ganho from resultado_item join "
             "(select id_item, sum(quantidade) as quantidade from "
             "(select id_item, quantidade*(-1) as quantidade from item_empenho union all select id_item, quantidade*(-1) as quantidade from item_carona union all select id_item, quantidade from item) t "
             "group by id_item) as total on total.id_item = resultado_item.id_item "
@@ -170,12 +177,12 @@ def consultar_fases_empenhos():
 
 def consultar_empenhos_pela_fase(fase:str=''):
     """Retorna dados dos empenhos, passando a fase como argumento a busca será filtrada pela fase."""
-    query=( "select numero_pregao, uasg, data_empenho, nota_empenho, sum(quantidade * valor_unitario) from empenho "
+    query=( "select empenho.id_empenho, numero_pregao, uasg, data_empenho, nota_empenho, data_entrega, sum(quantidade * valor_unitario) from empenho "
             "join pregao on empenho.id_pregao = pregao.id_pregao "
             "join orgao on orgao.id_orgao = pregao.id_orgao "
             "join fase_empenho on fase_empenho.id_fase = empenho.id_fase "
             "join item_empenho on item_empenho.id_empenho = empenho.id_empenho ")
-    group = ("group by data_empenho, nota_empenho, uasg, pregao.numero_pregao")
+    group = ("group by empenho.id_empenho, data_empenho, nota_empenho, data_entrega, uasg, pregao.numero_pregao")
     if(fase!=''):
         query=query+("where fase_empenho.nome_fase = '"+validar(fase)+"' ")
     query=query+group
@@ -224,9 +231,10 @@ def alterar_fase_pregao(uasg:str,pregao:str,fase:str):
 
 ###INSERÇÕES
 
-def inserir_items_planilha(uasg, pregao, item, modelo, valor, quantidade, fornecedor, marca, categoria,preco_custo, frete):
+def inserir_itens_planilha(uasg, pregao, item, modelo, valor, quantidade, fornecedor, marca, categoria,preco_custo, frete):
     """Insere os itens do pregão."""
     id_pregao = consultar_id_pregao(uasg, pregao)
+    if (len(fornecedor)>127): fornecedor = fornecedor[:127]
     if frete == "None": frete = 0.0
     query = "exec dbo.sp_inserir_item @frete="+validar(frete)+", @preco_custo="+validar(preco_custo)+", @item="+validar(item)+', @modelo="'+validar(modelo)+'", @valor='+validar(valor)+", @quantidade="+validar(quantidade)+", @id_pregao="+str(id_pregao)+', @fornecedor="'+validar(fornecedor)+'", @marca="'+validar(marca)+'", @categoria="'+validar(categoria)+'";'
     cursor.execute(query)
@@ -304,12 +312,14 @@ def inserir_itens_em_carona(uasg:str,pregao:str,orgao:str,data:str,itens:list):
     except:
         return False
 
-def inserir_empenho_solicitado(uasg:str,pregao:str,data:str,nota:str):
-    """Insere um empenho no banco de dados na fase Solicitado."""
+def inserir_empenho(uasg:str,pregao:str,data:str,nota:str,fase:str='Solicitado'):
+    """Insere um empenho no banco de dados, caso a fase não seja especificada, será inserido como Solicitado."""
     id_orgao = consultar_id_orgao(uasg)
     id_pregao = consultar_id_pregao(uasg,pregao)
+    id_fase = consultar_id_fase_empenho(fase)
+    if( '-1' in [id_orgao,id_pregao,id_fase]): return False
     query = (   "insert into empenho (data_empenho,nota_empenho, id_pregao, id_fase, id_orgao) values"
-                "('"+validar(data)+"','"+validar(nota)+"','"+validar(id_pregao)+"','4','"+validar(id_orgao)+"')")
+                "('"+validar(data)+"','"+validar(nota)+"','"+validar(id_pregao)+"','"+validar(id_fase)+"','"+validar(id_orgao)+"')")
     print(query)
     try:
         cursor.execute(query)

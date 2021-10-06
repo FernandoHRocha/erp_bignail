@@ -89,7 +89,7 @@ def listar_itens_em_categorias(uasg:str,pregao:str):
     cabecalho_empenhos = ['Item','Marca','Modelo','Quant','Preço','Custo','Data','Nota','Fase','id']
     cabecalho_caronas = ['Item','Marca','Modelo','Quant','Preço','Data','Órgão','Fase','id']
     cabecalho_reequilibrios = ['Item','Marca','Modelo','Quant','Preço','Novo Preço','Data','Fase','id']
-    
+
     return
 
 def abrir_pasta_pregao(pregao:str,uasg:str,data:str):
@@ -150,7 +150,6 @@ def homologar_pregao_e_itens(window:sg.Window,values:dict):
         if not cnn.inserir_itens_ganho(uasg,pregao,itens_homologar):
             return sg.popup('Não foi possível inserir os itens como homologados.')
         sg.popup('O pregão foi homologado.')
-        window.Close()
 
 ##JANELA EMPENHO DE ITENS
 
@@ -192,14 +191,13 @@ def empenhar_itens(window:sg.Window,values:list):
         if(len(itens_homologar)<1):
             sg.popup('Para registrar um empenho é necessário que pelo menos um item seja empenhado.')
         else:
-            if (not cnn.inserir_empenho_solicitado(uasg,pregao,data_empenho,nota_empenho)):
+            if (not cnn.inserir_empenho(uasg,pregao,data_empenho,nota_empenho)):
                 sg.popup('Não foi possível registrar o empenho.')
             else:
                 if(not cnn.inserir_itens_em_empenho(uasg,pregao,nota_empenho,itens_homologar)):
                     sg.popup('Houve um problema para registrar os itens do empenho.')
                 else:
                     sg.popup('Empenho registrado com sucesso!')
-                    window.Close()
 
 ##JANELA CARONA DE ITENS
 
@@ -250,5 +248,4 @@ def caronar_itens(window:sg.Window,values:list):
                     sg.popup('Houve um problema para registrar os itens da carona.')
                 else:
                     sg.popup('Carona registrado com sucesso!')
-                    window.Close()
 

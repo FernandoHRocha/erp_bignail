@@ -125,8 +125,8 @@ def janela_consulta_pregoes():
 def janela_consulta_empenhos():
     """Retorna um sg.Window com tabela e abas para apresentação dos empenhos da empresa."""
     cabecalho_generico = [
-        ['id','Pregão','UASG','Data do Empenho','Nota','Valor Total'],
-        [0,10,8,20,10,11]
+        ['id','Pregão','UASG','Data Empenho','Nota','Data Entrega','Valor Total'],
+        [0,10,8,12,10,12,11]
     ]
     abas = evh.listar_empenhos_gerais()
     layout=[
@@ -137,7 +137,7 @@ def janela_consulta_empenhos():
         ],
         [
             sg.Button('Consultar Itens',enable_events=True,key='bt_consultar'),
-            sg.Button('Alterar Fase',enable_events=True,key='bt_alterar_fase'),
+            sg.Button('Registrar Entrega',enable_events=True,key='bt_registrar_entrega'),
         ],
         [pt.bt_voltar()]
         ]
@@ -180,7 +180,7 @@ def janela_consulta_carona():
         ],
         [
             sg.Button('Consultar',enable_events=True,key='bt_consultar'),
-            sg.Button('Alterar Fase',enable_events=True,key='bt_alterar_fase'),
+            sg.Button('Registrar Empenho',enable_events=True,key='bt_empenho'),
         ],
         [pt.bt_voltar()]
         ]
