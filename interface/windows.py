@@ -16,6 +16,7 @@ titulo_janelas = {
     'janela_consulta_reequilibrio':'Pedidos de Reequilíbrio Econômico',
     'janela_consulta_carona':'Pedidos de Carona',
     'janela_consulta_atas':'Atas de Processos',
+    'janela_consulta_itens_pregao':'Itens do pregão',
     #cadastros
     'janela_cadastro_homologacao':'Homologar Pregão',
     'janela_cadastro_itens_empenhar':'Empenhar itens',
@@ -50,8 +51,6 @@ def janela_consulta():
 
 def janela_consulta_pregao():
     """Retorna um sg.Window contendo uma frame com a busca de pregão, e uma frame com tabela e botões."""
-    #orgaos = evh.atualizar_lista_orgao()
-
     cabecalho_registrado = [
         ['ID','Item','Modelo','Quantidade','Nosso Preço','Custo','Frete','Fornecedor','Marca'],
         [5,4,20,10,12,12,10,20,15]
@@ -98,10 +97,6 @@ def janela_consulta_pregoes():
         [sg.Button('Registrar Empenho',enable_events=True,key='bt_registrar_empenho',size=(20,1))],
         [sg.Button('Registrar Carona',enable_events=True,key='bt_registrar_carona',size=(20,1)),]
     ]
-    menu_opcoes = [
-            sg.Column(coluna1,key='cl_julgamento'),
-            sg.Column(coluna2,key='cl_ganho',visible=False),
-    ]
     layout=[
         [
             sg.TabGroup(
@@ -117,7 +112,10 @@ def janela_consulta_pregoes():
                 [
                     sg.Button('Consultar Itens',enable_events=True,key='bt_consutlar_itens',size=(20,1))
                 ],
-                    menu_opcoes
+                [
+                    sg.Column(coluna1,key='cl_julgamento'),
+                    sg.Column(coluna2,key='cl_ganho',visible=False),
+                ]
             ])
         ],
         [pt.bt_voltar()]
@@ -188,6 +186,55 @@ def janela_consulta_carona():
         ]
     return sg.Window(title=titulo_janelas['janela_consulta_carona'], layout=layout, finalize=True)
 
+def janela_consulta_itens_pregao(uasg:str,pregao:str):
+    orgao = ''#CONSUTLAR O NOME DO ÓRGÃO
+    data = ''#CONSULTAR A DATA DO PREGÃO
+    cabecalho_registrado = [
+        ['ID','Item','Modelo','Quantidade','Nosso Preço','Custo','Frete','Fornecedor','Marca'],
+        [5,4,20,10,12,12,10,20,15]
+    ]
+    cabecalho_ganhos = [
+        ['ID','Item','Marca','Modelo','Quant.','Valor Unit.','Valor Total','Custo','Frete','Fornecedor'],
+        [5,3,15,20,5,11,11,11,11,15]
+    ]
+    layout=[
+        [
+            sg.Frame(title=' Consulta aos itens do pregão ',key='fr_titulo_pregao',layout=[
+                [
+                    sg.Text('Órgão: '),
+                    sg.Text(orgao),
+                    sg.Text(' UASG: '),
+                    sg.Text(uasg),
+                ],
+                [
+                    sg.Text('Pregão: '),
+                    sg.Text(pregao),
+                    sg.Text(' Data Abertura: '),
+                    sg.Text(data),
+                ]
+            ])
+        ],
+        [
+            sg.Frame(title='',visible=False,key='fr_itens_participados',layout=[
+                [
+                sg.TabGroup([
+                    [
+                        sg.Tab('Registrados', pt.tabela_itens(cabecalho_registrado[0],'tb_registrado',larguras=cabecalho_registrado[1]),key='tab_registrado',visible=True),
+                        sg.Tab('Ganhos', pt.tabela_itens(cabecalho_ganhos[0],'tb_ganho',larguras=cabecalho_ganhos[1]),key='tab_ganho',visible=True)
+                    ]
+                    ],enable_events=True,key='tg_item')
+                ],
+                [
+                    sg.Button('Alterar item',enable_events=True,key='bt_item_alterar'),
+                    sg.Button('Registrar Empenho',enable_events=True,key='bt_item_empenho'),
+                    sg.Button('Registrar Carona',enable_events=True,key='bt_item_carona'),
+                    sg.Button('Consultar Fornecedor',enable_events=True,key='bt_fornecedor'),
+                ]
+            ]),
+        ],
+    ]
+    return sg.Window(title=titulo_janelas['janela_consulta_itens_pregao'],layout=layout,finalize=True)
+
 ###JANELAS DESTINADAS A CADASTROS
 
 def janela_cadastro():
@@ -220,7 +267,7 @@ def janela_cadastro_homologacao(uasg:str,pregao:str,itens:list):
             sg.Text(uasg,key='txt_uasg')
         ],
         [
-            sg.Column(  layout=[[pt.frame_item_homologar(item[0],item[1],item[2])] for item in itens],
+            sg.Column(  layout=[[pt.frame_item_homologar(item[0],item[1],item[2], item[3])] for item in itens],
                         size=(400,600),scrollable=True, vertical_scroll_only=True)
         ],
         data_ata,

@@ -83,13 +83,14 @@ def abrir_janela_alterar_fase_pregao(uasg:str,pregao:str):
     """Abre a janela para alteração de fase de pregão."""
     wds.janela_consulta_pregao_alterar_fase(uasg,pregao,cnn.consultar_fases_pregoes())
 
-# def atualizar_pregoes_gerais(window:sg.Window):
-#     """Refaz a consulta ao banco de dados para atualizar as tabelas de pregões."""
-#     window['tb_submeter'].update(values=cnn.consultar_pregoes_fase(1))
-#     window['tb_proposta'].update(values=cnn.consultar_pregoes_fase(1))
-#     window['tb_julgamento'].update(values=cnn.consultar_pregoes_fase(2))
-#     window['tb_ganhos'].update(values=cnn.consultar_pregoes_fase(4))
-#     window['tb_finalizados'].update(values=cnn.consultar_pregoes_fase(6))
+def listar_itens_em_categorias(uasg:str,pregao:str):
+    cabecalho_participados = ['Item','Marca','Modelo','Quant','Preço','Custo','Frete','Fornecedor','id']
+    cabecalho_ganhos = ['Item','Marca','Modelo','Quant','Empenhado','Carona','id']
+    cabecalho_empenhos = ['Item','Marca','Modelo','Quant','Preço','Custo','Data','Nota','Fase','id']
+    cabecalho_caronas = ['Item','Marca','Modelo','Quant','Preço','Data','Órgão','Fase','id']
+    cabecalho_reequilibrios = ['Item','Marca','Modelo','Quant','Preço','Novo Preço','Data','Fase','id']
+    
+    return
 
 def abrir_pasta_pregao(pregao:str,uasg:str,data:str):
     """Abre a pasta do pregão dentro do sistema."""

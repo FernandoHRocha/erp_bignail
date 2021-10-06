@@ -141,7 +141,8 @@ def consultar_fases_pregoes():
 def consultar_itens_homologar(uasg:str,pregao:str):
     """Retorna número, quantidade e modelo dos itens de um pregão."""
     id_pregao = consultar_id_pregao(uasg, pregao)
-    query = ("select item, modelo, quantidade from item where id_pregao = '"+validar(id_pregao)+"';")
+    query = (   "select item, nome_marca, modelo, quantidade from item inner join marca on marca.id_marca = "
+                "item.id_marca where id_pregao = '"+validar(id_pregao)+"';")
     cursor.execute(query)
     consulta=[list(row) for row in cursor.fetchall()]
     return consulta
@@ -226,6 +227,7 @@ def alterar_fase_pregao(uasg:str,pregao:str,fase:str):
 def inserir_items_planilha(uasg, pregao, item, modelo, valor, quantidade, fornecedor, marca, categoria,preco_custo, frete):
     """Insere os itens do pregão."""
     id_pregao = consultar_id_pregao(uasg, pregao)
+    if frete == "None": frete = 0.0
     query = "exec dbo.sp_inserir_item @frete="+validar(frete)+", @preco_custo="+validar(preco_custo)+", @item="+validar(item)+', @modelo="'+validar(modelo)+'", @valor='+validar(valor)+", @quantidade="+validar(quantidade)+", @id_pregao="+str(id_pregao)+', @fornecedor="'+validar(fornecedor)+'", @marca="'+validar(marca)+'", @categoria="'+validar(categoria)+'";'
     cursor.execute(query)
     conn.commit()
@@ -233,9 +235,10 @@ def inserir_items_planilha(uasg, pregao, item, modelo, valor, quantidade, fornec
 def inserir_pregao(uasg:str,pregao:str,data:str,fase:str):
     """Insere o pregão com base no id do órgão e no nome da fase."""
     id_orgao = consultar_id_orgao(uasg)
+    id_fase = consultar_id_fase_pregao(fase)
     if consultar_id_pregao(uasg,pregao)=='-1':
         query = ("insert into pregao (id_orgao, numero_pregao, data_abertura, id_fase) "
-                "values ('"+validar(id_orgao)+"','"+validar(pregao)+"',convert(datetime,'"+validar(data)+":00',120),(select id_fase from fase_pregao where nome_fase = '"+validar(fase)+"'));")
+                "values ('"+validar(id_orgao)+"','"+validar(pregao)+"',convert(datetime,'"+validar(data)+":00',120),'"+validar(id_fase)+"');")
         cursor.execute(query)
         conn.commit()
         return True
@@ -306,7 +309,8 @@ def inserir_empenho_solicitado(uasg:str,pregao:str,data:str,nota:str):
     id_orgao = consultar_id_orgao(uasg)
     id_pregao = consultar_id_pregao(uasg,pregao)
     query = (   "insert into empenho (data_empenho,nota_empenho, id_pregao, id_fase, id_orgao) values"
-                "('"+validar(data)+"','"+validar(nota)+"','"+validar(id_pregao)+"','1','"+validar(id_orgao)+"')")
+                "('"+validar(data)+"','"+validar(nota)+"','"+validar(id_pregao)+"','4','"+validar(id_orgao)+"')")
+    print(query)
     try:
         cursor.execute(query)
         conn.commit()

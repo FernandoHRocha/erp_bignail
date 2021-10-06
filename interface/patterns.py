@@ -55,7 +55,7 @@ def aba_com_tabela_itens(cabecalho:list, identificador:str, valores:list):
     titulo = identificador[0].upper()+identificador[1:len(identificador)]
     return sg.Tab(titulo, tabela_itens_preenchida(cabecalho[0],valores,'tb_'+identificador,larguras=cabecalho[1]),key='tab_'+identificador,visible=True)
 
-def frame_item_homologar(item:str,modelo:str,unidades:str):
+def frame_item_homologar(item:str,marca:str,modelo:str,unidades:str):
     """Retorna um sg.Frame para incluir itens em homologação."""
     item = str(item)
     modelo = str(modelo)
@@ -63,7 +63,7 @@ def frame_item_homologar(item:str,modelo:str,unidades:str):
     return sg.Frame(title=' Item '+str(item)+' ',layout=
         [
             [
-                sg.Checkbox(unidades+' un. do modelo: '+modelo,key='check_'+item,default=False,enable_events=True)
+                sg.Checkbox(unidades+' un. '+marca+' do modelo: '+modelo,key='check_'+item,default=False,enable_events=True)
             ],
             [
                 sg.Frame('',border_width=0,key='fr_it_'+item,visible=False,layout=[

@@ -137,6 +137,9 @@ while True:
         if(event == 'bt_alterar_fase'):
             sg.popup('Mostra opções para alterar a fase da carona.')
 
+    if(window.Title==titulo_janelas['janela_consulta_itens_pregao']):
+        pass
+
 ###JANELAS DESTINADAS A PROCEDIMENTOS DE CADASTROS
 
     if(window.Title==titulo_janelas['janela_cadastro']):
