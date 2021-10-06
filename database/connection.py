@@ -56,7 +56,7 @@ def consultar_id_empenho(uasg:str,pregao:str,nota_empenho:str):
 
 def consultar_id_fase_carona(fase:str):
     """Retorna o id da fase da carona. Caso não exista retorna o valor -1."""
-    query=("select id_fase from carona where nome_fase = '"+validar(fase)+"';")
+    query=("select id_fase from fase_carona where nome_fase = '"+validar(fase)+"';")
     cursor.execute(query)
     resultado = cursor.fetchone()
     return str(resultado[0]) if resultado!=None else '-1'
@@ -278,16 +278,15 @@ def inserir_itens_ganho(uasg:str,pregao:str,itens:list):
     except:
         return False
 
-def inserir_carona(uasg:str,pregao:str,data:str,orgao:str,fase:str=''):
-    """Insere uma nova carona no banco de dados."""
+def inserir_carona(uasg:str,pregao:str,data:str,orgao:str,fase:str='Aceita'):
+    """Insere uma nova carona no banco de dados. Quando a fase não for passada, será inserido como Aceita"""
     id_pregao = consultar_id_pregao(uasg,pregao)
     id_orgao = consultar_id_orgao_nome(orgao)
-    if fase == '':
-        id_fase = '1'
-    else:
-        id_fase = consultar_id_fase_carona(fase)
+    id_fase = consultar_id_fase_carona(fase)
+    if('-1' in [id_pregao,id_orgao,id_fase]):
+        return False
     query=( "insert into carona (data_carona, id_pregao, id_orgao, id_fase) "
-            "values ('"+validar(data)+"', '"+id_pregao+"', '"+id_orgao+"','"+id_fase+"')")
+            "values ('"+validar(data)+"', '"+validar(id_pregao)+"', '"+validar(id_orgao)+"','"+validar(id_fase)+"')")
     try:
         cursor.execute(query)
         conn.commit()

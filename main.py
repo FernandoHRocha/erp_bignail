@@ -100,14 +100,12 @@ while True:
         if(event == 'bt_registrar_empenho'):
             pregoes = evh.consultar_dados_selecionados_tabela_pregao(window,values)
             if pregoes:
-                    [evh.abrir_janela_itens_empenhar(pregao[1],pregao[0]) for pregao in pregoes]
-                    window.Close()
+                [evh.abrir_janela_itens_empenhar(pregao[1],pregao[0]) for pregao in pregoes]
         
         if(event == 'bt_registrar_carona'):
             pregoes = evh.consultar_dados_selecionados_tabela_pregao(window,values)
             if pregoes:
                 [evh.abrir_janela_itens_carona(pregao[1],pregao[0]) for pregao in pregoes]
-                window.Close()
 
         if(event == 'tg_pregoes'):
             if(values['tg_pregoes'] in ['tab_homologado','tab_finalizado']):
@@ -165,8 +163,6 @@ while True:
         if (event=='bt_concluir'):
             evh.homologar_pregao_e_itens(window, values)
             janela_anterior=wds.janela_consulta
-            window.Close()
-            wds.janela_consulta_pregoes()
         
         if(event=='bt_cancelar'):
             janela_anterior=wds.janela_consulta
@@ -182,8 +178,6 @@ while True:
         if (event=='bt_concluir'):
             evh.empenhar_itens(window, values)
             janela_anterior=wds.janela_consulta
-            window.Close()
-            wds.janela_consulta_pregoes()
         
         if(event=='bt_cancelar'):
             janela_anterior=wds.janela_consulta
@@ -199,8 +193,6 @@ while True:
         if (event=='bt_concluir'):
             evh.caronar_itens(window, values)
             janela_anterior=wds.janela_consulta
-            window.Close()
-            wds.janela_consulta_pregoes()
 
         if(event=='bt_cancelar'):
             janela_anterior=wds.janela_consulta

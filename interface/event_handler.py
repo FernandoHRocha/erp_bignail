@@ -121,6 +121,7 @@ def abrir_janela_homologacao_itens(uasg:str, pregao:str):
 
 def homologar_pregao_e_itens(window:sg.Window,values:dict):
     """Verifica e converte os valores dos itens para homologacao."""
+    window.BringToFront()
     uasg = window['txt_uasg'].get()
     pregao = window['txt_pregao'].get()
     data_ata = conferir_campos_de_data(values)
@@ -150,6 +151,7 @@ def homologar_pregao_e_itens(window:sg.Window,values:dict):
         if not cnn.inserir_itens_ganho(uasg,pregao,itens_homologar):
             return sg.popup('Não foi possível inserir os itens como homologados.')
         sg.popup('O pregão foi homologado.')
+        window.Close()
 
 ##JANELA EMPENHO DE ITENS
 
@@ -159,6 +161,7 @@ def abrir_janela_itens_empenhar(uasg:str,pregao:str):
 
 def empenhar_itens(window:sg.Window,values:list):
     """Valida dados dos itens, data, e insere ao banco de dados."""
+    window.BringToFront()
     nota_empenho = values['it_codigo_empenho']
     uasg = window['txt_uasg'].get()
     pregao = window['txt_pregao'].get()
@@ -175,9 +178,9 @@ def empenhar_itens(window:sg.Window,values:list):
                 valor = values[str(item).replace('check','it_valor')]
                 aux = []
                 aux.append(codigo_item)
-                if quantidade.isdigit():
-                    if (int(quantidade_max) < int(quantidade) or int(quantidade) < 1):
-                        return sg.popup('Verifique a quantidade para o item '+codigo_item)
+                if (not quantidade.isdigit()) or (int(quantidade_max) < int(quantidade) or int(quantidade) < 1):
+                    return sg.popup('Verifique a quantidade para o item '+codigo_item)
+                else:
                     aux.append(quantidade)
                 if valor.replace(',','',1).isdigit():
                     valor = str(round(float(valor.replace(',','.',1)),2))
@@ -189,15 +192,16 @@ def empenhar_itens(window:sg.Window,values:list):
                 itens_homologar.append(aux)
     else:
         if(len(itens_homologar)<1):
-            sg.popup('Para registrar um empenho é necessário que pelo menos um item seja empenhado.')
+            return sg.popup('Para registrar um empenho é necessário que pelo menos um item seja empenhado.')
         else:
             if (not cnn.inserir_empenho(uasg,pregao,data_empenho,nota_empenho)):
-                sg.popup('Não foi possível registrar o empenho.')
+                return sg.popup('Não foi possível registrar o empenho.')
             else:
                 if(not cnn.inserir_itens_em_empenho(uasg,pregao,nota_empenho,itens_homologar)):
-                    sg.popup('Houve um problema para registrar os itens do empenho.')
+                    return sg.popup('Houve um problema para registrar os itens do empenho.')
                 else:
                     sg.popup('Empenho registrado com sucesso!')
+                    window.Close()
 
 ##JANELA CARONA DE ITENS
 
@@ -207,6 +211,7 @@ def abrir_janela_itens_carona(uasg:str,pregao:str):
 
 def caronar_itens(window:sg.Window,values:list):
     """Valida os dados dos itens, a data e insere ao banco de dados."""
+    window.BringToFront()
     uasg = window['txt_uasg'].get()
     pregao = window['txt_pregao'].get()
     orgao = values['cb_orgao']
@@ -225,9 +230,9 @@ def caronar_itens(window:sg.Window,values:list):
                 valor = values[str(item).replace('check','it_valor')]
                 aux = []
                 aux.append(codigo_item)
-                if quantidade.isdigit():
-                    if (int(quantidade_max) < int(quantidade) or int(quantidade) < 1):
-                        return sg.popup('Verifique a quantidade para o item '+codigo_item)
+                if ((not quantidade.isdigit()) or (int(quantidade_max) < int(quantidade) or int(quantidade) < 1)):
+                    return sg.popup('Verifique a quantidade para o item '+codigo_item)
+                else:
                     aux.append(quantidade)
                 if valor.replace(',','',1).isdigit():
                     valor = str(round(float(valor.replace(',','.',1)),2))
@@ -239,13 +244,14 @@ def caronar_itens(window:sg.Window,values:list):
                 itens_caronar.append(aux)
     else:
         if(len(itens_caronar)<1):
-            sg.popup('Para registrar uma carona é necessário que pelo menos um item seja selecionado.')
+            return sg.popup('Para registrar uma carona é necessário que pelo menos um item seja selecionado.')
         else:
             if (not cnn.inserir_carona(uasg,pregao,data_carona,orgao)):
-                sg.popup('Não foi possível registrar a carona.')
+                return sg.popup('Não foi possível registrar a carona.')
             else:
                 if(not cnn.inserir_itens_em_carona(uasg,pregao,orgao,data_carona,itens_caronar)):
-                    sg.popup('Houve um problema para registrar os itens da carona.')
+                    return sg.popup('Houve um problema para registrar os itens da carona.')
                 else:
                     sg.popup('Carona registrado com sucesso!')
+                    window.Close()
 
