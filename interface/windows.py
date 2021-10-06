@@ -86,10 +86,10 @@ def janela_consulta_pregao():
 def janela_consulta_pregoes():
     """Retorna um sg.Window com tabela e abas para apresentação dos pregões."""
     cabecalho_generico = [
-        ['Pregão','UASG','Abertura','ÓRGÃO'],
-        [10,8,20,30]
+        ['Pregão','UASG','Abertura','ÓRGÃO','id'],
+        [10,8,20,30,0]
     ]
-    abas = evh.lista_pregoes_gerais()
+    abas = evh.listar_pregoes_gerais()
     coluna1=[#APLICADO PARA PREGÕES EM FASE DE PROPOSTA, JULGAMENTO E FRUSTRADO
         [sg.Button('Alterar Fase',enable_events=True,key='bt_alterar_fase',size=(20,1))],
         [sg.Button('Homologar Pregão',enable_events=True,key='bt_homologar',size=(20,1)),]
@@ -114,6 +114,9 @@ def janela_consulta_pregoes():
                 [
                     sg.Button('Abrir Pasta',enable_events=True,key='bt_pasta',size=(20,1))
                 ],
+                [
+                    sg.Button('Consultar Itens',enable_events=True,key='bt_consutlar_itens',size=(20,1))
+                ],
                     menu_opcoes
             ])
         ],
@@ -127,7 +130,7 @@ def janela_consulta_empenhos():
         ['id','Pregão','UASG','Data do Empenho','Nota','Valor Total'],
         [0,10,8,20,10,11]
     ]
-    abas = evh.lista_empenhos_gerais()
+    abas = evh.listar_empenhos_gerais()
     layout=[
         [
             sg.TabGroup(
@@ -170,7 +173,7 @@ def janela_consulta_carona():
         ['id','Pregão','UASG','Data do Pedido','Órgão Requerente'],
         [0,10,8,20,30]
     ]
-    abas = evh.lista_caronas_gerais()
+    abas = evh.listar_caronas_gerais()
     layout=[
         [
             sg.TabGroup(

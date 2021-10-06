@@ -46,11 +46,14 @@ def frame_orgaos_pregao(orgaos):
             sg.Combo(values=[],size=(10,1),enable_events=True,key='cb_pregao',readonly=True)]
             ])]
 
-def aba_com_tabela_itens(cabecalho:list, texto:str, valores:list):
-    """Retorna a sg.Tab contendo uma tabela."""
+def aba_com_tabela_itens(cabecalho:list, identificador:str, valores:list):
+    """Retorna a sg.Tab contendo uma tabela.\n
+    cabecalho - Contem uma lista com o nome das colunas e outra lista com a largura de cada coluna [[str],[int]].\n
+    identificador - Str para identificar a guia (tab) e a tabela (tb).\n
+    valores - conteudo para preencher a tabela, caso não seja passado nenhum valor, a tabela será preenchida com os valores do cabeçalho."""
     if(len(valores)<1): valores = cabecalho
-    titulo = texto[0].upper()+texto[1:len(texto)]
-    return sg.Tab(titulo, tabela_itens_preenchida(cabecalho[0],valores,'tb_'+texto,larguras=cabecalho[1]),key='tab_'+texto,visible=True)
+    titulo = identificador[0].upper()+identificador[1:len(identificador)]
+    return sg.Tab(titulo, tabela_itens_preenchida(cabecalho[0],valores,'tb_'+identificador,larguras=cabecalho[1]),key='tab_'+identificador,visible=True)
 
 def frame_item_homologar(item:str,modelo:str,unidades:str):
     """Retorna um sg.Frame para incluir itens em homologação."""

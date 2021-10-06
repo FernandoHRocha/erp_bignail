@@ -14,6 +14,18 @@ def conferir_campos_de_data(values:dict):
     data = dia+'-'+mes+'-'+ano
     return False if str(False) in data else data
 
+def consultar_dados_selecionados_tabela_pregao(window:sg.Window, values:dict, msg_erro:str='Favor selecionar um pregão.'):
+    """Retorna os dados do(s) pregão(ões) selecionado(s) na guia atual.\n
+    Caso nenhum pregão esteja selecionado retorna False e um sg.popup(msg_erro) é mostrado.\n
+    msg_erro - Str com a mensagem que deve aparecer caso nenhum pregão seja selecionado,
+    não passando esse parametro será considerada uma frase padrão."""
+    tab = str(values['tg_pregoes']).replace('tab','tb')
+    if (len(values[tab])>0):
+        return [window[tab].get()[linha] for linha in values[tab]]
+    else:
+        sg.popup(msg_erro)
+        return False
+
 def atualizar_lista_orgao():
     """Retorna do banco de dados uma lista com o nome dos órgãos registrados."""
     _orgao =[]
@@ -40,7 +52,7 @@ def apresentar_itens_pregao(window:sg.Window, orgao:str, pregao:str):
     window['tb_registrado'].update(values=cnn.consultar_itens_geral(orgao,pregao))
     window['tb_ganho'].update(values=cnn.consultar_itens_ganhos(orgao,pregao))
 
-def lista_pregoes_gerais():
+def listar_pregoes_gerais():
     """Retorna uma lista com a categoria dos pregões e os respectivos dados."""
     retorno =[]
     fases=cnn.consultar_fases_pregoes()
@@ -49,7 +61,7 @@ def lista_pregoes_gerais():
         retorno.append(aux)
     return retorno
 
-def lista_empenhos_gerais():
+def listar_empenhos_gerais():
     """Retorna uma lista com a categoria dos empenhos e os respectivos empenhos."""
     retorno=[]
     fases = cnn.consultar_fases_empenhos()
@@ -58,7 +70,7 @@ def lista_empenhos_gerais():
         retorno.append(aux)
     return retorno
 
-def lista_caronas_gerais():
+def listar_caronas_gerais():
     """Retorna uma lista com a categoria das caronas e os respectivos pedidos."""
     retorno=[]
     fases = cnn.consultar_fases_carona()
@@ -71,13 +83,13 @@ def abrir_janela_alterar_fase_pregao(uasg:str,pregao:str):
     """Abre a janela para alteração de fase de pregão."""
     wds.janela_consulta_pregao_alterar_fase(uasg,pregao,cnn.consultar_fases_pregoes())
 
-def atualizar_pregoes_gerais(window:sg.Window):
-    """Refaz a consulta ao banco de dados para atualizar as tabelas de pregões."""
-    window['tb_submeter'].update(values=cnn.consultar_pregoes_fase(1))
-    window['tb_proposta'].update(values=cnn.consultar_pregoes_fase(1))
-    window['tb_julgamento'].update(values=cnn.consultar_pregoes_fase(2))
-    window['tb_ganhos'].update(values=cnn.consultar_pregoes_fase(4))
-    window['tb_finalizados'].update(values=cnn.consultar_pregoes_fase(6))
+# def atualizar_pregoes_gerais(window:sg.Window):
+#     """Refaz a consulta ao banco de dados para atualizar as tabelas de pregões."""
+#     window['tb_submeter'].update(values=cnn.consultar_pregoes_fase(1))
+#     window['tb_proposta'].update(values=cnn.consultar_pregoes_fase(1))
+#     window['tb_julgamento'].update(values=cnn.consultar_pregoes_fase(2))
+#     window['tb_ganhos'].update(values=cnn.consultar_pregoes_fase(4))
+#     window['tb_finalizados'].update(values=cnn.consultar_pregoes_fase(6))
 
 def abrir_pasta_pregao(pregao:str,uasg:str,data:str):
     """Abre a pasta do pregão dentro do sistema."""
@@ -99,6 +111,8 @@ def abrir_pasta_pregao(pregao:str,uasg:str,data:str):
         os.startfile(os.path.realpath(path))
     except:
         sg.popup('Não foi possível encontrar a pasta.')
+
+##JANELA HOMOLOGAÇÃO DE ITENS
 
 def abrir_janela_homologacao_itens(uasg:str, pregao:str):
     """Faz a chamada dos itens do pregão ao banco de dados e abre a janela de itens a homologar."""
@@ -136,6 +150,8 @@ def homologar_pregao_e_itens(window:sg.Window,values:dict):
             return sg.popup('Não foi possível inserir os itens como homologados.')
         sg.popup('O pregão foi homologado.')
         window.Close()
+
+##JANELA EMPENHO DE ITENS
 
 def abrir_janela_itens_empenhar(uasg:str,pregao:str):
     """Coleta as informações dos itens do pregão e chama a janela para empenho."""
@@ -183,6 +199,8 @@ def empenhar_itens(window:sg.Window,values:list):
                 else:
                     sg.popup('Empenho registrado com sucesso!')
                     window.Close()
+
+##JANELA CARONA DE ITENS
 
 def abrir_janela_itens_carona(uasg:str,pregao:str):
     """Coleta as informações dos itens do pregão e chama a janela para carona."""

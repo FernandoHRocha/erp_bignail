@@ -90,16 +90,15 @@ def consulta_pregoes(uasg):
         consulta.append(row[0])
     return consulta
 
-def consultar_pregoes_fase(fase:str):
+def consultar_pregoes_fase(fase:str=''):
     """Retorna a lista de pregões ordenados pela data filtrado por fase.
     Passado parametro nulo, retorna todos."""
-    query = ("select numero_pregao, uasg, data_abertura, nome_orgao from pregao "
-            "join orgao on pregao.id_orgao = orgao.id_orgao "
-            "where id_fase = (select id_fase from fase_pregao where nome_fase = '"+validar(fase)+"') "
-            "order by data_abertura;") if fase != '' else ("select data_abertura, "
-            "numero_pregao, uasg, nome_orgao from pregao "
-            "join orgao on pregao.id_orgao = orgao.id_orgao "
-            "order by data_abertura;")
+    query = ("select numero_pregao, uasg, data_abertura, nome_orgao, id_pregao from pregao "
+            "join orgao on pregao.id_orgao = orgao.id_orgao ")
+    if(fase != ''):
+        id_fase = consultar_id_fase_pregao(fase)
+        query = query + ("where id_fase = '"+validar(id_fase)+"' ")
+    query = query+("order by data_abertura;")
     cursor.execute(query)
     consulta = []
     for row in cursor:
@@ -205,7 +204,6 @@ def consultar_caronas_pela_fase(fase:str=''):
     cursor.execute(query)
     consulta=[list(row) for row in cursor.fetchall()]
     return consulta
-
 
 ###ALTERAÇÕES
 

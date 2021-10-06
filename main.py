@@ -78,54 +78,33 @@ while True:
     if(window.Title==titulo_janelas['janela_consulta_pregoes']):
         #wds.janela_consulta_pregoes
         if(event == 'bt_alterar_fase'):
-            tab = str(values['tg_pregoes']).replace('tab','tb')
-            if(len(values[tab])>0):
-                for linha in values[tab]:
-                    pregao = window[tab].get()[linha]
-                    evh.abrir_janela_alterar_fase_pregao(pregao[1],pregao[0])
-                    window.Close()
-            else:
-                sg.popup('Para alterar a fase de algum pregão é preciso selecionar um primeiro.')
+            pregoes = evh.consultar_dados_selecionados_tabela_pregao(window,values)
+            if pregoes:
+                [evh.abrir_janela_alterar_fase_pregao(pregao[1],pregao[0]) for pregao in pregoes]
+                window.Close()
 
-        if(event):
-            if('bt_pasta' in event):
-                tab = str(values['tg_pregoes']).replace('tab','tb')
-                if (len(values[tab])>0):
-                    for linha in values[tab]:
-                        pregao = window[tab].get()[linha]
-                        evh.abrir_pasta_pregao(pregao[0],pregao[1],pregao[2])
-                else:
-                    sg.popup('Primeiro selecione um pregão.')
+        if(event == 'bt_pasta'):
+            pregoes = evh.consultar_dados_selecionados_tabela_pregao(window,values)
+            if pregoes:
+                [evh.abrir_pasta_pregao(pregao[0],pregao[1],pregao[2]) for pregao in pregoes]
+        
+        if(event == 'bt_consultar_itens'):
+            sg.popup('Abrir janela consulta itens.')
         
         if(event == 'bt_homologar'):
-            tab = str(values['tg_pregoes']).replace('tab','tb')
-            if (len(values[tab])>0):
-                window.Close()
-                for linha in values[tab]:
-                    pregao = window[tab].get()[linha]
-                    evh.abrir_janela_homologacao_itens(pregao[1],pregao[0])
-            else:
-                sg.popup('Primeiro selecione um pregão.')
+            pregoes = evh.consultar_dados_selecionados_tabela_pregao(window,values)
+            if pregoes:
+                [evh.abrir_janela_homologacao_itens(pregao[1],pregao[0]) for pregao in pregoes]
 
         if(event == 'bt_registrar_empenho'):
-            tab = str(values['tg_pregoes']).replace('tab','tb')
-            if (len(values[tab])>0):
-                window.Close()
-                for linha in values[tab]:
-                    pregao = window[tab].get()[linha]
-                    evh.abrir_janela_itens_empenhar(pregao[1],pregao[0])
-            else:
-                sg.popup('Primeiro selecione um pregão.')
+            pregoes = evh.consultar_dados_selecionados_tabela_pregao(window,values)
+            if pregoes:
+                    [evh.abrir_janela_itens_empenhar(pregao[1],pregao[0]) for pregao in pregoes]
         
         if(event == 'bt_registrar_carona'):
-            tab = str(values['tg_pregoes']).replace('tab','tb')
-            if (len(values[tab])>0):
-                window.Close()
-                for linha in values[tab]:
-                    pregao = window[tab].get()[linha]
-                    evh.abrir_janela_itens_carona(pregao[1],pregao[0])
-            else:
-                sg.popup('Primeiro selecione um pregão.')
+            pregoes = evh.consultar_dados_selecionados_tabela_pregao(window,values)
+            if pregoes:
+                [evh.abrir_janela_itens_carona(pregao[1],pregao[0]) for pregao in pregoes]
 
         if(event == 'tg_pregoes'):
             if(values['tg_pregoes'] in ['tab_homologado','tab_finalizado']):
