@@ -25,7 +25,7 @@ titulo_janelas = {
     'janela_consulta_pregao_alterar_fase':'Alteração de Fase',
 }
 
-sg.theme('DarkGrey5')
+sg.theme('Default')
 
 def janela_menu():
     """Retorna um menu com as principais opções para gerenciamentos dos processos licitatórios da empresa."""

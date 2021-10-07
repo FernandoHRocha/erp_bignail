@@ -87,20 +87,26 @@ def abrir_janela_alterar_fase_pregao(uasg:str,pregao:str):
     wds.janela_consulta_pregao_alterar_fase(uasg,pregao,cnn.consultar_fases_pregoes())
 
 def listar_itens_em_categorias(id_pregao:str):
-    cabecalho_participados =    [['Item','Marca','Modelo','Quant','Preço','Custo','Frete','Fornecedor','id'],
-                                [5,15,20,5,12,12,8,20,0]]
-    cabecalho_homologados =  [['Item','Marca','Modelo','Quant','Empenho','Carona','id'],
-                            [5,15,20,5,7,5,0]]
-    cabecalho_empenhos =    [['Item','Marca','Modelo','Quant','Preço','Custo','Data','Nota','Fase','id'],
-                            [5,15,20,5,12,12,10,10,12,0]]
-    cabecalho_caronas =     [['Item','Marca','Modelo','Quant','Preço','Data','Órgão','Fase','id'],
-                            [5,15,20,5,12,10,30,12,0]]
-    cabecalho_reequilibrios =   [['Item','Marca','Modelo','Quant','Preço','Novo Preço','Data','Fase','id'],
-                                [5,15,20,5,12,12,10,12,0]]
+    """Retorna os dados necessários para apresentar os itens do pregão em suas categorias."""
+    cabecalho_participados =    [
+        ['Item','Marca','Modelo','Quant','Preço','Custo','Frete','Fornecedor','id'],
+        [5,15,20,5,12,12,8,20,0]]
+    cabecalho_homologados =  [
+        ['Item','Marca','Modelo','Preço','Quant','Empenho','Carona','id'],
+        [5,15,20,12,5,7,5,0]]
+    cabecalho_empenhos =    [
+        ['Item','Marca','Modelo','Quant','Preço','Custo','Data Empenho','Data Entrega','Nota','Fase','id'],
+        [5,15,20,5,12,12,12,12,10,12,0]]
+    cabecalho_caronas =     [
+        ['Item','Marca','Modelo','Quant','Preço','Data','Órgão','Fase','id'],
+        [5,15,20,5,12,10,30,12,0]]
+    cabecalho_reequilibrios =   [
+        ['Item','Marca','Modelo','Quant','Preço','Novo Preço','Data','Fase','id'],
+        [5,15,20,5,12,12,10,12,0]]
     return [
         [cabecalho_participados,'participados',cnn.consultar_itens_participados(id_pregao)],
-        [cabecalho_homologados,'homologados',cnn.consultar_itens_homologados(id_pregao)],
-        #[cabecalho_empenhos,'empenhados',],cnn.(id_pregao)],
+        [cabecalho_homologados,'homologados',cnn.consultar_itens_homologados_id(id_pregao)],
+        [cabecalho_empenhos,'empenhados',cnn.consultar_itens_empenhados_id(id_pregao)],
         [cabecalho_caronas,'caronas',cnn.consultar_itens_carona(id_pregao)],
         #[cabecalho_reequilibrio,'reequilibros',],##cnn.(id_pregao)],
     ]

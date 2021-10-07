@@ -27,8 +27,7 @@ def tabela_itens(cabecalho,key,larguras,visible=True):
     return [[sg.Table(headings=cabecalho,values=cabecalho,enable_events=True,key=key,auto_size_columns=False,col_widths=larguras,visible=visible)]]
 
 def tabela_itens_preenchida(cabecalho,valores,key,larguras,visible=True):
-    if valores:
-        return [[sg.Table(headings=cabecalho,values=valores,enable_events=True,key=key,auto_size_columns=False,col_widths=larguras,visible=visible)]]
+    return [[sg.Table(headings=cabecalho,values=valores,enable_events=True,key=key,auto_size_columns=False,col_widths=larguras,visible=visible)]]
 
 def combo_estado_pregao(key):
     return sg.Combo(values=['Proposta','Julgamento','Frustrado','Homologado','Adjudicado','Finalizado','Suspenso'],enable_events=True, key=key,size=(12,1))
@@ -52,7 +51,7 @@ def aba_com_tabela_itens(cabecalho:list, identificador:str, valores:list):
     identificador - Str para identificar a guia (tab) e a tabela (tb).\n
     valores - conteudo para preencher a tabela, caso não seja passado nenhum valor, a tabela será preenchida com os valores do cabeçalho."""
     if(len(valores)<1):
-        valores = cabecalho
+        valores = []
     titulo = identificador[0].upper()+identificador[1:len(identificador)]
     return sg.Tab(titulo, tabela_itens_preenchida(cabecalho[0],valores,'tb_'+identificador,larguras=cabecalho[1]),key='tab_'+identificador,visible=True)
 

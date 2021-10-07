@@ -141,7 +141,6 @@ while True:
 
     if(window.Title==titulo_janelas['janela_cadastro']):
         if(event == 'bt_cadastro_planilha'):
-            janela_anterior=wds.janela_cadastro
             aut.cadastrar_planilha()
         if(event == 'bt_cadastro_empenho'):
             pass
