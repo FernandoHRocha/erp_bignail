@@ -253,6 +253,7 @@ def consultar_itens_homologados(id_pregao:str):
         select id_item, sum(carona), empenho from
         (select item_carona.id_item, quantidade as carona, cast(0 as int) as empenho from item_carona) as car group by id_item, empenho) as total group by id_item)
         as qnts on qnts.id_item = i.id_item
+        join resultado_item as ri on ri.id_item = i.id_item
         join marca on marca.id_marca = i.id_marca"""+" where id_pregao = '"+validar(id_pregao)+"';")
     cursor.execute(query)
     consulta=[list(row) for row in cursor.fetchall()]

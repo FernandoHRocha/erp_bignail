@@ -7,21 +7,12 @@ import PySimpleGUI as sg
 janela_anterior = wds.janela_menu
 titulo_janelas = wds.titulo_janelas
 
-wds.janela_consulta_itens_pregao('6')
-
-#wds.janela_menu()
+wds.janela_menu()
 
 while True:
     window, event, values = sg.read_all_windows()
 
     print(window.Title, event, values)
-
-    if event == 'bt_voltar':
-        if janela_anterior == 'janela_menu':
-            window.Close()
-        else:
-            window.Close()
-            janela_anterior()
 
     if(window.Title==titulo_janelas['janela_menu']):
         if(event == 'bt_consultar'):
@@ -59,7 +50,6 @@ while True:
             wds.janela_consulta_carona()
 
     if(window.Title==titulo_janelas['janela_consulta_pregao']):
-        #wds.janela_consulta_pregao
         if(event == 'cb_orgao'):
             evh.escolher_orgao(window,values['cb_orgao'])
         if(event == 'cb_pregao'):
@@ -78,7 +68,7 @@ while True:
             sg.popup('Registra o aceite de carona dos itens selecionados e abre a pasta do pregão.')
 
     if(window.Title==titulo_janelas['janela_consulta_pregoes']):
-
+        janela_anterior=wds.janela_consulta
         if(event == 'bt_alterar_fase'):
             pregoes = evh.consultar_dados_selecionados_tabela_pregao(window,values)
             if pregoes:
@@ -93,7 +83,9 @@ while True:
         if(event == 'bt_consultar_itens'):
             pregoes = evh.consultar_dados_selecionados_tabela_pregao(window,values)
             if pregoes:
+                janela_anterior=wds.janela_consulta_pregoes
                 wds.janela_consulta_itens_pregao(pregoes[0][len(pregoes[0])-1])
+                window.Close()
         
         if(event == 'bt_homologar'):
             pregoes = evh.consultar_dados_selecionados_tabela_pregao(window,values)
@@ -224,6 +216,13 @@ while True:
                 cnn.alterar_fase_pregao(window['txt_uasg'].get(),window['txt_pregao'].get(),values['cb_alterar_fase'])
                 window.Close()
                 wds.janela_consulta_pregoes()
+
+    if event == 'bt_voltar':
+        if janela_anterior == 'janela_menu':
+            window.Close()
+        else:
+            window.Close()
+            janela_anterior()
 
     if(event == sg.WIN_CLOSED):
         if(window.Title == titulo_janelas['janela_menu']):

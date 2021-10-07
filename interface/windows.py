@@ -84,6 +84,7 @@ def janela_consulta_pregao():
 
 def janela_consulta_pregoes():
     """Retorna um sg.Window com tabela e abas para apresentação dos pregões."""
+
     cabecalho_generico = [
         ['Pregão','UASG','Abertura','ÓRGÃO','id'],
         [10,8,20,30,0]
@@ -231,7 +232,8 @@ def janela_consulta_itens_pregao(id_pregao:str):
             sg.Button('Registrar Empenho',enable_events=True,key='bt_item_empenho'),
             sg.Button('Registrar Carona',enable_events=True,key='bt_item_carona'),
             sg.Button('Consultar Fornecedor',enable_events=True,key='bt_fornecedor'),
-        ]
+        ],
+        [pt.bt_voltar()]
     ]
     return sg.Window(title=titulo_janelas['janela_consulta_itens_pregao'],layout=layout,finalize=True)
 
