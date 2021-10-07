@@ -76,7 +76,7 @@ def cadastrar_planilha():
         cnn.inserir_pregao(pregao['uasg'],pregao['numero'],pregao['data'],"Proposta")
 
     for item in itens:
-        cnn.inserir_items_planilha(
+        cnn.inserir_itens_planilha(
             uasg = pregao['uasg'],
             pregao = pregao['numero'],
             item=item[0],

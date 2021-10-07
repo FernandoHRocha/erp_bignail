@@ -26,6 +26,9 @@ def consultar_dados_selecionados_tabela_pregao(window:sg.Window, values:dict, ms
         sg.popup(msg_erro)
         return False
 
+def consultar_dados_pregao(id_pregao:str):
+    return cnn.consultar_dados_pregao(id_pregao)
+
 def atualizar_lista_orgao():
     """Retorna do banco de dados uma lista com o nome dos órgãos registrados."""
     _orgao =[]
@@ -50,7 +53,7 @@ def apresentar_itens_pregao(window:sg.Window, orgao:str, pregao:str):
             orgao = org[1]
             break
     window['tb_registrado'].update(values=cnn.consultar_itens_geral(orgao,pregao))
-    window['tb_ganho'].update(values=cnn.consultar_itens_ganhos(orgao,pregao))
+    window['tb_ganho'].update(values=cnn.consultar_itens_homologados(orgao,pregao))
 
 def listar_pregoes_gerais():
     """Retorna uma lista com a categoria dos pregões e os respectivos dados."""
@@ -86,21 +89,21 @@ def abrir_janela_alterar_fase_pregao(uasg:str,pregao:str):
 def listar_itens_em_categorias(id_pregao:str):
     cabecalho_participados =    [['Item','Marca','Modelo','Quant','Preço','Custo','Frete','Fornecedor','id'],
                                 [5,15,20,5,12,12,8,20,0]]
-    cabecalho_ganhos =  [['Item','Marca','Modelo','Quant','Empenhado','Carona','id'],
-                        [5,15,20,5,5,5,0]]
+    cabecalho_homologados =  [['Item','Marca','Modelo','Quant','Empenho','Carona','id'],
+                            [5,15,20,5,7,5,0]]
     cabecalho_empenhos =    [['Item','Marca','Modelo','Quant','Preço','Custo','Data','Nota','Fase','id'],
                             [5,15,20,5,12,12,10,10,12,0]]
     cabecalho_caronas =     [['Item','Marca','Modelo','Quant','Preço','Data','Órgão','Fase','id'],
                             [5,15,20,5,12,10,30,12,0]]
     cabecalho_reequilibrios =   [['Item','Marca','Modelo','Quant','Preço','Novo Preço','Data','Fase','id'],
                                 [5,15,20,5,12,12,10,12,0]]
-    
-    itens_participados = cnn.consultar_itens_participados(id_pregao)
-    itens_ganhos = cnn.consultar_itens_ganhos(id_pregao)
-    itens_caronas = cnn.consultar_itens_carona(id_pregao)
-    
-
-    return
+    return [
+        [cabecalho_participados,'participados',cnn.consultar_itens_participados(id_pregao)],
+        [cabecalho_homologados,'homologados',cnn.consultar_itens_homologados(id_pregao)],
+        #[cabecalho_empenhos,'empenhados',],cnn.(id_pregao)],
+        [cabecalho_caronas,'caronas',cnn.consultar_itens_carona(id_pregao)],
+        #[cabecalho_reequilibrio,'reequilibros',],##cnn.(id_pregao)],
+    ]
 
 def abrir_pasta_pregao(pregao:str,uasg:str,data:str):
     """Abre a pasta do pregão dentro do sistema."""

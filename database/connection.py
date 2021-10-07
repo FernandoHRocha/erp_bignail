@@ -127,7 +127,7 @@ def consultar_itens_geral(uasg:str,pregao:str):
         consulta.append([str(valor) for valor in row])
     return consulta
 
-def consultar_itens_ganhos(uasg:str,pregao:str):
+def consultar_itens_homologados(uasg:str,pregao:str):
     """Retorna uma lista de itens classificados em primeiro lugar."""
     query=("select item.id_item, item, nome_marca, modelo, quantidade, valor_ganho, (quantidade * valor_ganho) as valor_total, preco_custo, frete, fornecedor from item "
         "join marca on item.id_marca = marca.id_marca "
@@ -215,19 +215,36 @@ def consultar_caronas_pela_fase(fase:str=''):
 
 ###CONSULTAS PELO ID DO PREGÃO
 
+def consultar_dados_pregao(id_pregao:str):
+    """Retorna os dados gerais de um pregão.\n
+    numero, uasg, órgão, data de abertura, data da ata, fase."""
+    query=(
+        """select p.numero_pregao, o.uasg, o.nome_orgao,
+        format (p.data_abertura,'dd-MM-yyyy hh:mm') as data_abertura,
+        p.data_ata, fp.nome_fase from pregao as p
+        join orgao as o on o.id_orgao = p.id_orgao
+        join fase_pregao as fp on fp.id_fase = p.id_fase
+        where p.id_pregao = '"""+validar(id_pregao)+"';")
+    cursor.execute(query)
+    consulta=[list(row) for row in cursor.fetchall()]
+    return consulta[0]
+
 def consultar_itens_participados(id_pregao:str):
     """Retorna uma lista de itens participados em um pregão."""
-    cursor.execute(
-        "select item, nome_marca, modelo, quantidade, valor_ofertado, preco_custo, frete, fornecedor, id_item from item "
-        "join marca on item.id_marca = marca.id_marca "
-        "where id_pregao = (select id_pregao from pregao where id_orgao = '"+validar(id_pregao)+"';")
+    query=(
+        """select i.item, nome_marca, modelo, i.quantidade, i.valor_ofertado, 
+        i.preco_custo, i.frete, i.fornecedor, i.id_item from item as i
+        join marca as m on m.id_marca = i.id_marca
+        where i.id_pregao = '"""+validar(id_pregao)+"';")
+    cursor.execute(query)
     consulta=[list(row) for row in cursor.fetchall()]
     return consulta
 
-def consultar_itens_ganhos(id_pregao:str):
+def consultar_itens_homologados(id_pregao:str):
     """Retorna uma lista de itens ganhos para determinado pregão."""
     query=(
-        """select i.item, nome_marca, i.modelo, i.quantidade, qnts.empenho, qnts.carona, i.id_item from item as i
+        """select i.item, nome_marca, i.modelo, i.quantidade, (case when qnts.empenho is null then 0 else qnts.empenho end)
+        as empenho, (case when qnts.carona is null then 0 else qnts.carona end) as carona, i.id_item from item as i
         left join
         (select id_item, sum(carona) as carona, sum(empenho) as empenho from
         (select id_item, carona, sum(empenho) as empenho from

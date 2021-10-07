@@ -7,7 +7,9 @@ import PySimpleGUI as sg
 janela_anterior = wds.janela_menu
 titulo_janelas = wds.titulo_janelas
 
-wds.janela_menu()
+wds.janela_consulta_itens_pregao('6')
+
+#wds.janela_menu()
 
 while True:
     window, event, values = sg.read_all_windows()
@@ -89,7 +91,9 @@ while True:
                 [evh.abrir_pasta_pregao(pregao[0],pregao[1],pregao[2]) for pregao in pregoes]
         
         if(event == 'bt_consultar_itens'):
-            sg.popup('Abrir janela consulta itens.')
+            pregoes = evh.consultar_dados_selecionados_tabela_pregao(window,values)
+            if pregoes:
+                wds.janela_consulta_itens_pregao(pregoes[0][len(pregoes[0])-1])
         
         if(event == 'bt_homologar'):
             pregoes = evh.consultar_dados_selecionados_tabela_pregao(window,values)

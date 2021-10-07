@@ -110,7 +110,7 @@ def janela_consulta_pregoes():
                     sg.Button('Abrir Pasta',enable_events=True,key='bt_pasta',size=(20,1))
                 ],
                 [
-                    sg.Button('Consultar Itens',enable_events=True,key='bt_consutlar_itens',size=(20,1))
+                    sg.Button('Consultar Itens',enable_events=True,key='bt_consultar_itens',size=(20,1))
                 ],
                 [
                     sg.Column(coluna1,key='cl_julgamento'),
@@ -186,17 +186,15 @@ def janela_consulta_carona():
         ]
     return sg.Window(title=titulo_janelas['janela_consulta_carona'], layout=layout, finalize=True)
 
-def janela_consulta_itens_pregao(uasg:str,pregao:str):
-    orgao = ''#CONSUTLAR O NOME DO ÓRGÃO
-    data = ''#CONSULTAR A DATA DO PREGÃO
-    cabecalho_registrado = [
-        ['ID','Item','Modelo','Quantidade','Nosso Preço','Custo','Frete','Fornecedor','Marca'],
-        [5,4,20,10,12,12,10,20,15]
-    ]
-    cabecalho_ganhos = [
-        ['ID','Item','Marca','Modelo','Quant.','Valor Unit.','Valor Total','Custo','Frete','Fornecedor'],
-        [5,3,15,20,5,11,11,11,11,15]
-    ]
+def janela_consulta_itens_pregao(id_pregao:str):
+    dados = evh.consultar_dados_pregao(id_pregao)
+    pregao = dados[0]
+    uasg = dados[1]
+    orgao = dados[2]
+    data = dados[3]
+    ata = dados[4] if dados[4] != 'None' else 'Pendente'
+    fase = dados[5]
+    abas = evh.listar_itens_em_categorias(id_pregao)
     layout=[
         [
             sg.Frame(title=' Consulta aos itens do pregão ',key='fr_titulo_pregao',layout=[
@@ -209,29 +207,31 @@ def janela_consulta_itens_pregao(uasg:str,pregao:str):
                 [
                     sg.Text('Pregão: '),
                     sg.Text(pregao),
-                    sg.Text(' Data Abertura: '),
+                    sg.Text(' '+fase)
+                ],
+                [
+                    sg.Text('Data Abertura: '),
                     sg.Text(data),
+                    sg.Text(' Data de Assinatura da Ata: '),
+                    sg.Text(ata),
                 ]
             ])
         ],
         [
-            sg.Frame(title='',visible=False,key='fr_itens_participados',layout=[
+            sg.Frame(title='',visible=True,key='fr_itens',layout=[
                 [
-                sg.TabGroup([
-                    [
-                        sg.Tab('Registrados', pt.tabela_itens(cabecalho_registrado[0],'tb_registrado',larguras=cabecalho_registrado[1]),key='tab_registrado',visible=True),
-                        sg.Tab('Ganhos', pt.tabela_itens(cabecalho_ganhos[0],'tb_ganho',larguras=cabecalho_ganhos[1]),key='tab_ganho',visible=True)
-                    ]
-                    ],enable_events=True,key='tg_item')
-                ],
-                [
-                    sg.Button('Alterar item',enable_events=True,key='bt_item_alterar'),
-                    sg.Button('Registrar Empenho',enable_events=True,key='bt_item_empenho'),
-                    sg.Button('Registrar Carona',enable_events=True,key='bt_item_carona'),
-                    sg.Button('Consultar Fornecedor',enable_events=True,key='bt_fornecedor'),
+                    sg.TabGroup([
+                        [pt.aba_com_tabela_itens(aba[0],aba[1],aba[2]) for aba in abas]
+                    ],enable_events=True,key='tg_itens')
                 ]
-            ]),
+            ])
         ],
+        [
+            sg.Button('Alterar item',enable_events=True,key='bt_item_alterar'),
+            sg.Button('Registrar Empenho',enable_events=True,key='bt_item_empenho'),
+            sg.Button('Registrar Carona',enable_events=True,key='bt_item_carona'),
+            sg.Button('Consultar Fornecedor',enable_events=True,key='bt_fornecedor'),
+        ]
     ]
     return sg.Window(title=titulo_janelas['janela_consulta_itens_pregao'],layout=layout,finalize=True)
 

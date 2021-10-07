@@ -51,7 +51,8 @@ def aba_com_tabela_itens(cabecalho:list, identificador:str, valores:list):
     cabecalho - Contem uma lista com o nome das colunas e outra lista com a largura de cada coluna [[str],[int]].\n
     identificador - Str para identificar a guia (tab) e a tabela (tb).\n
     valores - conteudo para preencher a tabela, caso não seja passado nenhum valor, a tabela será preenchida com os valores do cabeçalho."""
-    if(len(valores)<1): valores = cabecalho
+    if(len(valores)<1):
+        valores = cabecalho
     titulo = identificador[0].upper()+identificador[1:len(identificador)]
     return sg.Tab(titulo, tabela_itens_preenchida(cabecalho[0],valores,'tb_'+identificador,larguras=cabecalho[1]),key='tab_'+identificador,visible=True)
 
