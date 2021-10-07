@@ -118,7 +118,7 @@ def consultar_pregoes_fase(fase:str=''):
 def consultar_itens_geral(uasg:str,pregao:str):
     """Retorna uma lista de itens participados em um pregão."""
     cursor.execute(
-        "select id_item, item, modelo, quantidade, valor_ofertado, preco_custo, frete, fornecedor, nome_marca from item "
+        "select item, nome_marca, modelo, quantidade, valor_ofertado, preco_custo, frete, fornecedor, id_item from item "
         "join marca on item.id_marca = marca.id_marca "
         "where id_pregao = (select id_pregao from pregao where id_orgao = "
         "(select id_orgao from orgao where uasg = '"+validar(uasg)+"') and numero_pregao = '"+validar(pregao)+"');")
@@ -211,6 +211,49 @@ def consultar_caronas_pela_fase(fase:str=''):
     query=query+group
     cursor.execute(query)
     consulta=[list(row) for row in cursor.fetchall()]
+    return consulta
+
+###CONSULTAS PELO ID DO PREGÃO
+
+def consultar_itens_participados(id_pregao:str):
+    """Retorna uma lista de itens participados em um pregão."""
+    cursor.execute(
+        "select item, nome_marca, modelo, quantidade, valor_ofertado, preco_custo, frete, fornecedor, id_item from item "
+        "join marca on item.id_marca = marca.id_marca "
+        "where id_pregao = (select id_pregao from pregao where id_orgao = '"+validar(id_pregao)+"';")
+    consulta=[list(row) for row in cursor.fetchall()]
+    return consulta
+
+def consultar_itens_ganhos(id_pregao:str):
+    """Retorna uma lista de itens ganhos para determinado pregão."""
+    query=(
+        """select i.item, nome_marca, i.modelo, i.quantidade, qnts.empenho, qnts.carona, i.id_item from item as i
+        left join
+        (select id_item, sum(carona) as carona, sum(empenho) as empenho from
+        (select id_item, carona, sum(empenho) as empenho from
+        (select item_empenho.id_item, cast(0 as int) as carona, quantidade as empenho from item_empenho) as emp group by id_item, carona
+        union all
+        select id_item, sum(carona), empenho from
+        (select item_carona.id_item, quantidade as carona, cast(0 as int) as empenho from item_carona) as car group by id_item, empenho) as total group by id_item)
+        as qnts on qnts.id_item = i.id_item
+        join marca on marca.id_marca = i.id_marca"""+" where id_pregao = '"+validar(id_pregao)+"';")
+    cursor.execute(query)
+    consulta=[list(row) for row in cursor.fetchall()]
+    return consulta
+
+def consultar_itens_carona(id_pregao:str):
+    """Retorna uma lista de itens aceitos em carona para determinado pregão."""
+    query=(
+        """select i.item, nome_marca, i.modelo, ic.quantidade, ic.valor_ganho,
+        c.data_carona, nome_orgao, nome_fase, c.id_carona from carona as c
+        join item_carona as ic on ic.id_carona = c.id_carona
+        join item as i on i.id_item = ic.id_item
+        join marca on marca.id_marca = i.id_marca
+        join fase_carona as fc on fc.id_fase=c.id_fase
+        join orgao as o on o.id_orgao = c.id_orgao 
+        where c.id_pregao = '"""+validar(id_pregao)+"' order by c.data_carona desc;""")
+    cursor.execute(query)
+    consulta = [list(row) for row in cursor.fetchall()]
     return consulta
 
 ###ALTERAÇÕES

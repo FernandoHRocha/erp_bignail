@@ -83,12 +83,22 @@ def abrir_janela_alterar_fase_pregao(uasg:str,pregao:str):
     """Abre a janela para alteração de fase de pregão."""
     wds.janela_consulta_pregao_alterar_fase(uasg,pregao,cnn.consultar_fases_pregoes())
 
-def listar_itens_em_categorias(uasg:str,pregao:str):
-    cabecalho_participados = ['Item','Marca','Modelo','Quant','Preço','Custo','Frete','Fornecedor','id']
-    cabecalho_ganhos = ['Item','Marca','Modelo','Quant','Empenhado','Carona','id']
-    cabecalho_empenhos = ['Item','Marca','Modelo','Quant','Preço','Custo','Data','Nota','Fase','id']
-    cabecalho_caronas = ['Item','Marca','Modelo','Quant','Preço','Data','Órgão','Fase','id']
-    cabecalho_reequilibrios = ['Item','Marca','Modelo','Quant','Preço','Novo Preço','Data','Fase','id']
+def listar_itens_em_categorias(id_pregao:str):
+    cabecalho_participados =    [['Item','Marca','Modelo','Quant','Preço','Custo','Frete','Fornecedor','id'],
+                                [5,15,20,5,12,12,8,20,0]]
+    cabecalho_ganhos =  [['Item','Marca','Modelo','Quant','Empenhado','Carona','id'],
+                        [5,15,20,5,5,5,0]]
+    cabecalho_empenhos =    [['Item','Marca','Modelo','Quant','Preço','Custo','Data','Nota','Fase','id'],
+                            [5,15,20,5,12,12,10,10,12,0]]
+    cabecalho_caronas =     [['Item','Marca','Modelo','Quant','Preço','Data','Órgão','Fase','id'],
+                            [5,15,20,5,12,10,30,12,0]]
+    cabecalho_reequilibrios =   [['Item','Marca','Modelo','Quant','Preço','Novo Preço','Data','Fase','id'],
+                                [5,15,20,5,12,12,10,12,0]]
+    
+    itens_participados = cnn.consultar_itens_participados(id_pregao)
+    itens_ganhos = cnn.consultar_itens_ganhos(id_pregao)
+    itens_caronas = cnn.consultar_itens_carona(id_pregao)
+    
 
     return
 
