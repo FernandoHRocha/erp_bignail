@@ -145,19 +145,19 @@ CREATE TABLE empenho
  data_empenho date NOT NULL ,
  nota_empenho varchar(30) NULL,
  data_entrega date NULL,
+ id_carona int NULL,
  id_pregao int NOT NULL,
- id_orgao int NOT NULL,
  id_fase int NOT NULL,
+CONSTRAINT FK_carona_empenho
+	FOREIGN KEY (id_carona)
+	REFERENCES carona (id_carona)
+	ON DELETE NO ACTION
+	ON UPDATE NO ACTION,
 CONSTRAINT FK_pregao_empenho
 	FOREIGN KEY (id_pregao)
 	REFERENCES pregao (id_pregao)
 	ON DELETE NO ACTION
 	ON UPDATE CASCADE,
-CONSTRAINT FK_orgao_empenho
-	FOREIGN KEY (id_orgao)
-	REFERENCES orgao (id_orgao)
-	ON DELETE NO ACTION
-	ON UPDATE NO ACTION,
 CONSTRAINT FK_fase_empenho
 	FOREIGN KEY (id_fase)
 	REFERENCES fase_empenho (id_fase)

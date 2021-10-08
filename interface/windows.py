@@ -266,6 +266,11 @@ def janela_cadastro():
         ]
     return sg.Window(titulo_janelas['janela_cadastro'], layout, finalize=True)
 
+def janela_cadastro_itens_reequilibrio(id_pregao:str):
+    """Retorna um sg.Window para registro dos itens que necessitam de pedido de reequilibrio econômico."""
+    
+    return
+
 def janela_cadastro_homologacao(uasg:str,pregao:str,itens:list):
     """Retorna um sg.Window para homologação do pregão."""
     data_ata =[

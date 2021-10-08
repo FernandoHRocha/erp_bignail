@@ -221,7 +221,6 @@ while True:
             else:
                 sg.popup('Reveja a data de entrega.')
 
-
 ###JANELAS DESTINADAS AOS PROCESSOS DE AUTOMAÇÃO
 
     if(window.Title==titulo_janelas['janela_comprasnet']):

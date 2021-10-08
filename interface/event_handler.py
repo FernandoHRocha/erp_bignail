@@ -105,11 +105,11 @@ def listar_itens_em_categorias(id_pregao:str):
         ['id','Item','Marca','Modelo','Preço','Quant','Empenho','Carona'],
         [0,5,15,20,12,5,7,5]]
     cabecalho_empenhos =    [
-        ['0','Item','Marca','Modelo','Quant','Preço','Custo','Data Empenho','Data Entrega','Nota','Fase','id'],
+        ['id','Item','Marca','Modelo','Quant','Preço','Custo','Data Empenho','Data Entrega','Nota','Fase'],
         [0,5,15,20,5,12,12,12,12,10,12]]
     cabecalho_caronas =     [
-        ['id','Item','Marca','Modelo','Quant','Preço','Data','Órgão','Fase','id'],
-        [0,5,15,20,5,12,10,30,12]]
+        ['id','Item','Marca','Modelo','Quant','Empenhado','Preço','Data','Órgão','Fase'],
+        [0,5,15,20,9,9,12,10,30]]
     cabecalho_reequilibrios =   [
         ['Item','Marca','Modelo','Quant','Preço','Novo Preço','Data','Fase','id'],
         [5,15,20,5,12,12,10,12,0]]

@@ -318,12 +318,15 @@ def consultar_itens_carona(id_pregao:str):
         nome_marca,
         i.modelo,
         ic.quantidade,
+		ie.quantidade as empenho,
         ic.valor_ganho,
         format (c.data_carona,'dd/MM/yyyy'),
         nome_orgao,
         nome_fase
         from carona as c
     join item_carona as ic on ic.id_carona = c.id_carona
+    left join empenho as e on (e.id_carona = c.id_carona)
+	left join item_empenho as ie on (ie.id_item = ic.id_item and e.id_empenho = ie.id_empenho)
     join item as i on i.id_item = ic.id_item
     join marca on marca.id_marca = i.id_marca
     join fase_carona as fc on fc.id_fase=c.id_fase
