@@ -6,6 +6,14 @@ import PySimpleGUI as sg
 import time
 import os
 
+def alterar_apresentacao_item(window:sg.Window,values:dict,event:str):
+    """Atualiza a apresentação de itens com checkbox marcados ou desmarcados."""
+    frame_input = str(event).replace('check_','fr_it_')
+    window[frame_input].update(visible=True)
+    window[frame_input].unhide_row() if values[event] else window[frame_input].hide_row()
+    window.refresh()
+    window['cl_itens'].contents_changed()
+
 def conferir_campos_de_data(values:dict):
     """Retorna uma string com a data se os campos forem válidados com sucesso, caso contrátio retorna False."""
     dia = str(adapter.conferir_se_inteiro_e_menor(values['it_dia'],31))

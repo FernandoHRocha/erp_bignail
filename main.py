@@ -97,11 +97,13 @@ while True:
             pregoes = evh.consultar_dados_selecionados_tabela_pregao(window,values)
             if pregoes:
                 [evh.abrir_janela_itens_empenhar(pregao[1],pregao[0]) for pregao in pregoes]
+                window.Close()
         
         if(event == 'bt_registrar_carona'):
             pregoes = evh.consultar_dados_selecionados_tabela_pregao(window,values)
             if pregoes:
                 [evh.abrir_janela_itens_carona(pregao[1],pregao[0]) for pregao in pregoes]
+                window.Close()
 
         if(event == 'tg_pregoes'):
             if(values['tg_pregoes'] in ['tab_homologado','tab_finalizado']):
@@ -152,9 +154,8 @@ while True:
     if(window.Title==titulo_janelas['janela_cadastro_homologacao']):
         if event:
             if('check_' in event):
-                frame_input = str(event).replace('check_','fr_it_')
-                window[frame_input].update(visible=True) if values[event] else window[frame_input].update(visible=False)
-        
+                evh.alterar_apresentacao_item(window,values,event)
+
         if (event=='bt_concluir'):
             evh.homologar_pregao_e_itens(window, values)
             janela_anterior=wds.janela_consulta
@@ -167,8 +168,7 @@ while True:
     if(window.Title==titulo_janelas['janela_cadastro_itens_empenhar']):
         if event:
             if('check_' in event):
-                frame_input = str(event).replace('check_','fr_it_')
-                window[frame_input].update(visible=True) if values[event] else window[frame_input].update(visible=False)
+                evh.alterar_apresentacao_item(window,values,event)
         
         if (event=='bt_concluir'):
             evh.empenhar_itens(window, values)
@@ -182,9 +182,8 @@ while True:
     if(window.Title==titulo_janelas['janela_cadastro_itens_carona']):
         if event:
             if('check_' in event):
-                frame_input = str(event).replace('check_','fr_it_')
-                window[frame_input].update(visible=True) if values[event] else window[frame_input].update(visible=False)
-        
+                evh.alterar_apresentacao_item(window,values,event)
+
         if (event=='bt_concluir'):
             evh.caronar_itens(window, values)
             janela_anterior=wds.janela_consulta
@@ -217,10 +216,8 @@ while True:
                 wds.janela_consulta_pregoes()
 
     if event == 'bt_voltar':
-        if janela_anterior == 'janela_menu':
-            window.Close()
-        else:
-            window.Close()
+        window.Close()
+        if janela_anterior != 'janela_menu':
             janela_anterior()
 
     if(event == sg.WIN_CLOSED):

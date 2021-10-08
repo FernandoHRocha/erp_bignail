@@ -1,4 +1,4 @@
-from tkinter import Text
+from tkinter import Scrollbar, Text
 import PySimpleGUI as sg
 from interface import patterns as pt
 from interface import event_handler as evh
@@ -25,7 +25,7 @@ titulo_janelas = {
     'janela_consulta_pregao_alterar_fase':'Alteração de Fase',
 }
 
-sg.theme('Default')
+sg.theme('DarkGrey5')
 
 def janela_menu():
     """Retorna um menu com as principais opções para gerenciamentos dos processos licitatórios da empresa."""
@@ -270,7 +270,7 @@ def janela_cadastro_homologacao(uasg:str,pregao:str,itens:list):
         ],
         [
             sg.Column(  layout=[[pt.frame_item_homologar(item[0],item[1],item[2], item[3])] for item in itens],
-                        size=(400,600),scrollable=True, vertical_scroll_only=True)
+                        size=(400,600),vertical_scroll_only=True,scrollable=True,key='cl_itens')
         ],
         data_ata,
         pt.botoes_concluir_cancelar_operacao(),
@@ -304,7 +304,7 @@ def janela_cadastro_itens_empenhar(uasg:str,pregao:str,itens:list):
         ],
         [
             sg.Column(  layout=[[pt.frame_item_empenhar(item)] for item in itens],
-                        size=(400,600),scrollable=True, vertical_scroll_only=True)
+                        size=(400,600),vertical_scroll_only=True,scrollable=True,key='cl_itens')
         ],
         [
             dados_empenho
@@ -339,7 +339,7 @@ def janela_cadastro_itens_carona(uasg:str,pregao:str,itens:list):
         ],
         [
             sg.Column(  layout=[[pt.frame_item_empenhar(item)] for item in itens],
-                        size=(800,600),scrollable=True, vertical_scroll_only=True)
+                        size=(800,600),vertical_scroll_only=True,scrollable=True,key='cl_itens')
         ],
         [
             sg.Text('Caso um mesmo órgão realize mais pedidos de carona para o mesmo pregão,\nconsidere datas diferentes para cada um.')

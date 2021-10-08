@@ -69,7 +69,7 @@ def frame_item_homologar(item:str,marca:str,modelo:str,unidades:str):
                 sg.Frame('',border_width=0,key='fr_it_'+item,visible=False,layout=[
                     [
                         sg.Text('Valor Ganhor R$'),
-                        sg.InputText(size=(15,1), enable_events=True, key='it_'+item)
+                        sg.InputText(size=(15,1), pad=(0,0),enable_events=True, key='it_'+item)
                     ]
                 ]),
             ]
