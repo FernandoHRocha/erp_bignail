@@ -22,12 +22,14 @@ def conferir_campos_de_data(values:dict):
     data = dia+'-'+mes+'-'+ano
     return False if str(False) in data else data
 
-def consultar_dados_selecionados_tabela_pregao(window:sg.Window, values:dict, msg_erro:str='Favor selecionar um pregão.'):
-    """Retorna os dados do(s) pregão(ões) selecionado(s) na guia atual.\n
+def consultar_dados_selecionados_tabela(window:sg.Window, values:dict,tab_group:str, msg_erro:str='Favor selecionar um pregão.'):
+    """Retorna os dados da linha selecionada.\n
+    Encontra qual a guia aberta, e recupera os dados selecionados para aquela guia somente.\n
+    tab_group é o nome da guia e será utilizada para encontrar a tabela com os valores.\n
     Caso nenhum pregão esteja selecionado retorna False e um sg.popup(msg_erro) é mostrado.\n
     msg_erro - Str com a mensagem que deve aparecer caso nenhum pregão seja selecionado,
     não passando esse parametro será considerada uma frase padrão."""
-    tab = str(values['tg_pregoes']).replace('tab','tb')
+    tab = str(values[tab_group]).replace('tab','tb')
     if (len(values[tab])>0):
         return [window[tab].get()[linha] for linha in values[tab]]
     else:
@@ -97,17 +99,17 @@ def abrir_janela_alterar_fase_pregao(uasg:str,pregao:str):
 def listar_itens_em_categorias(id_pregao:str):
     """Retorna os dados necessários para apresentar os itens do pregão em suas categorias."""
     cabecalho_participados =    [
-        ['Item','Marca','Modelo','Quant','Preço','Custo','Frete','Fornecedor','id'],
-        [5,15,20,5,12,12,8,20,0]]
+        ['id','Item','Marca','Modelo','Quant','Preço','Custo','Frete','Fornecedor'],
+        [0,5,15,20,5,12,12,8,20]]
     cabecalho_homologados =  [
-        ['Item','Marca','Modelo','Preço','Quant','Empenho','Carona','id'],
-        [5,15,20,12,5,7,5,0]]
+        ['id','Item','Marca','Modelo','Preço','Quant','Empenho','Carona'],
+        [0,5,15,20,12,5,7,5]]
     cabecalho_empenhos =    [
-        ['Item','Marca','Modelo','Quant','Preço','Custo','Data Empenho','Data Entrega','Nota','Fase','id'],
-        [5,15,20,5,12,12,12,12,10,12,0]]
+        ['0','Item','Marca','Modelo','Quant','Preço','Custo','Data Empenho','Data Entrega','Nota','Fase','id'],
+        [0,5,15,20,5,12,12,12,12,10,12]]
     cabecalho_caronas =     [
-        ['Item','Marca','Modelo','Quant','Preço','Data','Órgão','Fase','id'],
-        [5,15,20,5,12,10,30,12,0]]
+        ['id','Item','Marca','Modelo','Quant','Preço','Data','Órgão','Fase','id'],
+        [0,5,15,20,5,12,10,30,12]]
     cabecalho_reequilibrios =   [
         ['Item','Marca','Modelo','Quant','Preço','Novo Preço','Data','Fase','id'],
         [5,15,20,5,12,12,10,12,0]]

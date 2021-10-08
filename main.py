@@ -70,37 +70,37 @@ while True:
     if(window.Title==titulo_janelas['janela_consulta_pregoes']):
         janela_anterior=wds.janela_consulta
         if(event == 'bt_alterar_fase'):
-            pregoes = evh.consultar_dados_selecionados_tabela_pregao(window,values)
+            pregoes = evh.consultar_dados_selecionados_tabela(window,values,'tg_pregoes')
             if pregoes:
                 [evh.abrir_janela_alterar_fase_pregao(pregao[1],pregao[0]) for pregao in pregoes]
                 window.Close()
 
         if(event == 'bt_pasta'):
-            pregoes = evh.consultar_dados_selecionados_tabela_pregao(window,values)
+            pregoes = evh.consultar_dados_selecionados_tabela(window,values,'tg_pregoes')
             if pregoes:
                 [evh.abrir_pasta_pregao(pregao[0],pregao[1],pregao[2]) for pregao in pregoes]
         
         if(event == 'bt_consultar_itens'):
-            pregoes = evh.consultar_dados_selecionados_tabela_pregao(window,values)
+            pregoes = evh.consultar_dados_selecionados_tabela(window,values,'tg_pregoes')
             if pregoes:
                 janela_anterior=wds.janela_consulta_pregoes
                 wds.janela_consulta_itens_pregao(pregoes[0][len(pregoes[0])-1])
                 window.Close()
         
         if(event == 'bt_homologar'):
-            pregoes = evh.consultar_dados_selecionados_tabela_pregao(window,values)
+            pregoes = evh.consultar_dados_selecionados_tabela(window,values,'tg_pregoes')
             if pregoes:
                 [evh.abrir_janela_homologacao_itens(pregao[1],pregao[0]) for pregao in pregoes]
                 window.Close()
 
         if(event == 'bt_registrar_empenho'):
-            pregoes = evh.consultar_dados_selecionados_tabela_pregao(window,values)
+            pregoes = evh.consultar_dados_selecionados_tabela(window,values,'tg_pregoes')
             if pregoes:
                 [evh.abrir_janela_itens_empenhar(pregao[1],pregao[0]) for pregao in pregoes]
                 window.Close()
         
         if(event == 'bt_registrar_carona'):
-            pregoes = evh.consultar_dados_selecionados_tabela_pregao(window,values)
+            pregoes = evh.consultar_dados_selecionados_tabela(window,values,'tg_pregoes')
             if pregoes:
                 [evh.abrir_janela_itens_carona(pregao[1],pregao[0]) for pregao in pregoes]
                 window.Close()
@@ -120,7 +120,10 @@ while True:
         if(event == 'bt_consultar'):
             sg.popup('Abre a consulta aos itens do empenho.')
         if(event == 'bt_registrar_entrega'):
-            sg.popup('Em qual data a entrega foi realizada?')
+            empenho = evh.consultar_dados_selecionados_tabela(window,values,'tg_empenhos')
+            if empenho:
+                window.Close()
+                wds.janela_cadastro_entrega_empenho(empenho[0][0])
 
     if(window.Title==titulo_janelas['janela_consulta_reequilibrio']):
         if(event == 'bt_registrar_envio'):
@@ -137,7 +140,17 @@ while True:
             sg.popup('Mostra opções para alterar a fase da carona.')
 
     if(window.Title==titulo_janelas['janela_consulta_itens_pregao']):
-        pass
+        if (event == 'bt_item_alterar'):
+            pregoes = evh.consultar_dados_selecionados_tabela(window,values,'tg_itens')
+            pass
+        if (event == 'bt_item_empenho'):
+            pass
+        if (event == 'bt_item_carona'):
+            pass
+        if (event == 'bt_reequilibrio'):
+            pass
+        if (event == 'bt_fornecedor'):
+            pass
 
 ###JANELAS DESTINADAS A PROCEDIMENTOS DE CADASTROS
 
@@ -192,6 +205,22 @@ while True:
             janela_anterior=wds.janela_consulta
             window.Close()
             wds.janela_consulta_pregoes()
+
+    if(window.Title==titulo_janelas['janela_cadastro_entrega_empenho']):
+        if(event=='bt_cancelar'):
+            window.Close()
+        if(event=='bt_concluir'):
+            data = evh.conferir_campos_de_data(values)
+            if data:
+                if cnn.inserir_entrega_de_empenho(window['txt_empenho'].get(),data):
+                    sg.popup('Entrega resgistrada.')
+                else:
+                    sg.popup('Não foi possível realizar o registro.')
+                window.Close()
+                wds.janela_consulta_empenhos()
+            else:
+                sg.popup('Reveja a data de entrega.')
+
 
 ###JANELAS DESTINADAS AOS PROCESSOS DE AUTOMAÇÃO
 

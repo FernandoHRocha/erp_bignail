@@ -232,8 +232,8 @@ def consultar_dados_pregao(id_pregao:str):
 def consultar_itens_participados(id_pregao:str):
     """Retorna uma lista de itens participados em um pregão."""
     query=(
-        """select i.item, nome_marca, modelo, i.quantidade, i.valor_ofertado, 
-        i.preco_custo, i.frete, i.fornecedor, i.id_item from item as i
+        """select i.id_item, i.item, nome_marca, modelo, i.quantidade, i.valor_ofertado, 
+        i.preco_custo, i.frete, i.fornecedor from item as i
         join marca as m on m.id_marca = i.id_marca
         where i.id_pregao = '"""+validar(id_pregao)+"';")
     cursor.execute(query)
@@ -244,14 +244,15 @@ def consultar_itens_homologados_id(id_pregao:str):
     """Retorna uma lista de itens ganhos para determinado pregão."""
     query=(
     """select
+        i.id_item,
         i.item,
         nome_marca,
         i.modelo,
         ri.valor_ganho,
         i.quantidade,
         (case when qnts.empenho is null then 0 else qnts.empenho end) as empenho,
-        (case when qnts.carona is null then 0 else qnts.carona end) as carona,
-        i.id_item from item as i
+        (case when qnts.carona is null then 0 else qnts.carona end) as carona
+        from item as i
     left join
         (select
             id_item,
@@ -286,6 +287,7 @@ def consultar_itens_empenhados_id(id_pregao:str):
     """Retorna as informações dos itens do pregão que já foram empenhados."""
     query=(
     """select
+        e.id_empenho,
         i.item,
         nome_marca,
         (case when ie.modelo is null then i.modelo else ie.modelo end),
@@ -295,8 +297,7 @@ def consultar_itens_empenhados_id(id_pregao:str):
         format(e.data_empenho,'dd/MM/yyyy'),
         format(e.data_entrega,'dd/MM/yyyy'),
         e.nota_empenho,
-        nome_fase,
-        e.id_empenho
+        nome_fase
     from item_empenho as ie
     join empenho as e on e.id_empenho = ie.id_empenho
     join item as i on i.id_item = ie.id_item
@@ -312,6 +313,7 @@ def consultar_itens_carona(id_pregao:str):
     """Retorna uma lista de itens aceitos em carona para determinado pregão."""
     query=(
     """select
+        c.id_carona,
         i.item,
         nome_marca,
         i.modelo,
@@ -319,8 +321,8 @@ def consultar_itens_carona(id_pregao:str):
         ic.valor_ganho,
         format (c.data_carona,'dd/MM/yyyy'),
         nome_orgao,
-        nome_fase,
-        c.id_carona from carona as c
+        nome_fase
+        from carona as c
     join item_carona as ic on ic.id_carona = c.id_carona
     join item as i on i.id_item = ic.id_item
     join marca on marca.id_marca = i.id_marca
@@ -461,3 +463,14 @@ def inserir_itens_em_empenho(uasg:str,pregao:str,nota_empenho:str,itens:list):
             return True
     except:
         return False
+
+def inserir_entrega_de_empenho(id_empenho:str,data:str):
+    """Insere a data da entrega para o referido pregão."""
+    query=("update empenho set data_entrega='"+validar(data)+"', id_fase='2' where id_empenho = '"+validar(id_empenho)+"';")
+    try:
+        cursor.execute(query)
+        conn.commit()
+        return True
+    except:
+        return False
+

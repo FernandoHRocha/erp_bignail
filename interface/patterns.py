@@ -103,9 +103,11 @@ def frame_item_empenhar(itens:list):
             ]
         ])
 
-def botoes_concluir_cancelar_operacao():
-    """Retorna um array com dois sg.Button para finalizar operações com Cancelar e Concluir."""
+def botoes_concluir_cancelar_operacao(cancelar:str='Cancelar',concluir:str='Concluir'):
+    """Retorna um array com dois sg.Button para finalizar operações com Cancelar e Concluir.\n
+    Passando os parametros é possível alterar o nome exposto no botão, mas não suas chaves.\n
+    As chaves são respectivamente: bt_cancelar e bt_concluir."""
     return [
-        sg.Button('Cancelar',enable_events=True,key='bt_cancelar',size=(20,1)),
-        sg.Button('Concluir',enable_events=True,key='bt_concluir',size=(20,1)),
+        sg.Button(cancelar,enable_events=True,key='bt_cancelar',size=(20,1)),
+        sg.Button(concluir,enable_events=True,key='bt_concluir',size=(20,1)),
     ]

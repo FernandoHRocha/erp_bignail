@@ -23,6 +23,7 @@ titulo_janelas = {
     'janela_cadastro_homologacao':'Homologar Pregão',
     'janela_cadastro_itens_empenhar':'Empenhar itens',
     'janela_cadastro_itens_carona':'Cadastrar Carona de Itens',
+    'janela_cadastro_entrega_empenho':'Registrar Entrega',
     #auxiliares
     'janela_consulta_pregao_alterar_fase':'Alteração de Fase',
 }
@@ -235,6 +236,7 @@ def janela_consulta_itens_pregao(id_pregao:str):
             sg.Button('Alterar item',enable_events=True,key='bt_item_alterar'),
             sg.Button('Registrar Empenho',enable_events=True,key='bt_item_empenho'),
             sg.Button('Registrar Carona',enable_events=True,key='bt_item_carona'),
+            sg.Button('Solicitar Reequilibrio',enable_events=True,key='bt_reequilibrio'),
             sg.Button('Consultar Fornecedor',enable_events=True,key='bt_fornecedor'),
         ],
         [pt.bt_voltar()]
@@ -244,6 +246,7 @@ def janela_consulta_itens_pregao(id_pregao:str):
 ###JANELAS DESTINADAS A ALTERAÇÕES
 
 def janela_alteracao_itens_participados(id_pregao:str):
+    
     layout = [
         [
 
@@ -362,6 +365,21 @@ def janela_cadastro_itens_carona(uasg:str,pregao:str,itens:list):
         pt.botoes_concluir_cancelar_operacao(),
     ]
     return sg.Window(title=titulo_janelas['janela_cadastro_itens_carona'],layout=layout,finalize=True)
+
+def janela_cadastro_entrega_empenho(id_empenho:str):
+    """Retorna um sg.Window com campos de data para registrar a entrega."""
+    layout = [
+        [
+            sg.Text(id_empenho,key='txt_empenho')
+        ],
+        [
+            pt.data('Qual foi a data da entrega?','entrega_empenho',True)
+        ],
+        [
+            pt.botoes_concluir_cancelar_operacao(concluir='Registrar')
+        ]
+    ]
+    return sg.Window(title=titulo_janelas['janela_cadastro_entrega_empenho'],layout=layout,finalize=True)
 
 ###JANELAS DESTINADAS AOS PROCESSOS DE AUTOMAÇÃO
 
