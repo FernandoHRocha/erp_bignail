@@ -1,30 +1,35 @@
-CREATE TABLE categoria (
+CREATE TABLE categoria
+(
  id_categoria int IDENTITY(1,1) PRIMARY KEY,
- nome_categoria varchar(30) NOT NULL,
+ nome_categoria varchar(30) NOT NULL ,
 );
 
-CREATE TABLE marca (
+CREATE TABLE marca
+(
  id_marca int IDENTITY(1,1) PRIMARY KEY,
- nome_marca varchar(50) NOT NULL,
+ nome_marca varchar(50) NOT NULL ,
 );
 
-CREATE TABLE orgao (
+CREATE TABLE orgao
+(
  id_orgao int IDENTITY(1,1) PRIMARY KEY,
  nome_orgao varchar(80) NOT NULL,
  uasg char(6) NOT NULL UNIQUE
 );
 
-CREATE TABLE fase_pregao (
+CREATE TABLE fase_pregao
+(
  id_fase int IDENTITY(1,1) PRIMARY KEY,
- nome_fase varchar(30) NOT NULL,
+ nome_fase varchar(30) NOT NULL ,
 );
 
-CREATE TABLE pregao (
- id_pregao int IDENTITY(1,1) PRIMARY KEY,
- numero_pregao varchar(10) NOT NULL,
- data_abertura datetime NOT NULL,
+CREATE TABLE pregao
+(
+ id_pregao int IDENTITY(1,1) PRIMARY KEY ,
+ numero_pregao varchar(10) NOT NULL ,
+ data_abertura datetime NOT NULL ,
  data_ata date,
- id_fase int NOT NULL,
+ id_fase int NOT NULL ,
  id_orgao int NOT NULL,
  CONSTRAINT FK_orgao_pregao
 	FOREIGN KEY (id_orgao)
@@ -38,7 +43,8 @@ CREATE TABLE pregao (
 	ON UPDATE CASCADE,
 );
 
-CREATE TABLE item (
+CREATE TABLE item
+(
  id_item int IDENTITY(1,1) PRIMARY KEY,
  item int NOT NULL,
  modelo varchar(45),
@@ -67,9 +73,10 @@ CREATE TABLE item (
 	ON UPDATE CASCADE
 );
 
-CREATE TABLE fase_carona (
+CREATE TABLE fase_carona
+(
  id_fase int IDENTITY(1,1) PRIMARY KEY,
- nome_fase varchar(30) NOT NULL,
+ nome_fase varchar(30) NOT NULL ,
 );
 
 CREATE TABLE carona (
@@ -95,10 +102,11 @@ CREATE TABLE carona (
 		ON UPDATE CASCADE,
 );
 
-CREATE TABLE item_carona (
+CREATE TABLE item_carona
+(
 	id_item_carona int IDENTITY(1,1) PRIMARY KEY,
 	quantidade int NOT NULL,
-	valor_ganho decimal (11,2),
+	valor_ganho decimal(11,2) NULL,
 	id_carona int NOT NULL,
 	id_item int NOT NULL,
 	CONSTRAINT FK_item_item_carona
@@ -113,7 +121,8 @@ CREATE TABLE item_carona (
 		ON UPDATE NO ACTION,
 );
 
-CREATE TABLE resultado_item (
+CREATE TABLE resultado_item
+(
  id_item int PRIMARY KEY,
  colocacao int,
  valor_ganho decimal(11,2) NOT NULL,
@@ -124,15 +133,18 @@ CREATE TABLE resultado_item (
 	ON UPDATE CASCADE,
 );
 
-CREATE TABLE fase_empenho (
+CREATE TABLE fase_empenho
+(
  id_fase int IDENTITY(1,1) PRIMARY KEY,
- nome_fase varchar(30) NOT NULL,
+ nome_fase varchar(30) NOT NULL ,
 );
 
-CREATE TABLE empenho (
+CREATE TABLE empenho
+(
  id_empenho int IDENTITY(1,1) PRIMARY KEY,
- data_empenho date NOT NULL,
- nota_empenho varchar(30),
+ data_empenho date NOT NULL ,
+ nota_empenho varchar(30) NULL,
+ data_entrega date NULL,
  id_pregao int NOT NULL,
  id_orgao int NOT NULL,
  id_fase int NOT NULL,
@@ -153,13 +165,21 @@ CONSTRAINT FK_fase_empenho
 	ON UPDATE CASCADE
 );
 
-CREATE TABLE item_empenho (
+CREATE TABLE item_empenho
+(
  id_item_empenho int IDENTITY(1,1) PRIMARY KEY,
  quantidade int NOT NULL,
+ modelo varchar(45) NULL,
  custo_unitario decimal(11,2),
  valor_unitario decimal(11,2),
+ id_marca int NULL,
  id_empenho int NOT NULL,
  id_item int NOT NULL,
+CONSTRAINT FK_marca_item_empenho
+	FOREIGN KEY (id_marca)
+	REFERENCES marca (id_marca)
+	ON DELETE CASCADE
+	ON UPDATE CASCADE,
 CONSTRAINT FK_empenho_item_empenho
 	FOREIGN KEY (id_empenho)
 	REFERENCES empenho (id_empenho)
@@ -172,12 +192,14 @@ CONSTRAINT FK_item_item_empenho
 	ON UPDATE NO ACTION,
 );
 
-CREATE TABLE fase_reequilibrio (
+CREATE TABLE fase_reequilibrio
+(
  id_fase int IDENTITY(1,1) PRIMARY KEY,
- nome_fase varchar(30) NOT NULL,
+ nome_fase varchar(30) NOT NULL ,
 );
 
-CREATE TABLE reequilibrio (
+CREATE TABLE reequilibrio 
+(
 	id_reequilibrio int IDENTITY(1,1) PRIMARY KEY,
 	data_reequilibrio date NOT NULL,
 	id_pregao int NOT NULL,
@@ -200,7 +222,8 @@ CREATE TABLE reequilibrio (
 		ON UPDATE CASCADE,
 );
 
-CREATE TABLE item_reequilibrio (
+CREATE TABLE item_reequilibrio
+(
 	id_item_reequilibrio int IDENTITY(1,1) PRIMARY KEY,
 	quantidade int NOT NULL,
 	novo_valor decimal(11,2) NOT NULL,

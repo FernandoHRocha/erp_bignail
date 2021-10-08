@@ -288,7 +288,7 @@ def consultar_itens_empenhados_id(id_pregao:str):
     """select
         i.item,
         nome_marca,
-        i.modelo,
+        (case when ie.modelo is null then i.modelo else ie.modelo end),
         ie.quantidade,
         ie.valor_unitario,
         (case when ie.custo_unitario is null then 0 else ie.custo_unitario end) as custo,
@@ -300,7 +300,7 @@ def consultar_itens_empenhados_id(id_pregao:str):
     from item_empenho as ie
     join empenho as e on e.id_empenho = ie.id_empenho
     join item as i on i.id_item = ie.id_item
-    join marca as m on m.id_marca = i.id_marca
+    join marca as m on (case when ie.id_marca is null then (i.id_marca) else (ie.id_marca) end) = m.id_marca
     join fase_empenho as fs on fs.id_fase = e.id_fase
     join pregao as p on p.id_pregao = i.id_pregao
     where p.id_pregao = '"""+validar(id_pregao)+"' order by e.data_empenho desc;")

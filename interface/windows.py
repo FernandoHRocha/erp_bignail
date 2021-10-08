@@ -17,6 +17,8 @@ titulo_janelas = {
     'janela_consulta_carona':'Pedidos de Carona',
     'janela_consulta_atas':'Atas de Processos',
     'janela_consulta_itens_pregao':'Itens do pregão',
+    #alterações
+    'janela_alteracao_itens_participados':'Alteração dos Itens Cadastrados.',
     #cadastros
     'janela_cadastro_homologacao':'Homologar Pregão',
     'janela_cadastro_itens_empenhar':'Empenhar itens',
@@ -200,21 +202,23 @@ def janela_consulta_itens_pregao(id_pregao:str):
         [
             sg.Frame(title=' Consulta aos itens do pregão ',key='fr_titulo_pregao',layout=[
                 [
+                    sg.Text(id_pregao,visible=False),
                     sg.Text('Órgão: '),
-                    sg.Text(orgao),
+                    sg.Text(orgao,key='txt_orgao'),
                     sg.Text(' UASG: '),
-                    sg.Text(uasg),
+                    sg.Text(uasg,key='txt_uasg'),
                 ],
                 [
                     sg.Text('Pregão: '),
-                    sg.Text(pregao),
-                    sg.Text(' '+fase)
+                    sg.Text(pregao,key='txt_pregao'),
+                    sg.Text(' '),
+                    sg.Text(fase,key='txt_fase'),
                 ],
                 [
                     sg.Text('Data Abertura: '),
-                    sg.Text(data),
+                    sg.Text(data,key='txt_data'),
                     sg.Text(' Data de Assinatura da Ata: '),
-                    sg.Text(ata),
+                    sg.Text(ata,key='txt_ata'),
                 ]
             ])
         ],
@@ -236,6 +240,16 @@ def janela_consulta_itens_pregao(id_pregao:str):
         [pt.bt_voltar()]
     ]
     return sg.Window(title=titulo_janelas['janela_consulta_itens_pregao'],layout=layout,finalize=True)
+
+###JANELAS DESTINADAS A ALTERAÇÕES
+
+def janela_alteracao_itens_participados(id_pregao:str):
+    layout = [
+        [
+
+        ]
+    ]
+    return sg.Window(title=titulo_janelas['janela_alteracao_itens_participados'],layout=layout, finalize=True)
 
 ###JANELAS DESTINADAS A CADASTROS
 
