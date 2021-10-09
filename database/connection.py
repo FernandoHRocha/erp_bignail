@@ -80,22 +80,17 @@ def consultar_id_fase_empenho(fase:str):
 
 ###CONSULTAS
 
-def consulta_orgaos():
-    """Retorna uma lista de todos os órgãos cadastrados e sua respectiva uasg."""
-    consulta = []
-    cursor.execute('exec sel_orgaos;')
-    for row in cursor:
-        aux = [row[0],row[1]]
-        consulta.append(aux)
-    return consulta
+def consultar_todos_orgaos():
+    """Retorna uma lista de todos os órgãos cadastrados."""
+    query=("select nome_orgao from orgao order by nome_orgao asc;")
+    cursor.execute(query)
+    return [row[0] for row in cursor.fetchall()]
 
-def consulta_pregoes(uasg):
-    """Consulta os pregões participados por órgão."""
-    cursor.execute("exec sel_pregoes @uasg = '"+validar(uasg)+"'")
-    consulta = []
-    for row in cursor:
-        consulta.append(row[0])
-    return consulta
+def consultar_todos_uasgs():
+    """Retorna uma lista ordenada dos uasgs contidos no banco de dados."""
+    query=("select uasg from orgao order by uasg asc;")
+    cursor.execute(query)
+    return [row[0] for row in cursor.fetchall()]
 
 def consultar_pregoes_fase(fase:str=''):
     """Retorna a lista de pregões ordenados pela data filtrado por fase.
@@ -214,6 +209,12 @@ def consultar_caronas_pela_fase(fase:str=''):
     return consulta
 
 ###CONSULTAS PELO ID DO PREGÃO
+
+def consultar_pregao_orgao(id_orgao:str):
+    """Retorna uma lista com os pregões registrados para o órgão."""
+    query=("select numero_pregao from pregao where id_orgao = '"+validar(id_orgao)+"' order by numero_pregao asc;")
+    cursor.execute(query)
+    return [row[0] for row in cursor.fetchall()]
 
 def consultar_dados_pregao(id_pregao:str):
     """Retorna os dados gerais de um pregão.\n
@@ -335,6 +336,34 @@ def consultar_itens_carona(id_pregao:str):
     cursor.execute(query)
     consulta = [list(row) for row in cursor.fetchall()]
     return consulta
+
+###PROCURAS
+
+def procurar_uasg(uasg:str):
+    """Retorna uma lista de uasgs parecidos com o parametro de entrada."""
+    query=("select uasg from orgao where uasg like '"+validar(uasg)+"%' order by uasg;")
+    cursor.execute(query)
+    return [row[0] for row in cursor.fetchall()]
+
+def procurar_orgao(orgao:str):
+    """Retorna uma lista de órgão cujos nome são parecidos com o parametro de entrada."""
+    query=("select nome_orgao from orgao where nome_orgao like '%"+validar(orgao)+"%';")
+    cursor.execute(query)
+    return [row[0] for row in cursor.fetchall()]
+
+def procurar_orgao_com_uasg(uasg:str):
+    """Retorna o nome do órgão com uma procura pelo seu código uasg."""
+    query=("select nome_orgao from orgao where uasg = '"+validar(uasg)+"';")
+    cursor.execute(query)
+    resultado = cursor.fetchone()
+    return resultado[0] if resultado != None else '-1'
+
+def procurar_uasg_com_nome_orgao(orgao:str):
+    """Retorna o código uasg com uma procura pelo nome do órgão."""
+    query=("select uasg from orgao where nome_orgao = '"+validar(orgao)+"';")
+    cursor.execute(query)
+    resultado = cursor.fetchone()
+    return resultado[0] if resultado != None else '-1'
 
 ###ALTERAÇÕES
 

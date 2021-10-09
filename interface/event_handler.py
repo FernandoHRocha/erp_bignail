@@ -39,31 +39,9 @@ def consultar_dados_selecionados_tabela(window:sg.Window, values:dict,tab_group:
 def consultar_dados_pregao(id_pregao:str):
     return cnn.consultar_dados_pregao(id_pregao)
 
-def atualizar_lista_orgao():
+def consultar_uasg_orgao():
     """Retorna do banco de dados uma lista com o nome dos órgãos registrados."""
-    _orgao =[]
-    for org in cnn.consulta_orgaos():
-        _orgao.append(org[0])
-    return _orgao
-
-def escolher_orgao(window:sg.Window, orgao:str):
-    """Preenche um combo box com os pregões participados pelo órgão indicado."""
-    window['fr_pregao'].update(visible=True)
-    for org in cnn.consulta_orgaos():
-        if org[0] == orgao:
-            window['txt_uasg'].update(value=org[1])
-            window['cb_pregao'].update(values=cnn.consulta_pregoes(org[1]),visible=True)
-            break
-
-def apresentar_itens_pregao(window:sg.Window, orgao:str, pregao:str):
-    """Preenche um combo box com os pregões participados pelo órgão indicado."""
-    window['fr_itens_participados'].update(visible=True)
-    for org in cnn.consulta_orgaos():
-        if org[0] == orgao:
-            orgao = org[1]
-            break
-    window['tb_registrado'].update(values=cnn.consultar_itens_geral(orgao,pregao))
-    window['tb_ganho'].update(values=cnn.consultar_itens_homologados(orgao,pregao))
+    return [cnn.consultar_todos_uasgs(),cnn.consultar_todos_orgaos()]
 
 def listar_pregoes_gerais():
     """Retorna uma lista com a categoria dos pregões e os respectivos dados."""
@@ -96,7 +74,7 @@ def abrir_janela_alterar_fase_pregao(uasg:str,pregao:str):
     """Abre a janela para alteração de fase de pregão."""
     wds.janela_consulta_pregao_alterar_fase(uasg,pregao,cnn.consultar_fases_pregoes())
 
-def listar_itens_em_categorias(id_pregao:str):
+def listar_itens_em_categorias(id_pregao:str):#incompleto
     """Retorna os dados necessários para apresentar os itens do pregão em suas categorias."""
     cabecalho_participados =    [
         ['id','Item','Marca','Modelo','Quant','Preço','Custo','Frete','Fornecedor'],
@@ -141,6 +119,42 @@ def abrir_pasta_pregao(pregao:str,uasg:str,data:str):
         os.startfile(os.path.realpath(path))
     except:
         sg.popup('Não foi possível encontrar a pasta.')
+
+##JANELA DE PROCURA POR PREGÃO
+
+def limpar_entradas_procura_pregao(window,entradas:list):
+    """Esvazia as entradas de dados que não estão sendo utilizadas"""
+    [window[entrada].update(value='') for entrada in entradas]
+
+def procurar_pelo_uasg(uasg:str,window):
+    """Procura e atualiza o combobox com os uasgs que condizem com o parametro entrada."""
+    if uasg:
+        limpar_entradas_procura_pregao(window,['it_orgao','it_pregao'])
+        window['cb_uasg'].update(values=cnn.procurar_uasg(uasg))
+
+def procurar_pelo_orgao(orgao:str,window):
+    if orgao:
+        limpar_entradas_procura_pregao(window,['it_uasg','it_pregao'])
+        valor = cnn.procurar_orgao(orgao)
+        #if (len(valor)>0):
+        window['cb_orgao'].update(values=valor)
+
+def atualizar_orgao_pelo_uasg(uasg:str,window):
+    """Procura e atualiza o órgão pelo seu código uasg."""
+    if uasg:
+        window['cb_orgao'].update(value=cnn.procurar_orgao_com_uasg(uasg))
+        atualizar_lista_pregoes(cnn.consultar_id_orgao(uasg),window)
+
+def atualizar_uasg_pelo_orgao(orgao:str,window):
+    """Procura e atualiza o uasg pelo nome do órgão."""
+    if orgao:
+        uasg = cnn.procurar_uasg_com_nome_orgao(orgao)
+        window['cb_uasg'].update(value=uasg)
+        atualizar_lista_pregoes(cnn.consultar_id_orgao(uasg),window)
+
+def atualizar_lista_pregoes(id_orgao:str,window):
+    """Procura e atualiza o combobox dos pregões registrados para determinado órgão."""
+    window['cb_pregao'].update(values=cnn.consultar_pregao_orgao(id_orgao))
 
 ##JANELA HOMOLOGAÇÃO DE ITENS
 
@@ -284,3 +298,14 @@ def caronar_itens(window:sg.Window,values:list):
                     sg.popup('Carona registrado com sucesso!')
                     window.Close()
 
+##CONTROLE DE ENTRADAS
+
+def entrada_numerica(valor:str):
+    """Confere se o último caractere inserido é um número.\n
+    Retorna um caractere a menos caso não seja um número.\n
+    Retorna nulo quando a entrada é nula."""
+    if valor:
+        if(valor[len(valor)-1].isdigit() and len(valor)<7):
+            return valor
+        else:
+            return valor[:-1]

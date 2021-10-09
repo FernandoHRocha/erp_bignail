@@ -50,22 +50,28 @@ while True:
             wds.janela_consulta_carona()
 
     if(window.Title==titulo_janelas['janela_consulta_pregao']):
+        if (event == 'it_uasg'):
+            valor = evh.entrada_numerica(values['it_uasg'])
+            window['it_uasg'].update(value=valor)
+            evh.procurar_pelo_uasg(valor,window)
+
+        if (event == 'it_orgao'):
+            evh.procurar_pelo_orgao(values['it_orgao'],window)
+        
+        if(event == 'cb_uasg'):
+            evh.atualizar_orgao_pelo_uasg(values['cb_uasg'],window)
+
         if(event == 'cb_orgao'):
-            evh.escolher_orgao(window,values['cb_orgao'])
+            evh.atualizar_uasg_pelo_orgao(values['cb_orgao'],window)
+
+        if (event == 'it_pregao'):
+            valor = evh.entrada_numerica(values['it_pregao'])
+            window['it_pregao'].update(value=valor)
+            evh.procurar_pelo_uasg(valor,window)
+
         if(event == 'cb_pregao'):
-            evh.apresentar_itens_pregao(window,values['cb_orgao'],values['cb_pregao'])
-        if(event == 'tg_item'):#eventos de mudança de aba tab_registrado tab_ganho
-            pass
-        if(event == 'tb_registrado'):
-            pass
-        if(event == 'tb_ganho'):
-            pass
-        if(event == 'bt_item_alterar'):
-            sg.popup('Abre a tela de alteração das informações do item.')
-        if(event == 'bt_item_empenho'):
-            sg.popup('Registra o empenho dos itens selecionados e abre a pasta do pregão.')
-        if(event == 'bt_item_carona'):
-            sg.popup('Registra o aceite de carona dos itens selecionados e abre a pasta do pregão.')
+            window['fr_info_pregao'].update(visible=True)
+            window['fr_opcoes_pregao'].update(visible=True)
 
     if(window.Title==titulo_janelas['janela_consulta_pregoes']):
         janela_anterior=wds.janela_consulta

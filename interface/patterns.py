@@ -32,18 +32,81 @@ def tabela_itens_preenchida(cabecalho,valores,key,larguras,visible=True):
 def combo_estado_pregao(key):
     return sg.Combo(values=['Proposta','Julgamento','Frustrado','Homologado','Adjudicado','Finalizado','Suspenso'],enable_events=True, key=key,size=(12,1))
 
-def frame_orgaos_pregao(orgaos):
-    """Retorna uma sg.frame com dois rótulos e duas caixas combo,
-    referente aos órgãos registrados (lista que deve ser passada
-    como parametro) e outra aos pregões."""
-    return [sg.Frame(title='',layout=[
-            [sg.Text('Órgão: ',(10,1),key='txt_uasg'),
-            sg.Combo(values=orgaos,size=(60,1),enable_events=True,key='cb_orgao',readonly=True)]
-            ]),
-        sg.Frame(title='',key='fr_pregao',visible=False,layout=[
-            [sg.Text(' Pregão: ',(10,1)),
-            sg.Combo(values=[],size=(10,1),enable_events=True,key='cb_pregao',readonly=True)]
-            ])]
+def frame_pesquisa_por_pregao(orgaos:list):
+    """Retorna uma sg.frame com a busca de pregão, informações e opções.\n
+    O parametro deve ser uma lista com a primeira lista sendo dos códigos UASG, e a segunda o nome dos Órgãos."""
+    col1=(30,1)
+    return [
+        sg.Frame(title=' Pesquisar por Órgão e Pregão ',layout=[
+            [
+                sg.Column(layout=[
+                    [
+                        sg.Text('UASG')
+                    ],
+                    [
+                        sg.InputText(size=(10,1),key='it_uasg',enable_events=True)
+                    ],
+                    [
+                        sg.Combo(values=orgaos[0],size=(8,1),enable_events=True,key='cb_uasg',readonly=True)
+                    ]
+                ]),
+                sg.Column(layout=[
+                    [
+                        sg.Text('Órgão')
+                    ],
+                    [
+                        sg.InputText(size=(82,1),key='it_orgao',enable_events=True)
+                    ],
+                    [
+                        sg.Combo(values=orgaos[1],size=(80,1),key='cb_orgao',readonly=True,enable_events=True)
+                    ],
+                ]),
+                sg.Column(layout=[
+                    [
+                        sg.Text('Pregão')
+                    ],
+                    [
+                        sg.InputText(size=(14,1),key='it_pregao',enable_events=True)
+                    ],
+                    [
+                        sg.Combo(values=[],size=(12,1),key='cb_pregao',readonly=True,enable_events=True)
+                    ]
+                ])
+            ],
+            [
+                sg.Frame(title=' Informações do Pregão ',border_width=0,visible=False,key='fr_info_pregao',layout=[
+                    [
+                        sg.Column(layout=[
+                            [sg.Text('Data da disputa de preços',size=col1,justification='center')],
+                            [sg.Text('00/00/0000', key='txt_data_abertura',size=col1,justification='center')],
+                            [sg.Text('Estado atual',size=col1,justification='center')],
+                            [sg.Text('Julgamento', key='txt_julgamento',size=col1,justification='center')],
+                        ]),
+                        sg.Column(layout=[
+                            [sg.Text('Itens homologados',size=col1,justification='center')],
+                            [sg.Text('XX', key='txt_itens_homologados',size=col1,justification='center')],
+                            [sg.Text('Empenhos',size=col1,justification='center')],
+                            [sg.Text('XX', key='txt_itens_empenhados',size=col1,justification='center')],
+                        ]),
+                        sg.Column(layout=[
+                            [sg.Text('Valor total homologado',size=col1,justification='center')],
+                            [sg.Text('XXXX,XX', key='txt_valor_homologado',size=col1,justification='center')],
+                            [sg.Text('Valor total empenhado',size=col1,justification='center')],
+                            [sg.Text('XXXX,XX', key='txt_valor_empenhado',size=col1,justification='center')],
+                        ]),
+                    ]
+                ]),
+            ],
+            [
+                sg.Frame(title=' Opções do pregão ',border_width=0 ,visible=False,key='fr_opcoes_pregao',layout=[
+                    [
+                        sg.Button(button_text='Abrir Pasta',key='bt_pasta'),
+                        sg.Button(button_text='Consultar Itens',key='bt_pasta'),
+                    ]
+                ])
+            ]
+        ])
+    ]
 
 def aba_com_tabela_itens(cabecalho:list, identificador:str, valores:list):
     """Retorna a sg.Tab contendo uma tabela.\n

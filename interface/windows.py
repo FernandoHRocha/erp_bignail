@@ -53,34 +53,10 @@ def janela_consulta():
     return sg.Window(title=titulo_janelas['janela_consulta'], layout=layout, finalize=True)
 
 def janela_consulta_pregao():
-    """Retorna um sg.Window contendo uma frame com a busca de pregão, e uma frame com tabela e botões."""
-    cabecalho_registrado = [
-        ['ID','Item','Modelo','Quantidade','Nosso Preço','Custo','Frete','Fornecedor','Marca'],
-        [5,4,20,10,12,12,10,20,15]
-    ]
-    cabecalho_ganhos = [
-        ['ID','Item','Marca','Modelo','Quant.','Valor Unit.','Valor Total','Custo','Frete','Fornecedor'],
-        [5,3,15,20,5,11,11,11,11,15]
-    ]
-
+    """Retorna um sg.Window contendo a busca geral de pregão."""
+    orgaos = evh.consultar_uasg_orgao()
     layout=[
-        pt.frame_orgaos_pregao(evh.atualizar_lista_orgao()),
-        [sg.Frame(title='',visible=False,key='fr_itens_participados',layout=[
-            [
-            sg.TabGroup([
-                [
-                    sg.Tab('Registrados', pt.tabela_itens(cabecalho_registrado[0],'tb_registrado',larguras=cabecalho_registrado[1]),key='tab_registrado',visible=True),
-                    sg.Tab('Ganhos', pt.tabela_itens(cabecalho_ganhos[0],'tb_ganho',larguras=cabecalho_ganhos[1]),key='tab_ganho',visible=True)
-                ]
-                ],enable_events=True,key='tg_item')
-            ],
-            [
-                sg.Button('Alterar item',enable_events=True,key='bt_item_alterar'),
-                sg.Button('Registrar Empenho',enable_events=True,key='bt_item_empenho'),
-                sg.Button('Registrar Carona',enable_events=True,key='bt_item_carona'),
-            ]
-            ]),
-        ],
+        pt.frame_pesquisa_por_pregao(orgaos),
         [pt.bt_voltar()]
     ]
     return sg.Window(title=titulo_janelas['janela_consulta_pregao'], layout=layout, finalize=True)
@@ -245,7 +221,7 @@ def janela_consulta_itens_pregao(id_pregao:str):
 
 ###JANELAS DESTINADAS A ALTERAÇÕES
 
-def janela_alteracao_itens_participados(id_pregao:str):
+def janela_alteracao_itens_participados(id_pregao:str):#INCOMPLETO
     
     layout = [
         [
@@ -266,7 +242,7 @@ def janela_cadastro():
         ]
     return sg.Window(titulo_janelas['janela_cadastro'], layout, finalize=True)
 
-def janela_cadastro_itens_reequilibrio(id_pregao:str):
+def janela_cadastro_itens_reequilibrio(id_pregao:str):#INCOMPLETO
     """Retorna um sg.Window para registro dos itens que necessitam de pedido de reequilibrio econômico."""
     
     return
@@ -357,7 +333,7 @@ def janela_cadastro_itens_carona(uasg:str,pregao:str,itens:list):
             sg.Text(uasg,key='txt_uasg')
         ],
         [
-            sg.Combo(values=evh.atualizar_lista_orgao(),size=(100,1),enable_events=True,key='cb_orgao',readonly=True)
+            sg.Combo(values=evh.consultar_uasg_orgao(),size=(100,1),enable_events=True,key='cb_orgao',readonly=True)
         ],
         [
             sg.Column(  layout=[[pt.frame_item_empenhar(item)] for item in itens],
