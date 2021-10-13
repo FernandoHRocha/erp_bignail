@@ -503,7 +503,6 @@ def inserir_empenho(uasg:str,pregao:str,data:str,nota:str,fase:str='Solicitado')
     if( '-1' in [id_orgao,id_pregao,id_fase]): return False
     query = (   "insert into empenho (data_empenho,nota_empenho, id_pregao, id_fase, id_orgao) values"
                 "('"+validar(data)+"','"+validar(nota)+"','"+validar(id_pregao)+"','"+validar(id_fase)+"','"+validar(id_orgao)+"')")
-    print(query)
     try:
         cursor.execute(query)
         conn.commit()

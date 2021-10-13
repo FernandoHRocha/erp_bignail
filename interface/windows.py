@@ -342,7 +342,7 @@ def janela_cadastro_itens_carona(uasg:str,pregao:str,itens:list):
             sg.Text(uasg,key='txt_uasg')
         ],
         [
-            sg.Combo(values=evh.consultar_uasg_orgao(),size=(100,1),enable_events=True,key='cb_orgao',readonly=True)
+            sg.Combo(values=evh.consultar_uasg_orgao()[1],size=(100,1),enable_events=True,key='cb_orgao',readonly=True)
         ],
         [
             sg.Column(  layout=[[pt.frame_item_empenhar(item)] for item in itens],
