@@ -210,7 +210,7 @@ def consultar_caronas_pela_fase(fase:str=''):
 
 ###CONSULTAS PELO ID DO PREGÃO
 
-def consultar_pregao_orgao(id_orgao:str):
+def consultar_pregoes_do_orgao(id_orgao:str):
     """Retorna uma lista com os pregões registrados para o órgão."""
     query=("select numero_pregao from pregao where id_orgao = '"+validar(id_orgao)+"' order by numero_pregao asc;")
     cursor.execute(query)
@@ -220,14 +220,46 @@ def consultar_dados_pregao(id_pregao:str):
     """Retorna os dados gerais de um pregão.\n
     numero, uasg, órgão, data de abertura, data da ata, fase."""
     query=(
-        """select p.numero_pregao, o.uasg, o.nome_orgao,
-        format (p.data_abertura,'dd-MM-yyyy hh:mm') as data_abertura,
-        p.data_ata, fp.nome_fase from pregao as p
+        """select
+            p.numero_pregao,
+            o.uasg,
+            o.nome_orgao,
+            format (p.data_abertura,'dd/MM/yyyy HH:mm') as data_abertura,
+            format (p.data_ata, 'dd/MM/yyyy HH:mm') as data_ata,
+            fp.nome_fase from pregao as p
         join orgao as o on o.id_orgao = p.id_orgao
         join fase_pregao as fp on fp.id_fase = p.id_fase
         where p.id_pregao = '"""+validar(id_pregao)+"';")
     cursor.execute(query)
     consulta=[list(row) for row in cursor.fetchall()]
+    return consulta[0]
+
+def consultar_dados_gerais_pregao(id_pregao:str):
+    """Retorna os dados gerais do pregão."""
+    query=("""
+    select
+        format (p.data_abertura,'dd/MM/yyyy HH:mm'),
+        nome_fase,
+        count(ri.id_item) as itens_homologados,
+        sum(i.quantidade * ri.valor_ganho) as total_homologado,
+        e.empenhos,
+        emp.total as total_empenhado
+        from pregao as p
+    left join fase_pregao as fp on fp.id_fase = p.id_fase
+    left join item as i on i.id_pregao = p.id_pregao
+    left join resultado_item as ri on ri.id_item = i.id_item
+    left join (select id_pregao, count(id_empenho) as empenhos from empenho group by id_pregao) as e on e.id_pregao = p.id_pregao
+    left join (
+        select p.id_pregao, e.empenhos, sum(ie.valor_unitario * ie.quantidade) as total from pregao as p
+        join (select id_empenho, id_pregao, count(id_empenho) as empenhos from empenho group by id_empenho, id_pregao) as e on e.id_pregao = p.id_pregao
+        join item_empenho as ie on ie.id_empenho = e.id_empenho
+        group by p.id_pregao, e.id_pregao, e.empenhos) as emp on emp.id_pregao = p.id_pregao
+    where p.id_pregao = '"""+validar(id_pregao)+"""'
+    group by data_abertura, nome_fase, e.empenhos, emp.total
+        """)
+    cursor.execute(query)
+    consulta=[list(row) for row in cursor.fetchall()]
+    print(consulta)
     return consulta[0]
 
 def consultar_itens_participados(id_pregao:str):

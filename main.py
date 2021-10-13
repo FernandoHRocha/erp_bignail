@@ -73,6 +73,7 @@ while True:
 
         if(event == 'cb_pregao'):
             evh.mostrar_frame_informacoes_opcoes(window)
+            evh.atualizar_informacoes_pregao(values['cb_uasg'],values['cb_pregao'],window)
 
     if(window.Title==titulo_janelas['janela_consulta_pregoes']):
         janela_anterior=wds.janela_consulta

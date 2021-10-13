@@ -88,15 +88,15 @@ def frame_com_informacao_pregao():
                 ]),
                 sg.Column(layout=[
                     [sg.Text('Itens homologados',size=col1,justification='center')],
-                    [sg.Text('XX', key='txt_itens_homologados',size=col1,justification='center')],
+                    [sg.Text('0', key='txt_itens_homologados',size=col1,justification='center')],
                     [sg.Text('Empenhos',size=col1,justification='center')],
-                    [sg.Text('XX', key='txt_itens_empenhados',size=col1,justification='center')],
+                    [sg.Text('0', key='txt_empenhos',size=col1,justification='center')],
                 ]),
                 sg.Column(layout=[
                     [sg.Text('Valor total homologado',size=col1,justification='center')],
-                    [sg.Text('XXXX,XX', key='txt_valor_homologado',size=col1,justification='center')],
+                    [sg.Text('0', key='txt_valor_homologado',size=col1,justification='center')],
                     [sg.Text('Valor total empenhado',size=col1,justification='center')],
-                    [sg.Text('XXXX,XX', key='txt_valor_empenhado',size=col1,justification='center')],
+                    [sg.Text('0', key='txt_valor_empenhado',size=col1,justification='center')],
                 ]),
             ],
             [

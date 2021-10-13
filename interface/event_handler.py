@@ -153,14 +153,24 @@ def atualizar_uasg_pelo_orgao(orgao:str,window):
 
 def atualizar_lista_pregoes(id_orgao:str,window):
     """Procura e atualiza o combobox dos pregões registrados para determinado órgão."""
-    window['cb_pregao'].update(values=cnn.consultar_pregao_orgao(id_orgao))
+    window['cb_pregao'].update(values=cnn.consultar_pregoes_do_orgao(id_orgao))
 
 def mostrar_frame_informacoes_opcoes(window, mostrar:bool=True):
     """Esconde ou mostra (dependendo do parametro de entrada) as frames de informções de um pregão."""
     window['fr_info_pregao'].update(visible=True)
     window['fr_info_pregao'].unhide_row() if mostrar else window['fr_info_pregao'].hide_row()
-    #window.refresh()
-    #window['cl_info_pregao'].contents_changed()
+
+def atualizar_informacoes_pregao(uasg:str,pregao:str,window):
+    """Atualiza as informações gerais a cerca de um pregão para apresenta-lo na busca."""
+    id = cnn.consultar_id_pregao(uasg,pregao)
+    print(id)
+    infos = cnn.consultar_dados_gerais_pregao(id)
+    window['txt_data_abertura'].update(value=infos[0])
+    window['txt_julgamento'].update(value=infos[1])
+    window['txt_itens_homologados'].update(value=infos[2])
+    window['txt_empenhos'].update(value=infos[4])
+    window['txt_valor_homologado'].update(value=infos[3])
+    window['txt_valor_empenhado'].update(value=infos[5])
 
 ##JANELA HOMOLOGAÇÃO DE ITENS
 
