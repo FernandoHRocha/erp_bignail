@@ -35,7 +35,6 @@ def combo_estado_pregao(key):
 def frame_pesquisa_por_pregao(orgaos:list):
     """Retorna uma sg.frame com a busca de pregão, informações e opções.\n
     O parametro deve ser uma lista com a primeira lista sendo dos códigos UASG, e a segunda o nome dos Órgãos."""
-    col1=(30,1)
     return [
         sg.Frame(title=' Pesquisar por Órgão e Pregão ',layout=[
             [
@@ -73,37 +72,36 @@ def frame_pesquisa_por_pregao(orgaos:list):
                     ]
                 ])
             ],
+        ])
+    ]
+
+def frame_com_informacao_pregao():
+    col1=(30,1)
+    return[
+        sg.Frame('',visible=False,border_width=0,key='fr_info_pregao',layout=[
             [
-                sg.Frame(title=' Informações do Pregão ',border_width=0,visible=False,key='fr_info_pregao',layout=[
-                    [
-                        sg.Column(layout=[
-                            [sg.Text('Data da disputa de preços',size=col1,justification='center')],
-                            [sg.Text('00/00/0000', key='txt_data_abertura',size=col1,justification='center')],
-                            [sg.Text('Estado atual',size=col1,justification='center')],
-                            [sg.Text('Julgamento', key='txt_julgamento',size=col1,justification='center')],
-                        ]),
-                        sg.Column(layout=[
-                            [sg.Text('Itens homologados',size=col1,justification='center')],
-                            [sg.Text('XX', key='txt_itens_homologados',size=col1,justification='center')],
-                            [sg.Text('Empenhos',size=col1,justification='center')],
-                            [sg.Text('XX', key='txt_itens_empenhados',size=col1,justification='center')],
-                        ]),
-                        sg.Column(layout=[
-                            [sg.Text('Valor total homologado',size=col1,justification='center')],
-                            [sg.Text('XXXX,XX', key='txt_valor_homologado',size=col1,justification='center')],
-                            [sg.Text('Valor total empenhado',size=col1,justification='center')],
-                            [sg.Text('XXXX,XX', key='txt_valor_empenhado',size=col1,justification='center')],
-                        ]),
-                    ]
+                sg.Column(layout=[
+                    [sg.Text('Data da disputa de preços',size=col1,justification='center')],
+                    [sg.Text('00/00/0000', key='txt_data_abertura',size=col1,justification='center')],
+                    [sg.Text('Estado atual',size=col1,justification='center')],
+                    [sg.Text('Julgamento', key='txt_julgamento',size=col1,justification='center')],
+                ]),
+                sg.Column(layout=[
+                    [sg.Text('Itens homologados',size=col1,justification='center')],
+                    [sg.Text('XX', key='txt_itens_homologados',size=col1,justification='center')],
+                    [sg.Text('Empenhos',size=col1,justification='center')],
+                    [sg.Text('XX', key='txt_itens_empenhados',size=col1,justification='center')],
+                ]),
+                sg.Column(layout=[
+                    [sg.Text('Valor total homologado',size=col1,justification='center')],
+                    [sg.Text('XXXX,XX', key='txt_valor_homologado',size=col1,justification='center')],
+                    [sg.Text('Valor total empenhado',size=col1,justification='center')],
+                    [sg.Text('XXXX,XX', key='txt_valor_empenhado',size=col1,justification='center')],
                 ]),
             ],
             [
-                sg.Frame(title=' Opções do pregão ',border_width=0 ,visible=False,key='fr_opcoes_pregao',layout=[
-                    [
-                        sg.Button(button_text='Abrir Pasta',key='bt_pasta'),
-                        sg.Button(button_text='Consultar Itens',key='bt_pasta'),
-                    ]
-                ])
+                sg.Button(button_text='Abrir Pasta',key='bt_pasta'),
+                sg.Button(button_text='Consultar Itens',key='bt_pasta'),
             ]
         ])
     ]

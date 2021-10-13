@@ -59,9 +59,11 @@ while True:
             evh.procurar_pelo_orgao(values['it_orgao'],window)
         
         if(event == 'cb_uasg'):
+            evh.mostrar_frame_informacoes_opcoes(window,False)
             evh.atualizar_orgao_pelo_uasg(values['cb_uasg'],window)
 
         if(event == 'cb_orgao'):
+            evh.mostrar_frame_informacoes_opcoes(window,False)
             evh.atualizar_uasg_pelo_orgao(values['cb_orgao'],window)
 
         if (event == 'it_pregao'):
@@ -70,8 +72,7 @@ while True:
             evh.procurar_pelo_uasg(valor,window)
 
         if(event == 'cb_pregao'):
-            window['fr_info_pregao'].update(visible=True)
-            window['fr_opcoes_pregao'].update(visible=True)
+            evh.mostrar_frame_informacoes_opcoes(window)
 
     if(window.Title==titulo_janelas['janela_consulta_pregoes']):
         janela_anterior=wds.janela_consulta

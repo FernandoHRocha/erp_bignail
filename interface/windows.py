@@ -56,8 +56,17 @@ def janela_consulta_pregao():
     """Retorna um sg.Window contendo a busca geral de pregão."""
     orgaos = evh.consultar_uasg_orgao()
     layout=[
-        pt.frame_pesquisa_por_pregao(orgaos),
-        [pt.bt_voltar()]
+        [
+            sg.Column(key='cl_info_pregao',layout=[
+                [
+                    sg.Frame('',layout=[
+                            pt.frame_pesquisa_por_pregao(orgaos),
+                            pt.frame_com_informacao_pregao(),
+                    ]),
+                ],
+                [pt.bt_voltar()]
+            ])
+        ]
     ]
     return sg.Window(title=titulo_janelas['janela_consulta_pregao'], layout=layout, finalize=True)
 

@@ -136,7 +136,6 @@ def procurar_pelo_orgao(orgao:str,window):
     if orgao:
         limpar_entradas_procura_pregao(window,['it_uasg','it_pregao'])
         valor = cnn.procurar_orgao(orgao)
-        #if (len(valor)>0):
         window['cb_orgao'].update(values=valor)
 
 def atualizar_orgao_pelo_uasg(uasg:str,window):
@@ -155,6 +154,13 @@ def atualizar_uasg_pelo_orgao(orgao:str,window):
 def atualizar_lista_pregoes(id_orgao:str,window):
     """Procura e atualiza o combobox dos pregões registrados para determinado órgão."""
     window['cb_pregao'].update(values=cnn.consultar_pregao_orgao(id_orgao))
+
+def mostrar_frame_informacoes_opcoes(window, mostrar:bool=True):
+    """Esconde ou mostra (dependendo do parametro de entrada) as frames de informções de um pregão."""
+    window['fr_info_pregao'].update(visible=True)
+    window['fr_info_pregao'].unhide_row() if mostrar else window['fr_info_pregao'].hide_row()
+    #window.refresh()
+    #window['cl_info_pregao'].contents_changed()
 
 ##JANELA HOMOLOGAÇÃO DE ITENS
 
