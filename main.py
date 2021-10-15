@@ -90,7 +90,7 @@ while True:
         if(event == 'bt_alterar_fase'):
             pregoes = evh.consultar_dados_selecionados_tabela(window,values,'tg_pregoes')
             if pregoes:
-                [evh.abrir_janela_alterar_fase_pregao(pregao[1],pregao[0]) for pregao in pregoes]
+                [evh.abrir_janela_alterar_fase_pregao(pregao[2],pregao[1]) for pregao in pregoes]
                 window.Close()
 
         if(event == 'bt_pasta'):

@@ -226,9 +226,11 @@ def janela_consulta_itens_pregao(id_pregao:str):
                     coluna2
                 ]
             ]),
-            sg.Button('Abrir Pasta',enable_events=True,key='bt_pasta'),
-            sg.Button('Registrar Empenho',enable_events=True,key='bt_item_empenho'),
-            sg.Button('Registrar Carona',enable_events=True,key='bt_item_carona'),
+            sg.Column(layout=[
+                [sg.Button('Abrir Pasta',enable_events=True,size=(20,1),key='bt_pasta')],
+                [sg.Button('Registrar Empenho',enable_events=True,size=(20,1),key='bt_item_empenho')],
+                [sg.Button('Registrar Carona',enable_events=True,size=(20,1),key='bt_item_carona')],
+            ])
         ],
         [
             sg.Frame(title='',visible=True,key='fr_itens',layout=[
