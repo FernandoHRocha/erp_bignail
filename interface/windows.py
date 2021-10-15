@@ -114,8 +114,8 @@ def janela_consulta_pregoes():
 def janela_consulta_empenhos():
     """Retorna um sg.Window com tabela e abas para apresentação dos empenhos da empresa."""
     cabecalho_generico = [
-        ['id','Pregão','UASG','Data Empenho','Nota','Data Entrega','Valor Total'],
-        [0,10,8,12,10,12,11]
+        ['id','Pregão','UASG','Nota','Data Empenho','Data Entrega','Valor Total'],
+        [0,10,8,20,12,12,11]
     ]
     abas = evh.listar_empenhos_gerais()
     layout=[
@@ -184,27 +184,42 @@ def janela_consulta_itens_pregao(id_pregao:str):
     ata = dados[4] if dados[4] != 'None' else 'Pendente'
     fase = dados[5]
     abas = evh.listar_itens_em_categorias(id_pregao)
+
+    coluna1=sg.Column(size=(300,100),layout=[
+        [
+            sg.Text(id_pregao,visible=False),
+            sg.Text('Órgão:'),
+            sg.Text(orgao,key='txt_orgao'),
+        ],
+        [
+            sg.Text('Pregão:'),
+            sg.Text(pregao,key='txt_pregao'),
+        ],
+        [
+            sg.Text('Data Abertura: '),
+            sg.Text(data,key='txt_data'),
+        ]
+    ])
+    coluna2=sg.Column(size=(300,100),layout=[
+        [
+            sg.Text('UASG:'),
+            sg.Text(uasg,key='txt_uasg'),
+        ],
+        [
+            sg.Text('Fase:'),
+            sg.Text(fase,key='txt_fase'),
+        ],
+        [
+            sg.Text('Data de Assinatura da Ata:'),
+            sg.Text(ata,key='txt_ata'),
+        ]
+    ])
     layout=[
         [
             sg.Frame(title=' Consulta aos itens do pregão ',key='fr_titulo_pregao',layout=[
                 [
-                    sg.Text(id_pregao,visible=False),
-                    sg.Text('Órgão: '),
-                    sg.Text(orgao,key='txt_orgao'),
-                    sg.Text(' UASG: '),
-                    sg.Text(uasg,key='txt_uasg'),
-                ],
-                [
-                    sg.Text('Pregão: '),
-                    sg.Text(pregao,key='txt_pregao'),
-                    sg.Text(' '),
-                    sg.Text(fase,key='txt_fase'),
-                ],
-                [
-                    sg.Text('Data Abertura: '),
-                    sg.Text(data,key='txt_data'),
-                    sg.Text(' Data de Assinatura da Ata: '),
-                    sg.Text(ata,key='txt_ata'),
+                    coluna1,
+                    coluna2
                 ]
             ])
         ],
@@ -260,7 +275,7 @@ def janela_cadastro_homologacao(uasg:str,pregao:str,itens:list):
     """Retorna um sg.Window para homologação do pregão."""
     data_ata =[
         [
-            sg.Text('Data de assinatura da Ata')
+            sg.Text('Data de assinatura da ARP (Ata de Registro de Preços), deixar em branco caso não tenha sido assinada.')
         ],
         [
             sg.Text(' Dia '),sg.InputText('',size=(2,1),key='it_dia'),
@@ -274,6 +289,9 @@ def janela_cadastro_homologacao(uasg:str,pregao:str,itens:list):
             sg.Text(pregao,key='txt_pregao'),
             sg.Text(' do Uasg '),
             sg.Text(uasg,key='txt_uasg')
+        ],
+        [
+            sg.Text('Escolha os itens que foram homologados para a sua empresa, e então indique o valor disputado')
         ],
         [
             sg.Column(  layout=[[pt.frame_item_homologar(item[0],item[1],item[2], item[3])] for item in itens],
@@ -304,14 +322,17 @@ def janela_cadastro_itens_empenhar(uasg:str,pregao:str,itens:list):
     ]
     layout=[
         [
-            sg.Text('Registrar Empenho - Pregão '),
+            sg.Text('Registrar nota de empenho para o pregão '),
             sg.Text(pregao,key='txt_pregao'),
-            sg.Text(' do Uasg '),
+            sg.Text('do Uasg'),
             sg.Text(uasg,key='txt_uasg')
         ],
         [
+            sg.Text('Escolha os itens que foram empenhados em uma única nota, e indique a quantidade de cada um.')
+        ],
+        [
             sg.Column(  layout=[[pt.frame_item_empenhar(item)] for item in itens],
-                        size=(400,600),vertical_scroll_only=True,scrollable=True,key='cl_itens')
+                        size=(800,600),vertical_scroll_only=True,scrollable=True,key='cl_itens')
         ],
         [
             dados_empenho
@@ -336,20 +357,26 @@ def janela_cadastro_itens_carona(uasg:str,pregao:str,itens:list):
 
     layout=[
         [
-            sg.Text('Registrar Empenho - Pregão '),
+            sg.Text('Registrar Pedido de Carona para o pregão'),
             sg.Text(pregao,key='txt_pregao'),
-            sg.Text(' do Uasg '),
+            sg.Text('do Uasg'),
             sg.Text(uasg,key='txt_uasg')
         ],
         [
+            sg.Text('Selecione o órgão que solicitou entrar de carona no pregão.')
+        ],
+        [
             sg.Combo(values=evh.consultar_uasg_orgao()[1],size=(100,1),enable_events=True,key='cb_orgao',readonly=True)
+        ],
+        [
+            sg.Text('Selecione os itens aceitos na carona para servir ao órgão selecionado, e indique a quantidade de cada um.')
         ],
         [
             sg.Column(  layout=[[pt.frame_item_empenhar(item)] for item in itens],
                         size=(800,600),vertical_scroll_only=True,scrollable=True,key='cl_itens')
         ],
         [
-            sg.Text('Caso um mesmo órgão realize mais pedidos de carona para o mesmo pregão,\nconsidere datas diferentes para cada um.')
+            sg.Text('Caso um mesmo órgão realize mais pedidos de carona para o mesmo pregão, considere datas diferentes para cada um.')
         ],
         dados_carona,
         pt.botoes_concluir_cancelar_operacao(),
@@ -360,10 +387,8 @@ def janela_cadastro_entrega_empenho(id_empenho:str):
     """Retorna um sg.Window com campos de data para registrar a entrega."""
     layout = [
         [
-            sg.Text(id_empenho,key='txt_empenho')
-        ],
-        [
-            pt.data('Qual foi a data da entrega?','entrega_empenho',True)
+            sg.Text(id_empenho,key='txt_id_empenho',visible=False),
+            pt.data('Em que data a entrega foi realizada?','entrega_empenho',True)
         ],
         [
             pt.botoes_concluir_cancelar_operacao(concluir='Registrar')

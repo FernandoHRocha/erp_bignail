@@ -172,11 +172,20 @@ def consultar_fases_empenhos():
 
 def consultar_empenhos_pela_fase(fase:str=''):
     """Retorna dados dos empenhos, passando a fase como argumento a busca será filtrada pela fase."""
-    query=( "select empenho.id_empenho, numero_pregao, uasg, data_empenho, nota_empenho, data_entrega, sum(quantidade * valor_unitario) from empenho "
-            "join pregao on empenho.id_pregao = pregao.id_pregao "
-            "join orgao on orgao.id_orgao = pregao.id_orgao "
-            "join fase_empenho on fase_empenho.id_fase = empenho.id_fase "
-            "join item_empenho on item_empenho.id_empenho = empenho.id_empenho ")
+    query=(
+    """select
+        empenho.id_empenho,
+        numero_pregao,
+        uasg,
+        nota_empenho,
+        format (data_empenho,'dd/MM/yyyy') as data_empenho,
+        format (data_entrega,'dd/MM/yyyy') as data_entrega,
+        sum(quantidade * valor_unitario)
+    from empenho 
+    join pregao on empenho.id_pregao = pregao.id_pregao 
+    join orgao on orgao.id_orgao = pregao.id_orgao 
+    join fase_empenho on fase_empenho.id_fase = empenho.id_fase 
+    join item_empenho on item_empenho.id_empenho = empenho.id_empenho """)
     group = ("group by empenho.id_empenho, data_empenho, nota_empenho, data_entrega, uasg, pregao.numero_pregao")
     if(fase!=''):
         query=query+("where fase_empenho.nome_fase = '"+validar(fase)+"' ")
@@ -366,8 +375,7 @@ def consultar_itens_carona(id_pregao:str):
     join orgao as o on o.id_orgao = c.id_orgao 
     where c.id_pregao = '"""+validar(id_pregao)+"' order by c.data_carona desc;""")
     cursor.execute(query)
-    consulta = [list(row) for row in cursor.fetchall()]
-    return consulta
+    return [list(row) for row in cursor.fetchall()]
 
 ###PROCURAS
 
@@ -396,6 +404,18 @@ def procurar_uasg_com_nome_orgao(orgao:str):
     cursor.execute(query)
     resultado = cursor.fetchone()
     return resultado[0] if resultado != None else '-1'
+
+def procurar_pregoes(pregao:str,uasg:str):
+    """Retorna o número dos pregões participados pelo uasg indicado."""
+    id_orgao = consultar_id_orgao(uasg)
+    query=(
+    """select
+        numero_pregao
+    from pregao
+    where numero_pregao like '%"""+validar(pregao)+"""%' and id_orgao = '"""+validar(id_orgao)+"';")
+    cursor.execute(query)
+    resultado = [list(row) for row in cursor.fetchall()]
+    return resultado
 
 ###ALTERAÇÕES
 
