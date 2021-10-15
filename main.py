@@ -9,6 +9,7 @@ titulo_janelas = wds.titulo_janelas
 
 wds.janela_menu()
 
+
 while True:
     window, event, values = sg.read_all_windows()
 
@@ -18,9 +19,11 @@ while True:
         if(event == 'bt_consultar'):
             janela_anterior=wds.janela_menu
             wds.janela_consulta()
+        
         if(event == 'bt_cadastrar'):
             janela_anterior=wds.janela_menu
             wds.janela_cadastro()
+        
         if(event == 'bt_comprasnet'):
             janela_anterior=wds.janela_menu
             wds.janela_comprasnet()
@@ -32,18 +35,22 @@ while True:
             janela_anterior=wds.janela_consulta
             window.Close()
             wds.janela_consulta_pregoes()
+        
         if(event == 'bt_consulta_pregao'):
             janela_anterior=wds.janela_consulta
             window.Close()
             wds.janela_consulta_pregao()
+        
         if(event == 'bt_consulta_empenhos'):
             janela_anterior=wds.janela_consulta
             window.Close()
             wds.janela_consulta_empenhos()
+        
         if(event == 'bt_consulta_reequilibrios'):
             janela_anterior=wds.janela_consulta
             window.Close()
             wds.janela_consulta_reequilibrio()
+        
         if(event == 'bt_consulta_carona'):
             janela_anterior=wds.janela_consulta
             window.Close()
@@ -69,7 +76,7 @@ while True:
         if (event == 'it_pregao'):
             valor = evh.entrada_numerica(values['it_pregao'])
             window['it_pregao'].update(value=valor)
-            evh.procurar_pelo_uasg(valor,window)
+            evh.procurar_pelo_pregao(valor,values['cb_uasg'],window)
 
         if(event == 'cb_pregao'):
             evh.mostrar_frame_informacoes_opcoes(window)
@@ -127,11 +134,19 @@ while True:
     if(window.Title==titulo_janelas['janela_consulta_empenhos']):
         if(event == 'bt_consultar'):
             sg.popup('Abre a consulta aos itens do empenho.')
+        
         if(event == 'bt_registrar_entrega'):
             empenho = evh.consultar_dados_selecionados_tabela(window,values,'tg_empenhos')
             if empenho:
+                janela_anterior = wds.janela_consulta_empenhos
                 window.Close()
                 wds.janela_cadastro_entrega_empenho(empenho[0][0])
+        
+        if(event == 'tg_empenhos'):
+            if(values['tg_empenhos'] == 'tab_finalizado'):
+                window['bt_registrar_entrega'].update(visible=False)
+            else:
+                window['bt_registrar_entrega'].update(visible=True)
 
     if(window.Title==titulo_janelas['janela_consulta_reequilibrio']):
         if(event == 'bt_registrar_envio'):
@@ -216,11 +231,13 @@ while True:
 
     if(window.Title==titulo_janelas['janela_cadastro_entrega_empenho']):
         if(event=='bt_cancelar'):
+            janela_anterior()
             window.Close()
+        
         if(event=='bt_concluir'):
             data = evh.conferir_campos_de_data(values)
             if data:
-                if cnn.inserir_entrega_de_empenho(window['txt_empenho'].get(),data):
+                if cnn.inserir_entrega_de_empenho(window['txt_id_empenho'].get(),data):
                     sg.popup('Entrega resgistrada.')
                 else:
                     sg.popup('Não foi possível realizar o registro.')

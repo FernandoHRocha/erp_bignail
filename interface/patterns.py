@@ -2,19 +2,16 @@ import PySimpleGUI as sg
 from PySimpleGUI.PySimpleGUI import Checkbox, Text
 
 def data(title,key,visible):
-    horas = ['08:00','08:30','09:00','09:30','10:00','10:30','11:00','11:30','12:00','12:30','13:00','13:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30','18:00','18:30']
     anos = []
-    for n in range(2021,2026): anos.append(str(n))
+    for n in range(2020,2026): anos.append(str(n))
     return sg.Frame( layout=[
         [
-            sg.Text('Dia '),
+            sg.Text('Dia'),
             sg.Input(size=(4,1),enable_events=True,key='it_dia'),
-            sg.Text(' do mês de '),
+            sg.Text('mês'),
             sg.Input(size=(4,1),enable_events=True,key='it_mes'),
-            sg.Text(' no ano de '),
+            sg.Text('ano'),
             sg.Input(size=(5,1),enable_events=True,key='it_ano'),
-            sg.Text(' às '),
-            sg.Combo(values=horas,size=(6,1),enable_events=True,key='cb_hora',readonly=True),
         ],
         ],
         title=title,key=key,visible=visible,border_width=0)
@@ -79,6 +76,9 @@ def frame_com_informacao_pregao():
     col1=(30,1)
     return[
         sg.Frame('',visible=False,border_width=0,key='fr_info_pregao',layout=[
+            [
+                sg.Text('',visible=False,key='txt_id_pregao')
+            ],
             [
                 sg.Column(layout=[
                     [sg.Text('Data da disputa de preços',size=col1,justification='center')],

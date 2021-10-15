@@ -138,6 +138,14 @@ def procurar_pelo_orgao(orgao:str,window):
         valor = cnn.procurar_orgao(orgao)
         window['cb_orgao'].update(values=valor)
 
+def procurar_pelo_pregao(pregao:str,uasg:str,window):
+    if pregao and uasg:
+        limpar_entradas_procura_pregao(window,['it_uasg','it_orgao'])
+        valor = cnn.procurar_pregoes(pregao,uasg)
+        window['cb_pregao'].update(values=valor)
+    else:
+        window['it_pregao'].update(value='')
+
 def atualizar_orgao_pelo_uasg(uasg:str,window):
     """Procura e atualiza o órgão pelo seu código uasg."""
     if uasg:
@@ -163,8 +171,8 @@ def mostrar_frame_informacoes_opcoes(window, mostrar:bool=True):
 def atualizar_informacoes_pregao(uasg:str,pregao:str,window):
     """Atualiza as informações gerais a cerca de um pregão para apresenta-lo na busca."""
     id = cnn.consultar_id_pregao(uasg,pregao)
-    print(id)
     infos = cnn.consultar_dados_gerais_pregao(id)
+    window['txt_id_pregao'].update(value=id)
     window['txt_data_abertura'].update(value=infos[0])
     window['txt_julgamento'].update(value=infos[1])
     window['txt_itens_homologados'].update(value=infos[2])
