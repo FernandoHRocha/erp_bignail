@@ -99,22 +99,9 @@ def listar_itens_em_categorias(id_pregao:str):#incompleto
         #[cabecalho_reequilibrio,'reequilibros',],##cnn.(id_pregao)],
     ]
 
-def abrir_pasta_pregao(pregao:str,uasg:str,data:str):
+def abrir_pasta_pregao(id_pregao:str):
     """Abre a pasta do pregão dentro do sistema."""
-    while(True):##funções temporarias após consolidação do banco de dados não será necessário
-        if(len(pregao)>=8):
-            break
-        else:
-            pregao = '0'+pregao
-    while(True):
-        if(len(uasg)>=6):
-            break
-        else:
-            pregao = '0' + uasg
-    path = credentials.pasta
-    data = data.replace('/','-')
-    data = data[0:10]+'_'+pregao+'_'+uasg
-    path += data
+    path = credentials.pasta+cnn.consultar_pasta_pregao(id_pregao)
     try:
         os.startfile(os.path.realpath(path))
     except:
@@ -182,18 +169,17 @@ def atualizar_informacoes_pregao(uasg:str,pregao:str,window):
 
 ##JANELA HOMOLOGAÇÃO DE ITENS
 
-def abrir_janela_homologacao_itens(uasg:str, pregao:str):
+def abrir_janela_homologacao_itens(id_pregao:str,uasg:str,pregao:str):
     """Faz a chamada dos itens do pregão ao banco de dados e abre a janela de itens a homologar."""
-    wds.janela_cadastro_homologacao(uasg,pregao,cnn.consultar_itens_homologar(uasg, pregao))
+    wds.janela_cadastro_homologacao(id_pregao,uasg,pregao,cnn.consultar_itens_homologar(id_pregao))
 
 def homologar_pregao_e_itens(window:sg.Window,values:dict):
     """Verifica e converte os valores dos itens para homologacao."""
     window.BringToFront()
+    id_pregao = window['txt_id_pregao'].get()
     uasg = window['txt_uasg'].get()
     pregao = window['txt_pregao'].get()
     data_ata = conferir_campos_de_data(values)
-    if not data_ata:
-        return sg.popup('Favor conferir a data de assinatura da ata.')
     itens_homologar=[]
     for item in values.keys():
         if 'check' in item:
@@ -215,6 +201,9 @@ def homologar_pregao_e_itens(window:sg.Window,values:dict):
             return sg.popup('Para homologar um pregão é necessário que pelo menos um item seja empenhado.')
         if not cnn.alterar_fase_pregao(uasg,pregao,'Homologado'):
             return sg.popup('Não foi possível alterar a fase do pregão.')
+        if data_ata != False:
+            if not cnn.alterar_data_arp(id_pregao,data_ata):
+                sg.popup('Será necessário inserir a data de assinatura posteriormente.')
         if not cnn.inserir_itens_ganho(uasg,pregao,itens_homologar):
             return sg.popup('Não foi possível inserir os itens como homologados.')
         sg.popup('O pregão foi homologado.')
@@ -222,9 +211,9 @@ def homologar_pregao_e_itens(window:sg.Window,values:dict):
 
 ##JANELA EMPENHO DE ITENS
 
-def abrir_janela_itens_empenhar(uasg:str,pregao:str):
+def abrir_janela_itens_empenhar(id_pregao:str,uasg:str,pregao:str):
     """Coleta as informações dos itens do pregão e chama a janela para empenho."""
-    return wds.janela_cadastro_itens_empenhar(uasg,pregao,cnn.consultar_itens_homologados(uasg,pregao))
+    return wds.janela_cadastro_itens_empenhar(uasg,pregao,cnn.consultar_itens_homologados(id_pregao))
 
 def empenhar_itens(window:sg.Window,values:list):
     """Valida dados dos itens, data, e insere ao banco de dados."""
@@ -272,9 +261,9 @@ def empenhar_itens(window:sg.Window,values:list):
 
 ##JANELA CARONA DE ITENS
 
-def abrir_janela_itens_carona(uasg:str,pregao:str):
+def abrir_janela_itens_carona(id_pregao:str,uasg:str,pregao:str):
     """Coleta as informações dos itens do pregão e chama a janela para carona."""
-    return wds.janela_cadastro_itens_carona(uasg,pregao,cnn.consultar_itens_homologados(uasg,pregao))
+    return wds.janela_cadastro_itens_carona(uasg,pregao,cnn.consultar_itens_homologados(id_pregao))
 
 def caronar_itens(window:sg.Window,values:list):
     """Valida os dados dos itens, a data e insere ao banco de dados."""

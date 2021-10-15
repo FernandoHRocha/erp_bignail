@@ -138,11 +138,11 @@ def frame_item_homologar(item:str,marca:str,modelo:str,unidades:str):
 
 def frame_item_empenhar(itens:list):
     """Retorna um sg.Frame para incluir itens em nota de empenho."""
-    item = str(itens[0])
-    marca = str(itens[1])
-    modelo = str(itens[2])
-    unidades = str(itens[3])
-    valor = str(itens[4]).replace('.',',')
+    item = str(itens[1])
+    marca = str(itens[2])
+    modelo = str(itens[3])
+    unidades = str(itens[4])
+    valor = str(itens[5]).replace('.',',')
     return sg.Frame(title=' Item '+str(item)+' ',layout=
         [
             [

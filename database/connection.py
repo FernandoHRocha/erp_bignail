@@ -95,8 +95,15 @@ def consultar_todos_uasgs():
 def consultar_pregoes_fase(fase:str=''):
     """Retorna a lista de pregões ordenados pela data filtrado por fase.
     Passado parametro nulo, retorna todos."""
-    query = ("select numero_pregao, uasg, data_abertura, nome_orgao, id_pregao from pregao "
-            "join orgao on pregao.id_orgao = orgao.id_orgao ")
+    query = (
+    """select
+        id_pregao,
+        numero_pregao,
+        uasg,
+        data_abertura,
+        nome_orgao
+    from pregao
+    join orgao on pregao.id_orgao = orgao.id_orgao """)
     if(fase != ''):
         id_fase = consultar_id_fase_pregao(fase)
         query = query + ("where id_fase = '"+validar(id_fase)+"' ")
@@ -122,44 +129,54 @@ def consultar_itens_geral(uasg:str,pregao:str):
         consulta.append([str(valor) for valor in row])
     return consulta
 
-def consultar_itens_homologados(uasg:str,pregao:str):
-    """Retorna uma lista de itens classificados em primeiro lugar."""
-    query=("select item.id_item, item, nome_marca, modelo, quantidade, valor_ganho, (quantidade * valor_ganho) as valor_total, preco_custo, frete, fornecedor from item "
-        "join marca on item.id_marca = marca.id_marca "
-        "join resultado_item on resultado_item.id_item = item.id_item "
-        "where id_pregao = (select id_pregao from pregao where id_orgao = "
-        "(select id_orgao from orgao where uasg = '"+validar(uasg)+"') and numero_pregao = '"+validar(pregao)+"') "
-        " and resultado_item.colocacao = '1'")
-    cursor.execute(query)
-    consulta=[list(row) for row in cursor.fetchall()]
-    return consulta
-
 def consultar_fases_pregoes():
     query="select nome_fase from fase_pregao"
     cursor.execute(query)
     consulta=[row[0].lower() for row in cursor.fetchall()]
     return consulta
 
-def consultar_itens_homologar(uasg:str,pregao:str):
+def consultar_itens_homologar(id_pregao:str):
     """Retorna número, quantidade e modelo dos itens de um pregão."""
-    id_pregao = consultar_id_pregao(uasg, pregao)
-    query = (   "select item, nome_marca, modelo, quantidade from item inner join marca on marca.id_marca = "
-                "item.id_marca where id_pregao = '"+validar(id_pregao)+"';")
+    query = (
+    """select
+        item,
+        nome_marca,
+        modelo,
+        quantidade
+    from item
+    inner join marca on marca.id_marca = item.id_marca
+    where id_pregao = '"""+validar(id_pregao)+"';")
     cursor.execute(query)
-    consulta=[list(row) for row in cursor.fetchall()]
-    return consulta
+    return [list(row) for row in cursor.fetchall()]
 
-def consultar_itens_homologados(uasg:str,pregao:str):
-    """Retorna as informações dos itens ganhos para empenhar.
-    -> item, marca, modelo, quantidade, valor_ganho"""
-    id_pregao = consultar_id_pregao(uasg,pregao)
-    query=( "select item.item, nome_marca, item.modelo, total.quantidade, valor_ganho from resultado_item join "
-            "(select id_item, sum(quantidade) as quantidade from "
-            "(select id_item, quantidade*(-1) as quantidade from item_empenho union all select id_item, quantidade*(-1) as quantidade from item_carona union all select id_item, quantidade from item) t "
-            "group by id_item) as total on total.id_item = resultado_item.id_item "
-            "join item on item.id_item = resultado_item.id_item "
-            "join marca on item.id_marca = marca.id_marca "
-            "where item.id_pregao = '"+validar(id_pregao)+"';")
+def consultar_itens_homologados(id_pregao:str):
+    """Retorna as informações dos itens ganhos e a quantidade disponível para empenhar.
+    id, item, marca, modelo, quantidade, valor_ganho"""
+    query=(
+    """select
+        item.id_item,
+        item.item,
+        nome_marca,
+        item.modelo,
+        total.quantidade,
+        valor_ganho
+    from resultado_item
+        join (select id_item, sum(quantidade) as quantidade
+        from (select id_item, quantidade*(-1) as quantidade
+        from item_empenho
+        union all
+        select
+            id_item,
+            quantidade*(-1) as quantidade
+        from item_carona
+        union all
+        select
+            id_item,
+            quantidade
+        from item) t group by id_item) as total on total.id_item = resultado_item.id_item 
+    join item on item.id_item = resultado_item.id_item 
+    join marca on item.id_marca = marca.id_marca 
+    where item.id_pregao = '"""+validar(id_pregao)+"';")
     cursor.execute(query)
     consulta=[list(row) for row in cursor.fetchall()]
     return consulta
@@ -218,6 +235,19 @@ def consultar_caronas_pela_fase(fase:str=''):
     return consulta
 
 ###CONSULTAS PELO ID DO PREGÃO
+
+def consultar_pasta_pregao(id_pregao):
+    """Retorna o padrão das data_pregao_uasg para o pregão."""
+    query=(
+    """select
+        format(data_abertura,'yyyy-MM-dd'),
+        numero_pregao,
+        uasg
+    from pregao
+    inner join orgao on orgao.id_orgao = pregao.id_orgao where id_pregao = '"""+validar(id_pregao)+"';")
+    cursor.execute(query)
+    resultado = [list(row) for row in cursor.fetchall()]
+    return '_'.join(resultado[0])
 
 def consultar_pregoes_do_orgao(id_orgao:str):
     """Retorna uma lista com os pregões registrados para o órgão."""
@@ -377,6 +407,28 @@ def consultar_itens_carona(id_pregao:str):
     cursor.execute(query)
     return [list(row) for row in cursor.fetchall()]
 
+###CONSULTAS PELO ID CARONA
+
+def consultar_id_pregao_da_carona(id_carona:str)->str:
+    """Retorna o id do pregão da carona."""
+    query=(
+    """select
+        id_pregao
+    from carona where id_carona = '"""+validar(id_carona)+"';")
+    cursor.execute(query)
+    return [list(row) for row in cursor.fetchall()][0][0]
+
+###CONSULTAS PELO ID EMPENHO
+
+def consultar_id_pregao_do_empenho(id_empenho:str)->str:
+    """Retorna o id do pregão do empenho."""
+    query=(
+    """select
+        id_pregao
+    from empenho where id_empenho = '"""+validar(id_empenho)+"';")
+    cursor.execute(query)
+    return [list(row) for row in cursor.fetchall()][0][0]
+
 ###PROCURAS
 
 def procurar_uasg(uasg:str):
@@ -427,6 +479,16 @@ def alterar_fase_pregao(uasg:str,pregao:str,fase:str):
     try:
         query = ("update pregao set id_fase = '"+id_fase+"'"
                 "where numero_pregao = '"+validar(pregao)+"' and id_orgao = (select id_orgao from orgao where orgao.uasg ='"+validar(uasg)+"');")
+        cursor.execute(query)
+        cursor.commit()
+        return True
+    except:
+        return False
+
+def alterar_data_arp(id_pregao:str,data:str):
+    try:
+        query = ("update pregao set data_ata = '"+validar(data)+"' "
+                "where id_pregao = '"+validar(id_pregao)+"';")
         cursor.execute(query)
         cursor.commit()
         return True

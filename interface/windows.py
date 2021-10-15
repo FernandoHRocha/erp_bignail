@@ -10,9 +10,9 @@ titulo_janelas = {
     'janela_cadastro':'Cadastros',
     'janela_comprasnet':'Compras Net',
     #consultas
-    'janela_consulta_pregao':'Consulta de processo participado',
+    'janela_consulta_pregao':'Consulta de Processo Participado',
     'janela_consulta_pregoes':'Visão Geral dos processos',
-    'janela_consulta_empenhos':'Empenhos realizados',
+    'janela_consulta_empenhos':'Notas de Empenhos',
     'janela_consulta_reequilibrio':'Pedidos de Reequilíbrio Econômico',
     'janela_consulta_carona':'Pedidos de Carona',
     'janela_consulta_atas':'Atas de Processos',
@@ -74,8 +74,8 @@ def janela_consulta_pregoes():
     """Retorna um sg.Window com tabela e abas para apresentação dos pregões."""
 
     cabecalho_generico = [
-        ['Pregão','UASG','Abertura','ÓRGÃO','id'],
-        [10,8,20,30,0]
+        ['id','Pregão','UASG','Abertura','ÓRGÃO'],
+        [0,10,8,20,30]
     ]
     abas = evh.listar_pregoes_gerais()
     coluna1=[#APLICADO PARA PREGÕES EM FASE DE PROPOSTA, JULGAMENTO E FRUSTRADO
@@ -125,7 +125,9 @@ def janela_consulta_empenhos():
                 ],enable_events=True,key='tg_empenhos')
         ],
         [
-            sg.Button('Consultar Itens',enable_events=True,key='bt_consultar'),
+            sg.Button('Abrir Pasta Pregão', enable_events=True,key='bt_pasta'),
+            sg.Button('Consultar o Pregão', enable_events=True,key='bt_consultar_pregao'),
+            sg.Button('Consultar os Itens',enable_events=True,key='bt_consultar_itens'),
             sg.Button('Registrar Entrega',enable_events=True,key='bt_registrar_entrega'),
         ],
         [pt.bt_voltar()]
@@ -168,7 +170,9 @@ def janela_consulta_carona():
                 ],enable_events=True,key='tg_carona')
         ],
         [
-            sg.Button('Consultar',enable_events=True,key='bt_consultar'),
+            sg.Button('Abrir Pasta Pregão', enable_events=True,key='bt_pasta'),
+            sg.Button('Consultar o Pregão', enable_events=True,key='bt_consultar_pregao'),
+            sg.Button('Itens do Empenho',enable_events=True,key='bt_consultar_itens'),
             sg.Button('Registrar Empenho',enable_events=True,key='bt_empenho'),
         ],
         [pt.bt_voltar()]
@@ -187,7 +191,7 @@ def janela_consulta_itens_pregao(id_pregao:str):
 
     coluna1=sg.Column(size=(300,100),layout=[
         [
-            sg.Text(id_pregao,visible=False),
+            sg.Text(id_pregao,key='txt_id_pregao',visible=False),
             sg.Text('Órgão:'),
             sg.Text(orgao,key='txt_orgao'),
         ],
@@ -221,7 +225,10 @@ def janela_consulta_itens_pregao(id_pregao:str):
                     coluna1,
                     coluna2
                 ]
-            ])
+            ]),
+            sg.Button('Abrir Pasta',enable_events=True,key='bt_pasta'),
+            sg.Button('Registrar Empenho',enable_events=True,key='bt_item_empenho'),
+            sg.Button('Registrar Carona',enable_events=True,key='bt_item_carona'),
         ],
         [
             sg.Frame(title='',visible=True,key='fr_itens',layout=[
@@ -234,8 +241,6 @@ def janela_consulta_itens_pregao(id_pregao:str):
         ],
         [
             sg.Button('Alterar item',enable_events=True,key='bt_item_alterar'),
-            sg.Button('Registrar Empenho',enable_events=True,key='bt_item_empenho'),
-            sg.Button('Registrar Carona',enable_events=True,key='bt_item_carona'),
             sg.Button('Solicitar Reequilibrio',enable_events=True,key='bt_reequilibrio'),
             sg.Button('Consultar Fornecedor',enable_events=True,key='bt_fornecedor'),
         ],
@@ -271,23 +276,24 @@ def janela_cadastro_itens_reequilibrio(id_pregao:str):#INCOMPLETO
     
     return
 
-def janela_cadastro_homologacao(uasg:str,pregao:str,itens:list):
+def janela_cadastro_homologacao(id_pregao:str,uasg:str,pregao:str,itens:list):
     """Retorna um sg.Window para homologação do pregão."""
     data_ata =[
         [
             sg.Text('Data de assinatura da ARP (Ata de Registro de Preços), deixar em branco caso não tenha sido assinada.')
         ],
         [
-            sg.Text(' Dia '),sg.InputText('',size=(2,1),key='it_dia'),
-            sg.Text(' mês '),sg.InputText('',size=(2,1),key='it_mes'),
-            sg.Text(' ano '),sg.InputText('',size=(4,1),key='it_ano'),
+            sg.Text('Dia'),sg.InputText('',size=(2,1),key='it_dia'),
+            sg.Text('mês'),sg.InputText('',size=(2,1),key='it_mes'),
+            sg.Text('ano'),sg.InputText('',size=(4,1),key='it_ano'),
         ]
     ]
     layout=[
         [
-            sg.Text('Homologando o Pregão '),
+            sg.Text(id_pregao,key='txt_id_pregao',visible=False),
+            sg.Text('Homologando o Pregão'),
             sg.Text(pregao,key='txt_pregao'),
-            sg.Text(' do Uasg '),
+            sg.Text('do Uasg'),
             sg.Text(uasg,key='txt_uasg')
         ],
         [
