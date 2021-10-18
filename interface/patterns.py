@@ -101,7 +101,7 @@ def frame_com_informacao_pregao():
             ],
             [
                 sg.Button(button_text='Abrir Pasta',key='bt_pasta'),
-                sg.Button(button_text='Consultar Itens',key='bt_pasta'),
+                sg.Button(button_text='Consultar Itens',key='bt_consultar_itens'),
             ]
         ])
     ]

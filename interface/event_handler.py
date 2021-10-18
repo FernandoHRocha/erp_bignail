@@ -6,6 +6,17 @@ import PySimpleGUI as sg
 import time
 import os
 
+def voltar_pagina(historico,menu):
+    """Retorna a aplicação para a página vista anteriormente."""
+    try:
+        if len(historico)>0:
+            voltar = historico.pop()
+            voltar()
+            return historico
+    except:
+        menu()
+        return [menu]
+
 def alterar_apresentacao_item(window:sg.Window,values:dict,event:str):
     """Atualiza a apresentação de itens com checkbox marcados ou desmarcados."""
     frame_input = str(event).replace('check_','fr_it_')
@@ -169,8 +180,11 @@ def atualizar_informacoes_pregao(uasg:str,pregao:str,window):
 
 ##JANELA HOMOLOGAÇÃO DE ITENS
 
-def abrir_janela_homologacao_itens(id_pregao:str,uasg:str,pregao:str):
+def abrir_janela_homologacao_itens(id_pregao:str):
     """Faz a chamada dos itens do pregão ao banco de dados e abre a janela de itens a homologar."""
+    dados = consultar_dados_pregao(id_pregao)
+    uasg = dados[1]
+    pregao = dados[0]
     wds.janela_cadastro_homologacao(id_pregao,uasg,pregao,cnn.consultar_itens_homologar(id_pregao))
 
 def homologar_pregao_e_itens(window:sg.Window,values:dict):
@@ -211,8 +225,11 @@ def homologar_pregao_e_itens(window:sg.Window,values:dict):
 
 ##JANELA EMPENHO DE ITENS
 
-def abrir_janela_itens_empenhar(id_pregao:str,uasg:str,pregao:str):
+def abrir_janela_itens_empenhar(id_pregao:str):
     """Coleta as informações dos itens do pregão e chama a janela para empenho."""
+    dados = consultar_dados_pregao(id_pregao)
+    uasg = dados[1]
+    pregao = dados[0]
     return wds.janela_cadastro_itens_empenhar(uasg,pregao,cnn.consultar_itens_homologados(id_pregao))
 
 def empenhar_itens(window:sg.Window,values:list):
@@ -261,8 +278,11 @@ def empenhar_itens(window:sg.Window,values:list):
 
 ##JANELA CARONA DE ITENS
 
-def abrir_janela_itens_carona(id_pregao:str,uasg:str,pregao:str):
+def abrir_janela_itens_carona(id_pregao:str):
     """Coleta as informações dos itens do pregão e chama a janela para carona."""
+    dados = consultar_dados_pregao(id_pregao)
+    uasg = dados[1]
+    pregao = dados[0]
     return wds.janela_cadastro_itens_carona(uasg,pregao,cnn.consultar_itens_homologados(id_pregao))
 
 def caronar_itens(window:sg.Window,values:list):

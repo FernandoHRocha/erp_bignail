@@ -189,7 +189,7 @@ def janela_consulta_itens_pregao(id_pregao:str):
     fase = dados[5]
     abas = evh.listar_itens_em_categorias(id_pregao)
 
-    coluna1=sg.Column(size=(300,100),layout=[
+    coluna1=sg.Column(size=(500,100),layout=[
         [
             sg.Text(id_pregao,key='txt_id_pregao',visible=False),
             sg.Text('Órgão:'),
