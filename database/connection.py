@@ -12,7 +12,7 @@ def validar(campo):#NÃO PERMITE SQL INJECTION
 
 def consultar_id_orgao(uasg):
     """Retorna o código identificador do pregão caso ele exista, senão retorna -1."""
-    cursor.execute("select id_orgao from orgao where uasg = '"+validar(uasg)+"'  ORDER BY id_orgao OFFSET 0 ROW FETCH NEXT 1 ROW ONLY;")
+    cursor.execute("select id_orgao from orgao where uasg = '"+validar(uasg)+"';")
     resultado = cursor.fetchone()
     return str(resultado[0]) if resultado!=None else '-1'
 
@@ -151,32 +151,31 @@ def consultar_itens_homologar(id_pregao:str):
 
 def consultar_itens_homologados(id_pregao:str):
     """Retorna as informações dos itens ganhos e a quantidade disponível para empenhar.
-    id, item, marca, modelo, quantidade, valor_ganho"""
+    id, item, marca, modelo, quantidade, valor_ofertado"""
     query=(
     """select
-        item.id_item,
-        item.item,
+        i.id_item,
+        i.item,
         nome_marca,
-        item.modelo,
+        i.modelo,
         total.quantidade,
-        valor_ganho
-    from resultado_item
+        i.valor_ofertado
+    from item as i
         join (select id_item, sum(quantidade) as quantidade
-        from (select id_item, quantidade*(-1) as quantidade
-        from item_empenho
-        union all
-        select
-            id_item,
-            quantidade*(-1) as quantidade
-        from item_carona
-        union all
-        select
-            id_item,
-            quantidade
-        from item) t group by id_item) as total on total.id_item = resultado_item.id_item 
-    join item on item.id_item = resultado_item.id_item 
-    join marca on item.id_marca = marca.id_marca 
-    where item.id_pregao = '"""+validar(id_pregao)+"';")
+            from (select id_item, quantidade*(-1) as quantidade
+            from item_empenho
+            union all
+            select
+                id_item,
+                quantidade*(-1) as quantidade
+            from item_carona
+            union all
+            select
+                id_item,
+                quantidade
+            from item) t group by id_item) as total on total.id_item = i.id_item 
+    join marca on i.id_marca = marca.id_marca
+	where i.colocacao = 1 and i.id_pregao = '"""+validar(id_pregao)+"';")
     cursor.execute(query)
     consulta=[list(row) for row in cursor.fetchall()]
     return consulta
@@ -197,7 +196,7 @@ def consultar_empenhos_pela_fase(fase:str=''):
         nota_empenho,
         format (data_empenho,'dd/MM/yyyy') as data_empenho,
         format (data_entrega,'dd/MM/yyyy') as data_entrega,
-        sum(quantidade * valor_unitario)
+        sum(quantidade * valor_ofertado)
     from empenho 
     join pregao on empenho.id_pregao = pregao.id_pregao 
     join orgao on orgao.id_orgao = pregao.id_orgao 
@@ -279,23 +278,21 @@ def consultar_dados_gerais_pregao(id_pregao:str):
     select
         format (p.data_abertura,'dd/MM/yyyy HH:mm'),
         nome_fase,
-        count(ri.id_item) as itens_homologados,
-        sum(i.quantidade * ri.valor_ganho) as total_homologado,
+        count(i.id_item) as itens_homologados,
+        sum(i.quantidade * i.valor_ofertado) as total_homologado,
         e.empenhos,
         emp.total as total_empenhado
         from pregao as p
     left join fase_pregao as fp on fp.id_fase = p.id_fase
     left join item as i on i.id_pregao = p.id_pregao
-    left join resultado_item as ri on ri.id_item = i.id_item
     left join (select id_pregao, count(id_empenho) as empenhos from empenho group by id_pregao) as e on e.id_pregao = p.id_pregao
     left join (
-        select p.id_pregao, e.empenhos, sum(ie.valor_unitario * ie.quantidade) as total from pregao as p
+        select p.id_pregao, e.empenhos, sum(ie.valor_ofertado * ie.quantidade) as total from pregao as p
         join (select id_empenho, id_pregao, count(id_empenho) as empenhos from empenho group by id_empenho, id_pregao) as e on e.id_pregao = p.id_pregao
         join item_empenho as ie on ie.id_empenho = e.id_empenho
         group by p.id_pregao, e.id_pregao, e.empenhos) as emp on emp.id_pregao = p.id_pregao
     where p.id_pregao = '"""+validar(id_pregao)+"""'
-    group by data_abertura, nome_fase, e.empenhos, emp.total
-        """)
+    group by data_abertura, nome_fase, e.empenhos, emp.total""")
     cursor.execute(query)
     consulta=[list(row) for row in cursor.fetchall()]
     print(consulta)
@@ -320,7 +317,7 @@ def consultar_itens_homologados_id(id_pregao:str):
         i.item,
         nome_marca,
         i.modelo,
-        ri.valor_ganho,
+        i.valor_ofertado,
         i.quantidade,
         (case when qnts.empenho is null then 0 else qnts.empenho end) as empenho,
         (case when qnts.carona is null then 0 else qnts.carona end) as carona
@@ -349,8 +346,7 @@ def consultar_itens_homologados_id(id_pregao:str):
                                 cast(0 as int) as empenho
                             from item_carona) as car group by id_item, empenho) as total group by id_item)
                             as qnts on qnts.id_item = i.id_item
-    join resultado_item as ri on ri.id_item = i.id_item
-    join marca on marca.id_marca = i.id_marca where id_pregao = '"""+validar(id_pregao)+"';")
+    join marca on marca.id_marca = i.id_marca where id_pregao = '"""+validar(id_pregao)+"' and i.colocacao = 1;")
     cursor.execute(query)
     consulta=[list(row) for row in cursor.fetchall()]
     return consulta
@@ -364,7 +360,7 @@ def consultar_itens_empenhados_id(id_pregao:str):
         nome_marca,
         (case when ie.modelo is null then i.modelo else ie.modelo end),
         ie.quantidade,
-        ie.valor_unitario,
+        ie.valor_ofertado,
         (case when ie.custo_unitario is null then 0 else ie.custo_unitario end) as custo,
         format(e.data_empenho,'dd/MM/yyyy'),
         format(e.data_entrega,'dd/MM/yyyy'),
@@ -391,7 +387,7 @@ def consultar_itens_carona(id_pregao:str):
         i.modelo,
         ic.quantidade,
 		ie.quantidade as empenho,
-        ic.valor_ganho,
+        ic.valor_ofertado,
         format (c.data_carona,'dd/MM/yyyy'),
         nome_orgao,
         nome_fase
@@ -535,8 +531,7 @@ def inserir_itens_ganho(uasg:str,pregao:str,itens:list):
         id_item = consultar_id_item(item[0],uasg,pregao)
         if (id_item == '-1'):
             return False
-        query=( "insert into resultado_item (colocacao, valor_ganho, id_item) values ("
-                "'1','"+validar(item[1])+"','"+validar(id_item)+"')")
+        query=( "update item set colocacao = 1, valor_ofertado = '"+validar(item[1])+"' where id_item = '"+validar(id_item)+"';")
         cursor.execute(query)
     try:
         conn.commit()
@@ -568,7 +563,7 @@ def inserir_itens_em_carona(uasg:str,pregao:str,orgao:str,data:str,itens:list):
     try:
         for item in itens:
             id_item = consultar_id_item(item[0],uasg,pregao)
-            query=( "insert into item_carona (id_item, id_carona, quantidade, valor_ganho) "
+            query=( "insert into item_carona (id_item, id_carona, quantidade, valor_ofertado) "
                     "values ('"+validar(id_item)+"','"+validar(id_carona)+"','"+validar(item[1])+"','"+validar(item[2])+"')")
             cursor.execute(query)
         else:
@@ -599,8 +594,8 @@ def inserir_itens_em_empenho(uasg:str,pregao:str,nota_empenho:str,itens:list):
     id_empenho = consultar_id_empenho(uasg,pregao,nota_empenho)
     try:
         for item in itens:
-            id_item = consultar_id_item(item[0],uasg,pregao)
-            query = (   "insert into item_empenho (quantidade, valor_unitario, id_empenho, id_item) "
+            id_item = consultar_id_item(item[0], uasg, pregao)
+            query = (   "insert into item_empenho (quantidade, valor_ofertado, id_empenho, id_item) "
                         "values ('"+validar(item[1])+"','"+validar(item[2])+"','"+validar(id_empenho)+"','"+validar(id_item)+"');")
             cursor.execute(query)
             conn.commit()

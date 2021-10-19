@@ -19,6 +19,7 @@ titulo_janelas = {
     'janela_consulta_itens_pregao':'Itens do pregão',
     #alterações
     'janela_alteracao_itens_participados':'Alteração dos Itens Cadastrados.',
+    'janela_alteracao_data_abertura':'Alterar a Data de Abertura do Pregão.',
     #cadastros
     'janela_cadastro_homologacao':'Homologar Pregão',
     'janela_cadastro_itens_empenhar':'Empenhar itens',
@@ -72,7 +73,7 @@ def janela_consulta_pregao():
 
 def janela_consulta_pregoes():
     """Retorna um sg.Window com tabela e abas para apresentação dos pregões."""
-
+    tamanho_padrao=(25,1)
     cabecalho_generico = [
         ['id','Pregão','UASG','Abertura','ÓRGÃO'],
         [0,10,8,20,30]
@@ -95,12 +96,9 @@ def janela_consulta_pregoes():
         [
             sg.Frame(title=' Opções ',border_width=0,layout=
             [
-                [
-                    sg.Button('Abrir Pasta',enable_events=True,key='bt_pasta',size=(20,1))
-                ],
-                [
-                    sg.Button('Consultar Itens',enable_events=True,key='bt_consultar_itens',size=(20,1))
-                ],
+                [sg.Button('Abrir Pasta',enable_events=True,key='bt_pasta',size=tamanho_padrao)],
+                [sg.Button('Consultar Itens',enable_events=True,key='bt_consultar_itens',size=tamanho_padrao)],
+                [sg.Button('Alterar Data Abertura',enable_events=True,key='bt_alterar_data',size=tamanho_padrao)],
                 [
                     sg.Column(coluna1,key='cl_julgamento'),
                     sg.Column(coluna2,key='cl_ganho',visible=False),
@@ -260,6 +258,15 @@ def janela_alteracao_itens_participados(id_pregao:str):#INCOMPLETO
         ]
     ]
     return sg.Window(title=titulo_janelas['janela_alteracao_itens_participados'],layout=layout, finalize=True)
+
+def janela_alteracao_data_abertura(id_pregao:str):
+    """Retorna um sg.Window com campos de data para alterar a data de abertura de um pregão."""
+    layout = [
+        [pt.data('Qual a nova data do pregão?')],
+        [pt.botoes_concluir_cancelar_operacao()]
+    ]
+    return sg.Window(title=titulo_janelas['janela_alteracao_data_abertura'],layout=layout,finalize=True)
+    
 
 ###JANELAS DESTINADAS A CADASTROS
 

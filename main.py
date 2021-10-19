@@ -110,6 +110,9 @@ while True:
                 janela_anterior.append(wds.janela_consulta_pregoes)
                 wds.janela_consulta_itens_pregao(pregoes[0][0])
         
+        if(event == 'bt_alterar_data'):
+            pass
+
         if(event == 'bt_homologar'):
             pregoes = evh.consultar_dados_selecionados_tabela(window,values,'tg_pregoes')
             if pregoes:

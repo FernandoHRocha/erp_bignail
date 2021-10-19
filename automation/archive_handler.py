@@ -89,9 +89,9 @@ def cadastrar_planilha():
             fornecedor=item[7],
             preco_custo=item[8],
             )
-    nomenclatura = adapter.padronizar_nome_pasta(pregao['data'],pregao['numero'],pregao['uasg'])
-    renomear_arquivo(pasta_proposta, arquivo_planilha, nomenclatura)
-    renomear_arquivo(pasta_proposta, arquivo_word, nomenclatura)
-    mover_e_renomear_pasta(pasta,nomenclatura)
+    #nomenclatura = adapter.padronizar_nome_pasta(pregao['data'],pregao['numero'],pregao['uasg'])
+    #renomear_arquivo(pasta_proposta, arquivo_planilha, nomenclatura)
+    #renomear_arquivo(pasta_proposta, arquivo_word, nomenclatura)
+    #mover_e_renomear_pasta(pasta,nomenclatura)
     sg.popup('Foram inseridos '+str(len(itens))+' itens no pregão de número '+pregao['numero'])
     return

@@ -152,7 +152,7 @@ CONSTRAINT FK_fase_empenho
 	FOREIGN KEY (id_fase)
 	REFERENCES fase_empenho (id_fase)
 	ON DELETE NO ACTION
-	ON UPDATE CASCADE
+	ON UPDATE CASCADE,
 CONSTRAINT FK_orgao_empenho
 	FOREIGN KEY (id_orgao)
 	REFERENCES orgao (id_orgao)

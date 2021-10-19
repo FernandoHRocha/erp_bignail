@@ -1,7 +1,10 @@
 import PySimpleGUI as sg
 from PySimpleGUI.PySimpleGUI import Checkbox, Text
 
-def data(title,key,visible):
+def data(title:str='',key:str='fr_data',visible:bool=True,border_width:int=0):
+    """Retorna um sg.Frame com compos para inserção de datas.\n
+    Os campos de dia, mês e ano possuem as chaves it_dia, it_mes e it_ano respectivamente.\n
+    E os argumentos são referentes às propriedades do Frame."""
     anos = []
     for n in range(2020,2026): anos.append(str(n))
     return sg.Frame( layout=[
