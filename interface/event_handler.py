@@ -257,7 +257,7 @@ def empenhar_itens(window:sg.Window,values:list):
         if 'check' in item:
             if values[item]:
                 codigo_item = item.replace('check_','')
-                quantidade = values[str(item).replace('check','it')]
+                quantidade = values[str(item).replace('check','it_quantidade')]
                 quantidade_max = window[str(item).replace('check','txt_quantidade')].get()
                 valor = values[str(item).replace('check','it_valor')]
                 aux = []
@@ -312,7 +312,7 @@ def caronar_itens(window:sg.Window,values:list):
         if 'check' in item:
             if values[item]:
                 codigo_item = item.replace('check_','')
-                quantidade = values[str(item).replace('check','it')]
+                quantidade = values[str(item).replace('check','it_quantidade')]
                 quantidade_max = window[str(item).replace('check','txt_quantidade')].get()
                 valor = values[str(item).replace('check','it_valor')]
                 aux = []
@@ -344,12 +344,25 @@ def caronar_itens(window:sg.Window,values:list):
 
 ##CONTROLE DE ENTRADAS
 
-def entrada_numerica(valor:str):
+def entrada_numerica(valor:str,comprimento:int=7)->str:
     """Confere se o último caractere inserido é um número.\n
     Retorna um caractere a menos caso não seja um número.\n
     Retorna nulo quando a entrada é nula."""
     if valor:
-        if(valor[len(valor)-1].isdigit() and len(valor)<7):
+        if(valor[-1].isdigit() and len(valor)<comprimento):
+            return valor
+        else:
+            return valor[:-1]
+
+def entrada_decimal(valor:str,comprimento:int=12)->str:
+    """Confere se o último caractere inserido é um número.\n
+    Retorna um caractere a menos caso não seja um número ou pontuação.\n
+    Retorna nulo quando a entrada é nula."""
+    if valor:
+        valor = valor.replace('.',',')
+        if(valor[-1].isdigit() and len(valor)<comprimento):
+            return valor
+        elif((valor[-1] == ',') and (valor.count(',')==1 and len(valor)<comprimento)):
             return valor
         else:
             return valor[:-1]

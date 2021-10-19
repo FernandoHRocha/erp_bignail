@@ -13,7 +13,7 @@ wds.janela_menu()
 while True:
     window, event, values = sg.read_all_windows()
 
-    #print(window,event,values)
+    print(window,event,values)
 
     if(window.Title==titulo_janelas['janela_menu']):
         if(event == 'bt_consultar'):
@@ -245,13 +245,17 @@ while True:
 
     if(window.Title==titulo_janelas['janela_cadastro_homologacao']):
         if event:
-            if('check_' in event):
+            if ('check_' in event):
                 evh.alterar_apresentacao_item(window,values,event)
+            elif ('it_' in event):
+                entrada = str(event)
+                valor = evh.entrada_decimal(values[entrada],12)
+                window[entrada].update(value=valor)
 
         if (event=='bt_concluir'):
             evh.homologar_pregao_e_itens(window, values)
         
-        if(event=='bt_cancelar'):
+        if (event=='bt_cancelar'):
             window.Close()
             evh.voltar_pagina(janela_anterior,wds.janela_menu)
 
@@ -259,7 +263,15 @@ while True:
         if event:
             if('check_' in event):
                 evh.alterar_apresentacao_item(window,values,event)
-        
+            elif ('it_valor_' in event):
+                entrada = str(event)
+                valor = evh.entrada_decimal(values[entrada],12)
+                window[entrada].update(value=valor)
+            elif ('it_quantidade' in event):
+                entrada = str(event)
+                valor = evh.entrada_numerica(values[entrada],10)
+                window[entrada].update(value=valor)
+
         if (event=='bt_concluir'):
             evh.empenhar_itens(window, values)
         
@@ -271,17 +283,26 @@ while True:
         if event:
             if('check_' in event):
                 evh.alterar_apresentacao_item(window,values,event)
+            elif ('it_valor_' in event):
+                entrada = str(event)
+                valor = evh.entrada_decimal(values[entrada],12)
+                window[entrada].update(value=valor)
+            elif ('it_quantidade' in event):
+                entrada = str(event)
+                valor = evh.entrada_numerica(values[entrada],10)
+                window[entrada].update(value=valor)
 
         if (event=='bt_concluir'):
             evh.caronar_itens(window, values)
 
         if(event=='bt_cancelar'):
             window.Close()
+            evh.voltar_pagina(janela_anterior,wds.janela_menu)
 
     if(window.Title==titulo_janelas['janela_cadastro_entrega_empenho']):
         if(event=='bt_cancelar'):
             window.Close()
-            wds.janela_consulta_empenhos()
+            evh.voltar_pagina(janela_anterior,wds.janela_menu)
         
         if(event=='bt_concluir'):
             data = evh.conferir_campos_de_data(values)
@@ -301,8 +322,10 @@ while True:
         if(event == 'bt_concluir'):
             try:
                 nova_data = evh.conferir_campos_de_data(values) + ' ' + evh.conferir_campo_de_hora(values)
-                if cnn.alterar_data_abertura(window['txt_id_pregao'].get(),nova_data):
-                    sg.popup('Data alterada com sucesso.')
+                id_pregao = window['txt_id_pregao'].get()
+                evh.abrir_pasta_pregao(id_pregao)
+                if cnn.alterar_data_abertura(id_pregao,nova_data):
+                    sg.popup('Data alterada com sucesso.\nA pasta foi aberta para você alterar a data.')
                     window.Close()
                     evh.voltar_pagina(janela_anterior,wds.janela_menu)
             except:

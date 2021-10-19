@@ -179,13 +179,15 @@ def janela_consulta_carona():
 
 def janela_consulta_itens_pregao(id_pregao:str):
     dados = evh.consultar_dados_pregao(id_pregao)
-    pregao = dados[0]
-    uasg = dados[1]
-    orgao = dados[2]
-    data = dados[3]
-    ata = dados[4] if dados[4] != 'None' else 'Pendente'
-    fase = dados[5]
+    pregao = dados[1]
+    uasg = dados[2]
+    orgao = dados[3]
+    data = dados[4]
+    ata = dados[5] if dados[5] != 'None' else 'Pendente'
+    fase = dados[6]
     abas = evh.listar_itens_em_categorias(id_pregao)
+
+    homologado = True if fase == 'Homologado' else False
 
     coluna1=sg.Column(size=(500,100),layout=[
         [
@@ -226,8 +228,8 @@ def janela_consulta_itens_pregao(id_pregao:str):
             ]),
             sg.Column(layout=[
                 [sg.Button('Abrir Pasta',enable_events=True,size=(20,1),key='bt_pasta')],
-                [sg.Button('Registrar Empenho',enable_events=True,size=(20,1),key='bt_item_empenho')],
-                [sg.Button('Registrar Carona',enable_events=True,size=(20,1),key='bt_item_carona')],
+                [sg.Button('Registrar Empenho',enable_events=True,visible=homologado,size=(20,1),key='bt_item_empenho')],
+                [sg.Button('Registrar Carona',enable_events=True,visible=homologado,size=(20,1),key='bt_item_carona')],
             ])
         ],
         [
@@ -241,7 +243,7 @@ def janela_consulta_itens_pregao(id_pregao:str):
         ],
         [
             sg.Button('Alterar item',enable_events=True,key='bt_item_alterar'),
-            sg.Button('Solicitar Reequilibrio',enable_events=True,key='bt_reequilibrio'),
+            sg.Button('Solicitar Reequilibrio',visible=homologado,enable_events=True,key='bt_reequilibrio'),
             sg.Button('Consultar Fornecedor',enable_events=True,key='bt_fornecedor'),
         ],
         [pt.bt_voltar()]
@@ -277,7 +279,6 @@ def janela_alteracao_data_abertura(dados:str):
     ]
     return sg.Window(title=titulo_janelas['janela_alteracao_data_abertura'],layout=layout,finalize=True)
 
-
 ###JANELAS DESTINADAS A CADASTROS
 
 def janela_cadastro():
@@ -299,7 +300,7 @@ def janela_cadastro_homologacao(id_pregao:str,uasg:str,pregao:str,itens:list):
     """Retorna um sg.Window para homologação do pregão."""
     data_ata =[
         [
-            sg.Text('Data de assinatura da ARP (Ata de Registro de Preços), deixar em branco caso não tenha sido assinada.')
+            sg.Text('Data de assinatura da ARP (Ata de Registro de Preços)\nDeixe em branco caso não tenha sido assinada.')
         ],
         [
             sg.Text('Dia'),sg.InputText('',size=(2,1),key='it_dia'),
@@ -316,11 +317,11 @@ def janela_cadastro_homologacao(id_pregao:str,uasg:str,pregao:str,itens:list):
             sg.Text(uasg,key='txt_uasg')
         ],
         [
-            sg.Text('Escolha os itens que foram homologados para a sua empresa, e então indique o valor disputado')
+            sg.Text('Escolha os itens que foram homologados e coloque o valor disputado')
         ],
         [
-            sg.Column(  layout=[[pt.frame_item_homologar(item[0],item[1],item[2], item[3])] for item in itens],
-                        size=(400,600),vertical_scroll_only=True,scrollable=True,key='cl_itens')
+            sg.Column(  layout=[[pt.frame_item_homologar(item[0],item[1],item[2], item[3], item[4])] for item in itens],
+                        size=(600,400),vertical_scroll_only=True,scrollable=True,key='cl_itens')
         ],
         data_ata,
         pt.botoes_concluir_cancelar_operacao(),
@@ -353,11 +354,11 @@ def janela_cadastro_itens_empenhar(uasg:str,pregao:str,itens:list):
             sg.Text(uasg,key='txt_uasg')
         ],
         [
-            sg.Text('Escolha os itens que foram empenhados em uma única nota, e indique a quantidade de cada um.')
+            sg.Text('Escolha os itens que compõem a nota e indique a quantidade empenhada.')
         ],
         [
             sg.Column(  layout=[[pt.frame_item_empenhar(item)] for item in itens],
-                        size=(800,600),vertical_scroll_only=True,scrollable=True,key='cl_itens')
+                        size=(600,400),vertical_scroll_only=True,scrollable=True,key='cl_itens')
         ],
         [
             dados_empenho
@@ -394,11 +395,11 @@ def janela_cadastro_itens_carona(uasg:str,pregao:str,itens:list):
             sg.Combo(values=evh.consultar_uasg_orgao()[1],size=(100,1),enable_events=True,key='cb_orgao',readonly=True)
         ],
         [
-            sg.Text('Selecione os itens aceitos na carona para servir ao órgão selecionado, e indique a quantidade de cada um.')
+            sg.Text('Selecione os itens aceitos na carona para servir ao órgão selecionado e indique a quantidade.')
         ],
         [
             sg.Column(  layout=[[pt.frame_item_empenhar(item)] for item in itens],
-                        size=(800,600),vertical_scroll_only=True,scrollable=True,key='cl_itens')
+                        size=(600,400),vertical_scroll_only=True,scrollable=True,key='cl_itens')
         ],
         [
             sg.Text('Caso um mesmo órgão realize mais pedidos de carona para o mesmo pregão, considere datas diferentes para cada um.')

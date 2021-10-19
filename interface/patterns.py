@@ -141,21 +141,24 @@ def aba_com_tabela_itens(cabecalho:list, identificador:str, valores:list):
     titulo = identificador[0].upper()+identificador[1:len(identificador)]
     return sg.Tab(titulo, tabela_itens_preenchida(cabecalho[0],valores,'tb_'+identificador,larguras=cabecalho[1]),key='tab_'+identificador,visible=True)
 
-def frame_item_homologar(item:str,marca:str,modelo:str,unidades:str):
+def frame_item_homologar(item:str,marca:str,modelo:str,unidades:str,valor_ofertado:str):
     """Retorna um sg.Frame para incluir itens em homologação."""
     item = str(item)
     modelo = str(modelo)
     unidades = str(unidades)
+    valor_ofertado = str(valor_ofertado)
     return sg.Frame(title=' Item '+str(item)+' ',layout=
         [
             [
                 sg.Checkbox(unidades+' un. '+marca+' do modelo: '+modelo,key='check_'+item,default=False,enable_events=True)
             ],
             [
-                sg.Frame('',border_width=0,key='fr_it_'+item,visible=False,layout=[
+                sg.Frame('',border_width=0,key='fr_it_'+item,visible=False, layout=[
                     [
                         sg.Text('Valor Ganhor R$'),
-                        sg.InputText(size=(15,1), pad=(0,0),enable_events=True, key='it_'+item)
+                        sg.InputText(default_text=valor_ofertado,size=(15,1), pad=(0,0),enable_events=True, key='it_'+item),
+                        sg.Text('Valor Ofertado R$'),
+                        sg.Text(valor_ofertado)
                     ]
                 ]),
             ]
@@ -168,6 +171,9 @@ def frame_item_empenhar(itens:list):
     modelo = str(itens[3])
     unidades = str(itens[4])
     valor = str(itens[5]).replace('.',',')
+    if(int(unidades)<1):
+        print('não enviar o item ',item)
+        return sg.Text()
     return sg.Frame(title=' Item '+str(item)+' ',layout=
         [
             [
@@ -178,12 +184,10 @@ def frame_item_empenhar(itens:list):
                     [
                         sg.Text('Valor Ganhor R$'),
                         sg.InputText(default_text=valor,size=(11,1),enable_events=True,key='it_valor_'+item),
-                    ],
-                    [
-                        sg.InputText(size=(6,1), enable_events=True, key='it_'+item),
-                        sg.Text(' de '),
+                        sg.InputText(size=(6,1), enable_events=True, key='it_quantidade_'+item),
+                        sg.Text('de'),
                         sg.Text(unidades,key='txt_quantidade_'+item),
-                        sg.Text(' unidades.'),
+                        sg.Text('unidades.'),
                     ],
                 ]),
             ]

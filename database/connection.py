@@ -135,20 +135,6 @@ def consultar_fases_pregoes():
     consulta=[row[0].lower() for row in cursor.fetchall()]
     return consulta
 
-def consultar_itens_homologar(id_pregao:str):
-    """Retorna número, quantidade e modelo dos itens de um pregão."""
-    query = (
-    """select
-        item,
-        nome_marca,
-        modelo,
-        quantidade
-    from item
-    inner join marca on marca.id_marca = item.id_marca
-    where id_pregao = '"""+validar(id_pregao)+"';")
-    cursor.execute(query)
-    return [list(row) for row in cursor.fetchall()]
-
 def consultar_itens_homologados(id_pregao:str):
     """Retorna as informações dos itens ganhos e a quantidade disponível para empenhar.
     id, item, marca, modelo, quantidade, valor_ofertado"""
@@ -309,6 +295,21 @@ def consultar_itens_participados(id_pregao:str):
     cursor.execute(query)
     consulta=[list(row) for row in cursor.fetchall()]
     return consulta
+
+def consultar_itens_homologar(id_pregao:str):
+    """Retorna número, quantidade e modelo dos itens de um pregão."""
+    query = (
+    """select
+        item,
+        nome_marca,
+        modelo,
+        quantidade,
+        valor_ofertado
+    from item
+    inner join marca on marca.id_marca = item.id_marca
+    where id_pregao = '"""+validar(id_pregao)+"';")
+    cursor.execute(query)
+    return [list(row) for row in cursor.fetchall()]
 
 def consultar_itens_homologados_id(id_pregao:str):
     """Retorna uma lista de itens ganhos para determinado pregão."""
