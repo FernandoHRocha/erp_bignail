@@ -232,7 +232,6 @@ def homologar_pregao_e_itens(window:sg.Window,values:dict):
         if not cnn.inserir_itens_ganho(uasg,pregao,itens_homologar):
             return sg.popup('Não foi possível inserir os itens como homologados.')
         sg.popup('O pregão foi homologado.')
-        window.Close()
 
 ##JANELA EMPENHO DE ITENS
 
@@ -338,6 +337,56 @@ def caronar_itens(window:sg.Window,values:list):
             else:
                 if(not cnn.inserir_itens_em_carona(uasg,pregao,orgao,data_carona,itens_caronar)):
                     return sg.popup('Houve um problema para registrar os itens da carona.')
+                else:
+                    sg.popup('Carona registrado com sucesso!')
+                    window.Close()
+
+##JANELA REEQUILIBRIO DE ITENS
+
+def abrir_janela_itens_reequilibrio(id_pregao:str):
+    dados = consultar_dados_pregao(id_pregao)
+    id_pregao = dados[0]
+    uasg = dados[2]
+    pregao = dados[1]
+    return wds.janela_cadastro_itens_reequilibrio(id_pregao,uasg,pregao,cnn.consultar_itens_homologados(id_pregao))
+
+def reequilibrar_itens(window:sg.Window,values:list):
+    window.BringToFront()
+    id_pregao = window['txt_id_pregao'].get()
+    data_reequilibrio = conferir_campos_de_data(values)
+    if not data_reequilibrio:
+        return sg.popup('Favor corrigir a data do reequilibrio.')
+    itens_reequilibrio=[]
+    for item in values.keys():
+        if 'check' in item:
+            if values[item]:
+                codigo_item = item.replace('check_','')
+                quantidade = values[str(item).replace('check','it_quantidade')]
+                quantidade_max = window[str(item).replace('check','txt_quantidade')].get()
+                valor = values[str(item).replace('check','it_valor')]
+                aux = []
+                aux.append(codigo_item)
+                if ((not quantidade.isdigit()) or (int(quantidade_max) < int(quantidade) or int(quantidade) < 1)):
+                    return sg.popup('Verifique a quantidade para o item '+codigo_item)
+                else:
+                    aux.append(quantidade)
+                if valor.replace(',','',1).isdigit():
+                    valor = str(round(float(valor.replace(',','.',1)),2))
+                    if (len(valor.split('.')[1])<2):
+                        valor = valor + '0'
+                    aux.append(valor)
+                else:
+                    return sg.popup('Favor corrigir o valor do item '+codigo_item)
+                itens_reequilibrio.append(aux)
+    else:
+        if(len(itens_reequilibrio)<1):
+            return sg.popup('Para registrar um pedido de reequilibrio é necessário que pelo menos um item seja selecionado.')
+        else:
+            if (not cnn.inserir_reequilibrio(id_pregao,data_reequilibrio)):
+                return sg.popup('Não foi possível registrar o pedido.')
+            else:
+                if(not cnn.inserir_itens_em_reequilibrio(id_pregao,data_reequilibrio,itens_reequilibrio)):
+                    return sg.popup('Houve um problema para registrar os itens do pedido.')
                 else:
                     sg.popup('Carona registrado com sucesso!')
                     window.Close()

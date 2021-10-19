@@ -219,7 +219,23 @@ def consultar_caronas_pela_fase(fase:str=''):
     consulta=[list(row) for row in cursor.fetchall()]
     return consulta
 
+def consultar_id_reequilibrio(id_pregao:str,data:str):
+    """Retorna o id do reequilibrio. Caso não exista retorna o valor -1."""
+    query=( "select id_reequilibrio from reequilibrio where "+
+            "id_pregao = '"+validar(id_pregao)+"' and data_reequilibrio = '"+validar(data)+"';")
+    cursor.execute(query)
+    resultado = cursor.fetchone()
+    return str(resultado[0]) if resultado != None else '-1'
+
 ###CONSULTAS PELO ID DO PREGÃO
+
+def consultar_id_item_pelo_id_pregao(item:str,id_pregao:str):
+    """Retorna o id do item. Caso não exista retorna o valor -1."""
+    query=("select id_item from item where "+
+            "id_pregao = '"+validar(id_pregao)+"' and item = '"+validar(item)+"';")
+    cursor.execute(query)
+    resultado = cursor.fetchone()
+    return str(resultado[0]) if resultado != None else '-1'
 
 def consultar_pasta_pregao(id_pregao:str):
     """Retorna o padrão das data_pregao_uasg para o pregão."""
@@ -631,6 +647,33 @@ def inserir_entrega_de_empenho(id_empenho:str,data:str):
         cursor.execute(query)
         conn.commit()
         return True
+    except:
+        return False
+
+def inserir_reequilibrio(id_pregao:str,data:str,fase:str='1'):
+    """Insere um novo pedido de reequilibrio economico no banco de dados."""
+    query=("insert into reequilibrio (data_reequilibrio, id_pregao, id_orgao id_fase,) "+
+            "values ( '"+validar(data)+"', '"+validar(id_pregao)+"', "+
+            "(select id_orgao from pregao where id_pregao = '"+validar(id_pregao)+"'), '"+validar(fase)+"');")
+    try:
+        cursor.execute(query)
+        cursor.commit()
+        return True
+    except:
+        return False
+
+def inserir_itens_em_reequilibrio(id_pregao:str,data:str,itens:list):
+    id_reequilibrio = consultar_id_reequilibrio(id_pregao,data)
+    #NECESSARIO TERMINAR A QUERY
+    try:
+        for item in itens:
+            id_item = consultar_id_item_pelo_id_pregao(item[0],id_pregao)
+            query=( "insert into item_reequilibrio (id_item_reequilibrio, quantidade, valor_novo, valor_ofertado, id_reequilibrio) "
+                    #"values ('"+validar(id_item)+"','"+validar(id_reequilibrio)+"','"+validar(item[1])+"','"+validar(item[2])+"')")
+            cursor.execute(query)
+        else:
+            conn.commit()
+            return True
     except:
         return False
 

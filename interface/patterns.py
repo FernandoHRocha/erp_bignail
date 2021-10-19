@@ -172,7 +172,6 @@ def frame_item_empenhar(itens:list):
     unidades = str(itens[4])
     valor = str(itens[5]).replace('.',',')
     if(int(unidades)<1):
-        print('não enviar o item ',item)
         return sg.Text()
     return sg.Frame(title=' Item '+str(item)+' ',layout=
         [
@@ -183,11 +182,38 @@ def frame_item_empenhar(itens:list):
                 sg.Frame('',border_width=0,key='fr_it_'+item,visible=False,layout=[
                     [
                         sg.Text('Valor Ganhor R$'),
-                        sg.InputText(default_text=valor,size=(11,1),enable_events=True,key='it_valor_'+item),
+                        sg.InputText(default_text=valor,size=(12,1),enable_events=True,key='it_valor_'+item),
+                        sg.Text('quantidade'),
                         sg.InputText(size=(6,1), enable_events=True, key='it_quantidade_'+item),
                         sg.Text('de'),
                         sg.Text(unidades,key='txt_quantidade_'+item),
                         sg.Text('unidades.'),
+                    ],
+                ]),
+            ]
+        ])
+
+def frame_item_reequilibrio(itens:list):
+    """Retorna um sg.Frame para incluir itens em um pedido de reequilibrio economico."""
+    item = str(itens[1])
+    marca = str(itens[2])
+    modelo = str(itens[3])
+    unidades = str(itens[4])
+    valor = str(itens[5]).replace('.',',')
+    if(int(unidades)<1):
+        return sg.Text()
+    return sg.Frame(title=' Item '+str(item)+' ',layout=
+        [
+            [
+                sg.Checkbox(unidades+' un. '+marca+' - '+modelo,key='check_'+item,default=False,enable_events=True)
+            ],
+            [
+                sg.Frame('',border_width=0,key='fr_it_'+item,visible=False,layout=[
+                    [
+                        sg.Text('Valor Disputado R$'),
+                        sg.Text(valor),
+                        sg.Text('Valor Reequilibrado R$'),
+                        sg.InputText(size=(12,1), enable_events=True, key='it_valor_'+item),
                     ],
                 ]),
             ]

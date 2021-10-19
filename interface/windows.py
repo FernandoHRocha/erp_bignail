@@ -25,6 +25,7 @@ titulo_janelas = {
     'janela_cadastro_itens_empenhar':'Empenhar itens',
     'janela_cadastro_itens_carona':'Cadastrar Carona de Itens',
     'janela_cadastro_entrega_empenho':'Registrar Entrega',
+    'janela_cadastro_itens_reequilibrio':'Registrar Pedido de Reequilibrio Economico',
     #auxiliares
     'janela_consulta_pregao_alterar_fase':'Alteração de Fase',
 }
@@ -80,12 +81,13 @@ def janela_consulta_pregoes():
     ]
     abas = evh.listar_pregoes_gerais()
     coluna1=[#APLICADO PARA PREGÕES EM FASE DE PROPOSTA, JULGAMENTO E FRUSTRADO
-        [sg.Button('Alterar Fase',enable_events=True,key='bt_alterar_fase',size=(20,1))],
-        [sg.Button('Homologar Pregão',enable_events=True,key='bt_homologar',size=(20,1)),]
+        [sg.Button('Alterar Fase',enable_events=True,key='bt_alterar_fase',size=tamanho_padrao)],
+        [sg.Button('Homologar Pregão',enable_events=True,key='bt_homologar',size=tamanho_padrao),]
     ]
     coluna2=[#APLICADO PARA PREGÕES HOMOLOGADOS
-        [sg.Button('Registrar Empenho',enable_events=True,key='bt_registrar_empenho',size=(20,1))],
-        [sg.Button('Registrar Carona',enable_events=True,key='bt_registrar_carona',size=(20,1)),]
+        [sg.Button('Registrar Empenho',enable_events=True,key='bt_registrar_empenho',size=tamanho_padrao)],
+        [sg.Button('Registrar Carona',enable_events=True,key='bt_registrar_carona',size=tamanho_padrao)],
+        [sg.Button('Registrar Reequilibrio',enable_events=True,key='bt_registrar_reequilibrio',size=tamanho_padrao),]
     ]
     layout=[
         [
@@ -330,20 +332,13 @@ def janela_cadastro_homologacao(id_pregao:str,uasg:str,pregao:str,itens:list):
 
 def janela_cadastro_itens_empenhar(uasg:str,pregao:str,itens:list):
     """Retorna um sg.Window para escolher os itens a serem empenhados."""
-    data_empenho =[
-        [
-            sg.Text(' Dia '),sg.InputText('',size=(2,1),key='it_dia'),
-            sg.Text(' mês '),sg.InputText('',size=(2,1),key='it_mes'),
-            sg.Text(' ano '),sg.InputText('',size=(4,1),key='it_ano'),
-        ]
-    ]
     numero_empenho =[
         [
             sg.Text(' Número do empenho '),sg.InputText('',size=(20,1),key='it_codigo_empenho'),
         ]
     ]
     dados_empenho=[
-        [sg.Frame(title=' Data de Recebimento do Empenho ',layout=data_empenho)],
+        [sg.Frame(title=' Data de Recebimento do Empenho ',layout=[[pt.data()]])],
         [sg.Frame(title=' Código da Nota de Empenho ',layout=numero_empenho)],
     ]
     layout=[
@@ -369,18 +364,9 @@ def janela_cadastro_itens_empenhar(uasg:str,pregao:str,itens:list):
 
 def janela_cadastro_itens_carona(uasg:str,pregao:str,itens:list):
     """Retorna um sg.Window para escolher os itens a serem registrados em carona."""
-    data_carona =[
-        [
-            sg.Text(' Dia '),sg.InputText('',size=(2,1),key='it_dia'),
-            sg.Text(' mês '),sg.InputText('',size=(2,1),key='it_mes'),
-            sg.Text(' ano '),sg.InputText('',size=(4,1),key='it_ano'),
-        ]
-    ]
-
     dados_carona =[
-        [sg.Frame(title=' Data de Adesão a Carona ',layout=data_carona)]
+        [sg.Frame(title=' Data de Adesão a Carona ',layout=[[pt.data()]])]
     ]
-
     layout=[
         [
             sg.Text('Registrar Pedido de Carona para o pregão'),
@@ -409,6 +395,26 @@ def janela_cadastro_itens_carona(uasg:str,pregao:str,itens:list):
     ]
     return sg.Window(title=titulo_janelas['janela_cadastro_itens_carona'],layout=layout,finalize=True)
 
+def janela_cadastro_itens_reequilibrio(id_pregao:str,pregao:str,uasg:str,itens:list):
+    layout = [
+        [
+            sg.Text(id_pregao,key='txt_id_pregao',visible=False),
+            sg.Text('Registrar Pedido de Reequilibrio economico para o pregão '),
+            sg.Text(pregao,key='txt_pregao'),
+            sg.Text('do Uasg'),
+            sg.Text(uasg,key='txt_uasg')
+        ],
+        [
+            sg.Column(  layout=[[pt.frame_item_reequilibrio(item)] for item in itens],
+                        size=(600,400),vertical_scroll_only=True,scrollable=True,key='cl_itens')
+        ],
+        [
+            sg.Frame(title='Data de Solicitação do Pedido.',layout=[[pt.data()]])
+        ],
+        [pt.botoes_concluir_cancelar_operacao()]
+    ]
+    return sg.Window(title=titulo_janelas['janela_cadastro_itens_reequilibrio'], layout=layout,finalize=True)
+
 def janela_cadastro_entrega_empenho(id_empenho:str):
     """Retorna um sg.Window com campos de data para registrar a entrega."""
     layout = [
@@ -421,7 +427,7 @@ def janela_cadastro_entrega_empenho(id_empenho:str):
         ]
     ]
     return sg.Window(title=titulo_janelas['janela_cadastro_entrega_empenho'],layout=layout,finalize=True)
-
+    
 ###JANELAS DESTINADAS AOS PROCESSOS DE AUTOMAÇÃO
 
 def janela_comprasnet():

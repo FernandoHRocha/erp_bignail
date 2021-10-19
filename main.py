@@ -129,14 +129,22 @@ while True:
             if pregoes:
                 window.Close()
                 janela_anterior.append(wds.janela_consulta_pregoes)
-                [evh.abrir_janela_itens_empenhar(pregao[0]) for pregao in pregoes]
+                evh.abrir_janela_itens_empenhar(pregoes[0][0])
         
         if(event == 'bt_registrar_carona'):
             pregoes = evh.consultar_dados_selecionados_tabela(window,values,'tg_pregoes')
             if pregoes:
                 window.Close()
                 janela_anterior.append(wds.janela_consulta_pregoes)
-                [evh.abrir_janela_itens_carona(pregao[0]) for pregao in pregoes]
+                evh.abrir_janela_itens_carona(pregoes[0][0])
+
+        if(event == 'bt_registrar_reequilibrio'):
+            pregoes = evh.consultar_dados_selecionados_tabela(window,values,'tg_pregoes')
+            if pregoes:
+                window.Close()
+                janela_anterior.append(wds.janela_consulta_pregoes)
+                evh.abrir_janela_itens_reequilibrio(pregoes[0][0])
+
 
         if(event == 'tg_pregoes'):
             if(values['tg_pregoes'] in ['tab_homologado','tab_finalizado']):
@@ -254,6 +262,8 @@ while True:
 
         if (event=='bt_concluir'):
             evh.homologar_pregao_e_itens(window, values)
+            window.Close()
+            evh.voltar_pagina(janela_anterior,wds.janela_menu)
         
         if (event=='bt_cancelar'):
             window.Close()
@@ -294,6 +304,22 @@ while True:
 
         if (event=='bt_concluir'):
             evh.caronar_itens(window, values)
+
+        if(event=='bt_cancelar'):
+            window.Close()
+            evh.voltar_pagina(janela_anterior,wds.janela_menu)
+
+    if(window.Title==titulo_janelas['janela_cadastro_itens_reequilibrio']):
+        if event:
+            if('check_' in event):
+                evh.alterar_apresentacao_item(window,values,event)
+            elif ('it_valor_' in event):
+                entrada = str(event)
+                valor = evh.entrada_decimal(values[entrada],12)
+                window[entrada].update(value=valor)
+
+        if (event=='bt_concluir'):
+            evh.reequilibrar_itens(window, values)
 
         if(event=='bt_cancelar'):
             window.Close()
