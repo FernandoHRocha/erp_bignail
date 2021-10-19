@@ -49,10 +49,11 @@ CREATE TABLE item
  item int NOT NULL,
  modelo varchar(45),
  quantidade	int,
+ colocacao int,
  valor_ofertado decimal(11,2) NOT NULL,
  preco_custo decimal (11,2) NOT NULL,
  frete decimal (11,2) NOT NULL,
- fornecedor varchar(200),
+ fornecedor varchar(400),
  id_pregao int NOT NULL,
  id_marca int,
  id_categoria int,
@@ -106,7 +107,7 @@ CREATE TABLE item_carona
 (
 	id_item_carona int IDENTITY(1,1) PRIMARY KEY,
 	quantidade int NOT NULL,
-	valor_ganho decimal(11,2) NULL,
+	valor_ofertado decimal(11,2) NOT NULL,
 	id_carona int NOT NULL,
 	id_item int NOT NULL,
 	CONSTRAINT FK_item_item_carona
@@ -119,18 +120,6 @@ CREATE TABLE item_carona
 		REFERENCES carona (id_carona)
 		ON DELETE NO ACTION
 		ON UPDATE NO ACTION,
-);
-
-CREATE TABLE resultado_item
-(
- id_item int PRIMARY KEY,
- colocacao int,
- valor_ganho decimal(11,2) NOT NULL,
- CONSTRAINT FK_item_resultado
-	FOREIGN KEY (id_item)
-	REFERENCES item (id_item)
-	ON DELETE NO ACTION
-	ON UPDATE CASCADE,
 );
 
 CREATE TABLE fase_empenho
@@ -148,21 +137,27 @@ CREATE TABLE empenho
  id_carona int NULL,
  id_pregao int NOT NULL,
  id_fase int NOT NULL,
+ id_orgao int NULL,
 CONSTRAINT FK_carona_empenho
 	FOREIGN KEY (id_carona)
 	REFERENCES carona (id_carona)
 	ON DELETE NO ACTION
-	ON UPDATE NO ACTION,
+	ON UPDATE CASCADE,
 CONSTRAINT FK_pregao_empenho
 	FOREIGN KEY (id_pregao)
 	REFERENCES pregao (id_pregao)
 	ON DELETE NO ACTION
-	ON UPDATE CASCADE,
+	ON UPDATE NO ACTION,
 CONSTRAINT FK_fase_empenho
 	FOREIGN KEY (id_fase)
 	REFERENCES fase_empenho (id_fase)
 	ON DELETE NO ACTION
 	ON UPDATE CASCADE
+CONSTRAINT FK_orgao_empenho
+	FOREIGN KEY (id_orgao)
+	REFERENCES orgao (id_orgao)
+	ON DELETE NO ACTION
+	ON UPDATE NO ACTION
 );
 
 CREATE TABLE item_empenho
@@ -171,7 +166,7 @@ CREATE TABLE item_empenho
  quantidade int NOT NULL,
  modelo varchar(45) NULL,
  custo_unitario decimal(11,2),
- valor_unitario decimal(11,2),
+ valor_ofertado decimal(11,2),
  id_marca int NULL,
  id_empenho int NOT NULL,
  id_item int NOT NULL,
@@ -226,7 +221,8 @@ CREATE TABLE item_reequilibrio
 (
 	id_item_reequilibrio int IDENTITY(1,1) PRIMARY KEY,
 	quantidade int NOT NULL,
-	novo_valor decimal(11,2) NOT NULL,
+	valor_novo decimal(11,2) NOT NULL,
+	valor_ofertado decimal(11,2) NOT NULL,
 	id_reequilibrio int NOT NULL,
 	CONSTRAINT FK_reequilibrio_item_reequilibrio
 		FOREIGN KEY (id_reequilibrio)

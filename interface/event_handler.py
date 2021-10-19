@@ -1,5 +1,6 @@
 from database import connection as cnn
 from interface import windows as wds
+from subprocess import check_call
 import adapter
 import credentials
 import PySimpleGUI as sg
@@ -16,6 +17,11 @@ def voltar_pagina(historico,menu):
     except:
         menu()
         return [menu]
+
+def copiar_para_area_transferencia(texto:str):
+    """Passa o argumento para a area de transferência."""
+    cmd='echo '+texto.strip()+'|clip'
+    return check_call(cmd,shell=True)
 
 def alterar_apresentacao_item(window:sg.Window,values:dict,event:str):
     """Atualiza a apresentação de itens com checkbox marcados ou desmarcados."""

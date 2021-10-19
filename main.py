@@ -220,7 +220,9 @@ while True:
             pass
         
         if (event == 'bt_fornecedor'):
-            pass
+            item = evh.consultar_dados_selecionados_tabela(window,values,'tg_itens')
+            if item:
+                evh.copiar_para_area_transferencia(item[0][8])
 
 ###JANELAS DESTINADAS A PROCEDIMENTOS DE CADASTROS
 
