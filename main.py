@@ -111,7 +111,11 @@ while True:
                 wds.janela_consulta_itens_pregao(pregoes[0][0])
         
         if(event == 'bt_alterar_data'):
-            pass
+            pregao = evh.consultar_dados_selecionados_tabela(window,values,'tg_pregoes')
+            if pregao:
+                window.Close()
+                janela_anterior.append(wds.janela_consulta_pregoes)
+                wds.janela_alteracao_data_abertura(pregao[0][0])
 
         if(event == 'bt_homologar'):
             pregoes = evh.consultar_dados_selecionados_tabela(window,values,'tg_pregoes')
@@ -290,6 +294,20 @@ while True:
                 evh.voltar_pagina(janela_anterior,wds.janela_menu)
             else:
                 sg.popup('Reveja a data de entrega.')
+
+###JANELAS DESTINADAS A PROCEDIMENTOS DE ALTERAÇÃO
+
+    if(window.Title==titulo_janelas['janela_alteracao_data_abertura']):
+        if(event == 'bt_concluir'):
+            nova_data = evh.conferir_campos_de_data(values)
+            if not nova_data:
+                sg.popup('Confira se a data está correta, pois ocorreu um erro.')
+            else:
+                id_pregao = window['txt_id_pregao'].get()
+                evh.voltar_pagina(janela_anterior,wds.janela_menu)
+
+        if(event == 'bt_cancelar'):
+            evh.voltar_pagina(janela_anterior,wds.janela_menu)
 
 ###JANELAS DESTINADAS AOS PROCESSOS DE AUTOMAÇÃO
 

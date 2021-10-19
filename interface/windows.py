@@ -262,11 +262,14 @@ def janela_alteracao_itens_participados(id_pregao:str):#INCOMPLETO
 def janela_alteracao_data_abertura(id_pregao:str):
     """Retorna um sg.Window com campos de data para alterar a data de abertura de um pregão."""
     layout = [
-        [pt.data('Qual a nova data do pregão?')],
+        [
+            sg.Text(id_pregao,key='txt_id_pregao',visible=False),
+            pt.data('Qual a nova data do pregão?')
+        ],
         [pt.botoes_concluir_cancelar_operacao()]
     ]
     return sg.Window(title=titulo_janelas['janela_alteracao_data_abertura'],layout=layout,finalize=True)
-    
+
 
 ###JANELAS DESTINADAS A CADASTROS
 

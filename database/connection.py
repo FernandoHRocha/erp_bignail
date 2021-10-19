@@ -496,11 +496,20 @@ def alterar_data_arp(id_pregao:str,data:str):
 def inserir_itens_planilha(uasg, pregao, item, modelo, valor, quantidade, fornecedor, marca, categoria,preco_custo, frete):
     """Insere os itens do pregão."""
     id_pregao = consultar_id_pregao(uasg, pregao)
-    if (len(fornecedor)>127): fornecedor = fornecedor[:127]
     if frete == "None": frete = 0.0
-    query = "exec dbo.sp_inserir_item @frete="+validar(frete)+", @preco_custo="+validar(preco_custo)+", @item="+validar(item)+', @modelo="'+validar(modelo)+'", @valor='+validar(valor)+", @quantidade="+validar(quantidade)+", @id_pregao="+str(id_pregao)+', @fornecedor="'+validar(fornecedor)+'", @marca="'+validar(marca)+'", @categoria="'+validar(categoria)+'";'
+    query = ("exec dbo.sp_inserir_item @frete="+validar(frete)+
+            ", @preco_custo="+validar(preco_custo)+
+            ", @item="+validar(item)+
+            ", @modelo='"+validar(modelo)+
+            "', @valor="+validar(valor)+
+            ", @quantidade="+validar(quantidade)+
+            ", @id_pregao="+str(id_pregao)+
+            ", @fornecedor='"+validar(fornecedor)+
+            "', @marca='"+validar(marca)+
+            "', @categoria='"+validar(categoria)+"';")
     cursor.execute(query)
     conn.commit()
+    
 
 def inserir_pregao(uasg:str,pregao:str,data:str,fase:str):
     """Insere o pregão com base no id do órgão e no nome da fase."""

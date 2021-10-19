@@ -7,7 +7,7 @@ import PySimpleGUI as sg
 import time
 import os
 
-def voltar_pagina(historico,menu):
+def voltar_pagina(historico:list,menu)->list:
     """Retorna a aplicação para a página vista anteriormente."""
     try:
         if len(historico)>0:
