@@ -39,6 +39,11 @@ def conferir_campos_de_data(values:dict):
     data = dia+'-'+mes+'-'+ano
     return False if str(False) in data else data
 
+def conferir_campo_de_hora(values:dict):
+    """Retorna uma string com o horário selecionado, caso nenhum seja selecionado, retorna False"""
+    horario = str(values['cb_horario'])
+    return False if horario == '' else horario
+
 def consultar_dados_selecionados_tabela(window:sg.Window, values:dict,tab_group:str, msg_erro:str='Favor selecionar um pregão.'):
     """Retorna os dados da linha selecionada.\n
     Encontra qual a guia aberta, e recupera os dados selecionados para aquela guia somente.\n
@@ -189,8 +194,8 @@ def atualizar_informacoes_pregao(uasg:str,pregao:str,window):
 def abrir_janela_homologacao_itens(id_pregao:str):
     """Faz a chamada dos itens do pregão ao banco de dados e abre a janela de itens a homologar."""
     dados = consultar_dados_pregao(id_pregao)
-    uasg = dados[1]
-    pregao = dados[0]
+    uasg = dados[2]
+    pregao = dados[1]
     wds.janela_cadastro_homologacao(id_pregao,uasg,pregao,cnn.consultar_itens_homologar(id_pregao))
 
 def homologar_pregao_e_itens(window:sg.Window,values:dict):
@@ -234,8 +239,8 @@ def homologar_pregao_e_itens(window:sg.Window,values:dict):
 def abrir_janela_itens_empenhar(id_pregao:str):
     """Coleta as informações dos itens do pregão e chama a janela para empenho."""
     dados = consultar_dados_pregao(id_pregao)
-    uasg = dados[1]
-    pregao = dados[0]
+    uasg = dados[2]
+    pregao = dados[1]
     return wds.janela_cadastro_itens_empenhar(uasg,pregao,cnn.consultar_itens_homologados(id_pregao))
 
 def empenhar_itens(window:sg.Window,values:list):
@@ -287,8 +292,8 @@ def empenhar_itens(window:sg.Window,values:list):
 def abrir_janela_itens_carona(id_pregao:str):
     """Coleta as informações dos itens do pregão e chama a janela para carona."""
     dados = consultar_dados_pregao(id_pregao)
-    uasg = dados[1]
-    pregao = dados[0]
+    uasg = dados[2]
+    pregao = dados[1]
     return wds.janela_cadastro_itens_carona(uasg,pregao,cnn.consultar_itens_homologados(id_pregao))
 
 def caronar_itens(window:sg.Window,values:list):

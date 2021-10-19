@@ -115,7 +115,7 @@ while True:
             if pregao:
                 window.Close()
                 janela_anterior.append(wds.janela_consulta_pregoes)
-                wds.janela_alteracao_data_abertura(pregao[0][0])
+                wds.janela_alteracao_data_abertura(cnn.consultar_dados_pregao(pregao[0][0]))
 
         if(event == 'bt_homologar'):
             pregoes = evh.consultar_dados_selecionados_tabela(window,values,'tg_pregoes')
@@ -299,14 +299,17 @@ while True:
 
     if(window.Title==titulo_janelas['janela_alteracao_data_abertura']):
         if(event == 'bt_concluir'):
-            nova_data = evh.conferir_campos_de_data(values)
-            if not nova_data:
-                sg.popup('Confira se a data está correta, pois ocorreu um erro.')
-            else:
-                id_pregao = window['txt_id_pregao'].get()
-                evh.voltar_pagina(janela_anterior,wds.janela_menu)
-
+            try:
+                nova_data = evh.conferir_campos_de_data(values) + ' ' + evh.conferir_campo_de_hora(values)
+                if cnn.alterar_data_abertura(window['txt_id_pregao'].get(),nova_data):
+                    sg.popup('Data alterada com sucesso.')
+                    window.Close()
+                    evh.voltar_pagina(janela_anterior,wds.janela_menu)
+            except:
+                sg.popup('Confira se a data está correta.')
+                
         if(event == 'bt_cancelar'):
+            window.Close()
             evh.voltar_pagina(janela_anterior,wds.janela_menu)
 
 ###JANELAS DESTINADAS AOS PROCESSOS DE AUTOMAÇÃO

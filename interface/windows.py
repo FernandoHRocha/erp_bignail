@@ -259,13 +259,20 @@ def janela_alteracao_itens_participados(id_pregao:str):#INCOMPLETO
     ]
     return sg.Window(title=titulo_janelas['janela_alteracao_itens_participados'],layout=layout, finalize=True)
 
-def janela_alteracao_data_abertura(id_pregao:str):
+def janela_alteracao_data_abertura(dados:str):
     """Retorna um sg.Window com campos de data para alterar a data de abertura de um pregão."""
+    id_pregao = dados[0]
+    dia = dados[4][:2]
+    mes = dados[4][3:5]
+    ano = dados[4][6:10]
+    horario = dados[4][11:]
     layout = [
         [
             sg.Text(id_pregao,key='txt_id_pregao',visible=False),
-            pt.data('Qual a nova data do pregão?')
+            pt.data('Qual a nova data do pregão?',dia_padrao=dia,mes_padrao=mes,ano_padrao=ano)
         ],
+        [sg.Text('Abertura da disputa de lances:')],
+        [pt.horario(valor_inicial=horario)],
         [pt.botoes_concluir_cancelar_operacao()]
     ]
     return sg.Window(title=titulo_janelas['janela_alteracao_data_abertura'],layout=layout,finalize=True)

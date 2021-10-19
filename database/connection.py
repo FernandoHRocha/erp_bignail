@@ -235,7 +235,7 @@ def consultar_caronas_pela_fase(fase:str=''):
 
 ###CONSULTAS PELO ID DO PREGÃO
 
-def consultar_pasta_pregao(id_pregao):
+def consultar_pasta_pregao(id_pregao:str):
     """Retorna o padrão das data_pregao_uasg para o pregão."""
     query=(
     """select
@@ -259,6 +259,7 @@ def consultar_dados_pregao(id_pregao:str):
     numero, uasg, órgão, data de abertura, data da ata, fase."""
     query=(
         """select
+            p.id_pregao,
             p.numero_pregao,
             o.uasg,
             o.nome_orgao,
@@ -490,6 +491,16 @@ def alterar_data_arp(id_pregao:str,data:str):
         return True
     except:
         return False
+    
+def alterar_data_abertura(id_pregao:str,data:str):
+    try:
+        query= ("update pregao set data_abertura = '"+validar(data)+"' "
+                "where id_pregao = '"+validar(id_pregao)+"';")
+        cursor.execute(query)
+        cursor.commit()
+        return True
+    except:
+        return False
 
 ###INSERÇÕES
 
@@ -510,7 +521,6 @@ def inserir_itens_planilha(uasg, pregao, item, modelo, valor, quantidade, fornec
     cursor.execute(query)
     conn.commit()
     
-
 def inserir_pregao(uasg:str,pregao:str,data:str,fase:str):
     """Insere o pregão com base no id do órgão e no nome da fase."""
     id_orgao = consultar_id_orgao(uasg)

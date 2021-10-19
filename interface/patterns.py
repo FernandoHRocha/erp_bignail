@@ -1,7 +1,14 @@
 import PySimpleGUI as sg
 from PySimpleGUI.PySimpleGUI import Checkbox, Text
 
-def data(title:str='',key:str='fr_data',visible:bool=True,border_width:int=0):
+def data(
+        title:str='',
+        key:str='fr_data',
+        visible:bool=True,
+        border_width:int=0,
+        dia_padrao:str='',
+        mes_padrao:str='',
+        ano_padrao:str='2021'):
     """Retorna um sg.Frame com compos para inserção de datas.\n
     Os campos de dia, mês e ano possuem as chaves it_dia, it_mes e it_ano respectivamente.\n
     E os argumentos são referentes às propriedades do Frame."""
@@ -10,14 +17,29 @@ def data(title:str='',key:str='fr_data',visible:bool=True,border_width:int=0):
     return sg.Frame( layout=[
         [
             sg.Text('Dia'),
-            sg.Input(size=(4,1),enable_events=True,key='it_dia'),
+            sg.Input(default_text=dia_padrao,size=(4,1),enable_events=True,key='it_dia'),
             sg.Text('mês'),
-            sg.Input(size=(4,1),enable_events=True,key='it_mes'),
+            sg.Input(default_text=mes_padrao,size=(4,1),enable_events=True,key='it_mes'),
             sg.Text('ano'),
-            sg.Input(size=(5,1),enable_events=True,key='it_ano'),
+            sg.Input(default_text=ano_padrao,size=(5,1),enable_events=True,key='it_ano'),
         ],
+    ],title=title,key=key,visible=visible,border_width=border_width)
+
+def horario(title:str='',key:str='fr_horario',visible:bool=True,texto:str='Horário ',valor_inicial:str='',border_width:int=0):
+    """Retorna um sg.Frame com compos para inserção de datas.\n
+    Os campos de dia, mês e ano possuem as chaves it_dia, it_mes e it_ano respectivamente.\n
+    E os argumentos são referentes às propriedades do Frame."""
+    horarios = []
+    for m in range(8,18):
+        for n in [':00',':30']:
+            hr = '0' + str(m) if len(str(m)) == 1 else str(m)
+            horarios.append(str(hr+n))
+    return sg.Frame( layout=[
+        [
+            sg.Text(texto),
+            sg.Combo(default_value=valor_inicial,values=horarios,size=(5,1),enable_events=True,key='cb_horario',readonly=True),
         ],
-        title=title,key=key,visible=visible,border_width=0)
+    ],title=title,key=key,visible=visible,border_width=border_width)
 
 def bt_voltar():
     """Retorna um sg.Button padronizado para navegação entre janelas."""
