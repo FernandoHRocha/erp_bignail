@@ -220,10 +220,16 @@ CREATE TABLE reequilibrio
 CREATE TABLE item_reequilibrio
 (
 	id_item_reequilibrio int IDENTITY(1,1) PRIMARY KEY,
+	id_item int NOT NULL,
 	quantidade int NOT NULL,
 	valor_novo decimal(11,2) NOT NULL,
 	valor_ofertado decimal(11,2) NOT NULL,
 	id_reequilibrio int NOT NULL,
+	CONSTRAINT FK_item_item_reequilibrio
+		FOREIGN KEY (id_item)
+		REFERENCES item (id_item)
+		ON DELETE NO ACTION
+		ON UPDATE NO ACTION,
 	CONSTRAINT FK_reequilibrio_item_reequilibrio
 		FOREIGN KEY (id_reequilibrio)
 		REFERENCES reequilibrio (id_reequilibrio)
