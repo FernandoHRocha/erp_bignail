@@ -78,6 +78,14 @@ def consultar_id_fase_empenho(fase:str):
     resultado = cursor.fetchone()
     return str(resultado[0]) if resultado != None else '-1'
 
+def consultar_id_reequilibrio(id_pregao:str,data:str):
+    """Retorna o id do reequilibrio. Caso não exista retorna o valor -1."""
+    query=( "select id_reequilibrio from reequilibrio where "+
+            "id_pregao = '"+validar(id_pregao)+"' and data_reequilibrio = '"+validar(data)+"';")
+    cursor.execute(query)
+    resultado = cursor.fetchone()
+    return str(resultado[0]) if resultado != None else '-1'
+
 ###CONSULTAS
 
 def consultar_todos_orgaos():
@@ -219,13 +227,24 @@ def consultar_caronas_pela_fase(fase:str=''):
     consulta=[list(row) for row in cursor.fetchall()]
     return consulta
 
-def consultar_id_reequilibrio(id_pregao:str,data:str):
-    """Retorna o id do reequilibrio. Caso não exista retorna o valor -1."""
-    query=( "select id_reequilibrio from reequilibrio where "+
-            "id_pregao = '"+validar(id_pregao)+"' and data_reequilibrio = '"+validar(data)+"';")
+def consultar_fases_reequilibrio():
+    """Retorna uma lista com as fases dos pedidos de reequilibrio."""
+    query=("select nome_fase from fase_reequilibrio")
     cursor.execute(query)
-    resultado = cursor.fetchone()
-    return str(resultado[0]) if resultado != None else '-1'
+    consulta=[row[0].lower() for row in cursor.fetchall()]
+    return consulta
+
+def consultar_reequilibrios_pela_fase(fase:str=''):
+    """Retorna dados dos pedido de reequilibrio, passando a fase como argumento aplica-se tal filtro."""
+    query=( "select id_reequilibrio, numero_pregao, uasg, data_reequilibrio from reequilibrio as r "+
+            "join pregao as p on p.id_pregao = r.id_pregao join orgao as o on o.id_orgao = p.id_orgao "+
+            "join fase_reequilibrio as fr on fr.id_fase = r.id_fase ")
+    if(fase!=''):
+        query = query+("where fr.nome_fase= '"+validar(fase)+"';")
+    print(query)
+    cursor.execute(query)
+    consulta=[list(row) for row in cursor.fetchall()]
+    return consulta
 
 ###CONSULTAS PELO ID DO PREGÃO
 

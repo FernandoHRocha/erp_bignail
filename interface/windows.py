@@ -137,14 +137,14 @@ def janela_consulta_empenhos():
 def janela_consulta_reequilibrio():
     """Retorna um sg.Window com tabela e abas para apresentação dos pedidos de reequilíbrio econômico da empresa."""
     cabecalho_generico = [
-        ['Pregão','UASG','Data do Pedido','Item','Valor Licitado','Novo Licitado'],
-        [10,8,20,10,15,15]
+        ['id','Pregão','UASG','Data do Pedido'],
+        [0,10,8,20]
     ]
-    abas = ['pendentes','enviados','aceitos','recusados']
+    abas = evh.listar_reequilibrios_gerais()
     layout=[
         [
             sg.TabGroup(
-                [[pt.aba_com_tabela_itens(cabecalho_generico,aba,aba) for aba in abas]
+                [[pt.aba_com_tabela_itens(cabecalho_generico,aba[0],aba[1]) for aba in abas]
                 ],enable_events=True,key='tg_reequilibrio')
         ],
         [

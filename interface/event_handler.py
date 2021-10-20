@@ -92,6 +92,15 @@ def listar_caronas_gerais():
         retorno.append(aux)
     return retorno
 
+def listar_reequilibrios_gerais():
+    """Retorna uma lista com a categoria dos reequilibrios e os pedidos."""
+    retorno = []
+    fases = cnn.consultar_fases_reequilibrio()
+    for fase in fases:
+        aux = [fase,cnn.consultar_reequilibrios_pela_fase(fase)]
+        retorno.append(aux)
+    return retorno
+
 def abrir_janela_alterar_fase_pregao(uasg:str,pregao:str):
     """Abre a janela para alteração de fase de pregão."""
     wds.janela_consulta_pregao_alterar_fase(uasg,pregao,cnn.consultar_fases_pregoes())

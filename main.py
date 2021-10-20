@@ -145,7 +145,6 @@ while True:
                 janela_anterior.append(wds.janela_consulta_pregoes)
                 evh.abrir_janela_itens_reequilibrio(pregoes[0][0])
 
-
         if(event == 'tg_pregoes'):
             if(values['tg_pregoes'] in ['tab_homologado','tab_finalizado']):
                 window['cl_julgamento'].update(visible=False)
