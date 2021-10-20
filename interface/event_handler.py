@@ -293,7 +293,6 @@ def empenhar_itens(window:sg.Window,values:list):
                     return sg.popup('Houve um problema para registrar os itens do empenho.')
                 else:
                     sg.popup('Empenho registrado com sucesso!')
-                    window.Close()
 
 ##JANELA CARONA DE ITENS
 
@@ -348,7 +347,6 @@ def caronar_itens(window:sg.Window,values:list):
                     return sg.popup('Houve um problema para registrar os itens da carona.')
                 else:
                     sg.popup('Carona registrado com sucesso!')
-                    window.Close()
 
 ##JANELA REEQUILIBRIO DE ITENS
 

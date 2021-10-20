@@ -228,7 +228,9 @@ while True:
             evh.abrir_janela_itens_empenhar(window['txt_id_pregao'].get())
 
         if (event == 'bt_item_carona'):
-            pass
+            window.Close()
+            janela_anterior.append(partial(wds.janela_consulta_itens_pregao,str(window['txt_id_pregao'].get())))
+            evh.abrir_janela_itens_carona(window['txt_id_pregao'].get())
         
         if (event == 'bt_reequilibrio'):
             pass
@@ -283,6 +285,8 @@ while True:
 
         if (event=='bt_concluir'):
             evh.empenhar_itens(window, values)
+            window.Close()
+            evh.voltar_pagina(janela_anterior,wds.janela_menu)
         
         if(event=='bt_cancelar'):
             window.Close()
@@ -303,6 +307,8 @@ while True:
 
         if (event=='bt_concluir'):
             evh.caronar_itens(window, values)
+            window.Close()
+            evh.voltar_pagina(janela_anterior,wds.janela_menu)
 
         if(event=='bt_cancelar'):
             window.Close()
@@ -360,6 +366,16 @@ while True:
             window.Close()
             evh.voltar_pagina(janela_anterior,wds.janela_menu)
 
+    if(window.Title==titulo_janelas['janela_consulta_pregao_alterar_fase']):
+        if(event=='bt_confirmar_fase'):
+            if(values['cb_alterar_fase']==''):
+                sg.popup('Favor escolher um novo estado para o pregão.')
+            else:
+                window.Close()
+                evh.voltar_pagina(janela_anterior,wds.janela_menu)
+                cnn.alterar_fase_pregao(window['txt_uasg'].get(),window['txt_pregao'].get(),values['cb_alterar_fase'])
+
+
 ###JANELAS DESTINADAS AOS PROCESSOS DE AUTOMAÇÃO
 
     if(window.Title==titulo_janelas['janela_comprasnet']):
@@ -373,14 +389,6 @@ while True:
 
 ###JANELAS DESTINADAS AOS PROCESSOS AUXILIARES
 
-    if(window.Title==titulo_janelas['janela_consulta_pregao_alterar_fase']):
-        if(event=='bt_confirmar_fase'):
-            if(values['cb_alterar_fase']==''):
-                sg.popup('Favor escolher um novo estado para o pregão.')
-            else:
-                window.Close()
-                evh.voltar_pagina(janela_anterior,wds.janela_menu)
-                cnn.alterar_fase_pregao(window['txt_uasg'].get(),window['txt_pregao'].get(),values['cb_alterar_fase'])
 
     if event == 'bt_voltar':
         window.Close()
