@@ -361,15 +361,11 @@ def reequilibrar_itens(window:sg.Window,values:list):
         if 'check' in item:
             if values[item]:
                 codigo_item = item.replace('check_','')
-                quantidade = values[str(item).replace('check','it_quantidade')]
                 quantidade_max = window[str(item).replace('check','txt_quantidade')].get()
                 valor = values[str(item).replace('check','it_valor')]
                 aux = []
                 aux.append(codigo_item)
-                if ((not quantidade.isdigit()) or (int(quantidade_max) < int(quantidade) or int(quantidade) < 1)):
-                    return sg.popup('Verifique a quantidade para o item '+codigo_item)
-                else:
-                    aux.append(quantidade)
+                aux.append(quantidade_max)
                 if valor.replace(',','',1).isdigit():
                     valor = str(round(float(valor.replace(',','.',1)),2))
                     if (len(valor.split('.')[1])<2):
@@ -383,7 +379,7 @@ def reequilibrar_itens(window:sg.Window,values:list):
             return sg.popup('Para registrar um pedido de reequilibrio é necessário que pelo menos um item seja selecionado.')
         else:
             if (not cnn.inserir_reequilibrio(id_pregao,data_reequilibrio)):
-                return sg.popup('Não foi possível registrar o pedido.')
+                return sg.popup('Não foi possível registrar o pedido.\nConfira se o pregão já possui um pedido na mesma data')
             else:
                 if(not cnn.inserir_itens_em_reequilibrio(id_pregao,data_reequilibrio,itens_reequilibrio)):
                     return sg.popup('Houve um problema para registrar os itens do pedido.')

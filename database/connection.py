@@ -421,6 +421,14 @@ def consultar_itens_carona(id_pregao:str):
     cursor.execute(query)
     return [list(row) for row in cursor.fetchall()]
 
+def consultar_id_reequilibrio(id_pregao:str,data:str)->str:
+    """Retorna o id do pedido de reequilibrio economico, caso não exista retorna -1"""
+    query=( "select id_reequilibrio from reequilibrio where id_pregao = '"+validar(id_pregao)+"' "+
+            "and data_reequilibrio = '"+validar(data)+"';")
+    cursor.execute(query)
+    resultado = cursor.fetchone()
+    return str(resultado[0]) if resultado != None else '-1'
+
 ###CONSULTAS PELO ID CARONA
 
 def consultar_id_pregao_da_carona(id_carona:str)->str:
@@ -652,6 +660,8 @@ def inserir_entrega_de_empenho(id_empenho:str,data:str):
 
 def inserir_reequilibrio(id_pregao:str,data:str,fase:str='1'):
     """Insere um novo pedido de reequilibrio economico no banco de dados."""
+    if consultar_id_reequilibrio(id_pregao,data) == '-1':
+        return False
     query=("insert into reequilibrio (data_reequilibrio, id_pregao, id_orgao id_fase,) "+
             "values ( '"+validar(data)+"', '"+validar(id_pregao)+"', "+
             "(select id_orgao from pregao where id_pregao = '"+validar(id_pregao)+"'), '"+validar(fase)+"');")
@@ -664,12 +674,13 @@ def inserir_reequilibrio(id_pregao:str,data:str,fase:str='1'):
 
 def inserir_itens_em_reequilibrio(id_pregao:str,data:str,itens:list):
     id_reequilibrio = consultar_id_reequilibrio(id_pregao,data)
-    #NECESSARIO TERMINAR A QUERY
     try:
         for item in itens:
             id_item = consultar_id_item_pelo_id_pregao(item[0],id_pregao)
             query=( "insert into item_reequilibrio (id_item_reequilibrio, quantidade, valor_novo, valor_ofertado, id_reequilibrio) "
-                    #"values ('"+validar(id_item)+"','"+validar(id_reequilibrio)+"','"+validar(item[1])+"','"+validar(item[2])+"')")
+                    "values ('"+validar(id_item)+"', '"+validar(item[1])+"', '"+validar(item[2])+"', "+
+                    "(select valor_ofertado from item where id_item = '"+validar(id_item)+"'), "+
+                    "'"+validar(id_reequilibrio)+"';")
             cursor.execute(query)
         else:
             conn.commit()

@@ -187,7 +187,6 @@ def frame_item_empenhar(itens:list):
                         sg.InputText(size=(6,1), enable_events=True, key='it_quantidade_'+item),
                         sg.Text('de'),
                         sg.Text(unidades,key='txt_quantidade_'+item),
-                        sg.Text('unidades.'),
                     ],
                 ]),
             ]
@@ -210,10 +209,12 @@ def frame_item_reequilibrio(itens:list):
             [
                 sg.Frame('',border_width=0,key='fr_it_'+item,visible=False,layout=[
                     [
-                        sg.Text('Valor Disputado R$'),
+                        sg.Text('Disputado R$'),
                         sg.Text(valor),
-                        sg.Text('Valor Reequilibrado R$'),
+                        sg.Text('Reequilibrio R$'),
                         sg.InputText(size=(12,1), enable_events=True, key='it_valor_'+item),
+                        sg.Text(unidades,key='txt_quantidade_'+item),
+                        sg.Text('unidades.'),
                     ],
                 ]),
             ]
