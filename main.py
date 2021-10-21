@@ -375,7 +375,6 @@ while True:
                 evh.voltar_pagina(janela_anterior,wds.janela_menu)
                 cnn.alterar_fase_pregao(window['txt_uasg'].get(),window['txt_pregao'].get(),values['cb_alterar_fase'])
 
-
 ###JANELAS DESTINADAS AOS PROCESSOS DE AUTOMAÇÃO
 
     if(window.Title==titulo_janelas['janela_comprasnet']):
@@ -388,7 +387,6 @@ while True:
             pass
 
 ###JANELAS DESTINADAS AOS PROCESSOS AUXILIARES
-
 
     if event == 'bt_voltar':
         window.Close()

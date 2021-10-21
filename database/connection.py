@@ -286,12 +286,22 @@ def consultar_dados_pregao(id_pregao:str):
             o.nome_orgao,
             format (p.data_abertura,'dd/MM/yyyy HH:mm') as data_abertura,
             format (p.data_ata, 'dd/MM/yyyy HH:mm') as data_ata,
-            fp.nome_fase from pregao as p
+            fp.nome_fase,
+			sum(i.quantidade * i.preco_custo) as custo,
+			sum(case when i.colocacao = 1 then i.quantidade * i.preco_custo else 0 end) as homologado,
+			sum(ie.quantidade * ie.valor_ofertado) as empenhado
+			from pregao as p
+		join item as i on i.id_pregao = p.id_pregao
+		left join empenho as e on e.id_pregao = p.id_pregao
+		left join item_empenho as ie on (ie.id_item = i.id_item and ie.id_empenho = e.id_empenho)
+		left join carona as c on c.id_pregao = p.id_pregao
         join orgao as o on o.id_orgao = p.id_orgao
         join fase_pregao as fp on fp.id_fase = p.id_fase
-        where p.id_pregao = '"""+validar(id_pregao)+"';")
+        where p.id_pregao = '"""+validar(id_pregao)+"' "+
+        "group by p.id_pregao, p.numero_pregao, o.uasg,o.nome_orgao, data_abertura, data_ata, fp.nome_fase;")
     cursor.execute(query)
     consulta=[list(row) for row in cursor.fetchall()]
+    print(consulta)
     return consulta[0]
 
 def consultar_dados_gerais_pregao(id_pregao:str):
@@ -323,8 +333,17 @@ def consultar_dados_gerais_pregao(id_pregao:str):
 def consultar_itens_participados(id_pregao:str):
     """Retorna uma lista de itens participados em um pregão."""
     query=(
-        """select i.id_item, i.item, nome_marca, modelo, i.quantidade, i.valor_ofertado, 
-        i.preco_custo, i.frete, i.fornecedor from item as i
+        """select
+            i.id_item,
+            i.item,
+            nome_marca,
+            modelo,
+            i.quantidade,
+            i.valor_ofertado,
+            i.preco_custo,
+            i.frete,
+            cast(round((i.preco_custo+i.frete)/0.75,2) as decimal(11,2)) as preco,
+            i.fornecedor from item as i
         join marca as m on m.id_marca = i.id_marca
         where i.id_pregao = '"""+validar(id_pregao)+"';")
     cursor.execute(query)

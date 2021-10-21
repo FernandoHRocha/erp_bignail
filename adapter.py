@@ -37,3 +37,10 @@ def conferir_se_inteiro_e_menor(numero:str,teto:int):
             return False
     else:
         return False
+
+def adaptar_codigo_pregao(pregao:str)->str:
+    """Converte o texto de identificação do número do pregão para apresentar ao usuário."""
+    return pregao[:-4]+'/'+pregao[-4:]
+
+def calcular_preco_minimo(custo:str,frete:str)->str:
+    return str((float(custo) + float(frete))/0.75)

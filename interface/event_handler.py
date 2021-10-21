@@ -108,8 +108,8 @@ def abrir_janela_alterar_fase_pregao(uasg:str,pregao:str):
 def listar_itens_em_categorias(id_pregao:str):#incompleto
     """Retorna os dados necessários para apresentar os itens do pregão em suas categorias."""
     cabecalho_participados =    [
-        ['id','Item','Marca','Modelo','Quant','Preço','Custo','Frete','Fornecedor'],
-        [0,5,15,20,5,12,12,8,20]]
+        ['id','Item','Marca','Modelo','Quant','Preço','Custo','Frete','Preço Min','Fornecedor'],
+        [0,5,15,20,5,12,12,8,12,20]]
     cabecalho_homologados =  [
         ['id','Item','Marca','Modelo','Preço','Quant','Empenho','Carona'],
         [0,5,15,20,12,5,7,5]]

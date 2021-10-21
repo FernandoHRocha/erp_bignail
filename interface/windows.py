@@ -2,6 +2,7 @@ from tkinter import Scrollbar, Text
 import PySimpleGUI as sg
 from interface import patterns as pt
 from interface import event_handler as evh
+import adapter
 
 titulo_janelas = {
     'janela_menu':'BigNail ERP',
@@ -181,36 +182,39 @@ def janela_consulta_carona():
 
 def janela_consulta_itens_pregao(id_pregao:str):
     dados = evh.consultar_dados_pregao(id_pregao)
-    pregao = dados[1]
+    pregao = adapter.adaptar_codigo_pregao(dados[1])
     uasg = dados[2]
     orgao = dados[3]
     data = dados[4]
-    ata = dados[5] if dados[5] != 'None' else 'Pendente'
+    ata = dados[5] if dados[5] != None else 'Pendente'
     fase = dados[6]
+    valor_custo = dados[7]
+    valor_homologado = dados[8]
+    valor_empenhado = dados[9]
     abas = evh.listar_itens_em_categorias(id_pregao)
 
     homologado = True if fase == 'Homologado' else False
 
-    coluna1=sg.Column(size=(500,100),layout=[
+    coluna1=sg.Column(size=(500,110),layout=[
         [
             sg.Text(id_pregao,key='txt_id_pregao',visible=False),
             sg.Text('Órgão:'),
             sg.Text(orgao,key='txt_orgao'),
         ],
         [
-            sg.Text('Pregão:'),
-            sg.Text(pregao,key='txt_pregao'),
+            sg.Text('Uasg:'),
+            sg.Text(uasg,key='txt_uasg'),
         ],
         [
             sg.Text('Data Abertura: '),
             sg.Text(data,key='txt_data'),
+        ],
+        [
+            sg.Text('Valor Homologado:',visible=homologado),
+            sg.Text(valor_homologado,key='txt_homologado',visible=homologado),
         ]
     ])
-    coluna2=sg.Column(size=(300,100),layout=[
-        [
-            sg.Text('UASG:'),
-            sg.Text(uasg,key='txt_uasg'),
-        ],
+    coluna2=sg.Column(size=(300,110),layout=[
         [
             sg.Text('Fase:'),
             sg.Text(fase,key='txt_fase'),
@@ -218,11 +222,19 @@ def janela_consulta_itens_pregao(id_pregao:str):
         [
             sg.Text('Data de Assinatura da Ata:'),
             sg.Text(ata,key='txt_ata'),
+        ],
+        [
+            sg.Text('Valor Custo:'),
+            sg.Text(valor_custo,key='txt_custo'),
+        ],
+        [
+            sg.Text('Valor Empenhado:',visible=homologado),
+            sg.Text(valor_empenhado,key='txt_empenhado',visible=homologado),
         ]
     ])
     layout=[
         [
-            sg.Frame(title=' Consulta aos itens do pregão ',key='fr_titulo_pregao',layout=[
+            sg.Frame(title=' Consulta aos itens do pregão ' + pregao,key='fr_titulo_pregao',layout=[
                 [
                     coluna1,
                     coluna2
