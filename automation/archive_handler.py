@@ -15,14 +15,7 @@ def abrir_pasta(initialdir='C:/Users/Licitacao/Desktop'):
 class Planilha:
     
     def __init__(self, caminho):
-        while(True):
-            try:
-                self.planilha = openpyxl.load_workbook(caminho,data_only=True)
-                break
-            except:
-                sg.popup('Confira se a planilha está aberta, caso esteja favor fechar.')
-                self.planilha = openpyxl.load_workbook(caminho,data_only=True)
-                break
+        self.planilha = openpyxl.load_workbook(caminho,data_only=True)
 
     def obter_pregao(self):
         wb = self.planilha['Controle']
@@ -63,8 +56,11 @@ def cadastrar_planilha():
     except:
         sg.popup('Não foi possível abrir o arquivo.')
         return
-    
-    planilha = Planilha(pasta_proposta+'/'+arquivo_planilha)
+    try:
+        planilha = Planilha(pasta_proposta+'/'+arquivo_planilha)
+    except:
+        sg.popup('Confira se a planilha está aberta, caso esteja favor fechar.')
+        return
     pregao = planilha.obter_pregao()
     itens = planilha.obter_itens_cotados()
     if(cnn.consultar_id_orgao(pregao['uasg'])!='-1'):
