@@ -29,7 +29,7 @@ class Planilha:
     
     def obter_itens_cotados(self):
         wb = self.planilha['Planilha1']
-        colunas_registro = [1,3,4,5,9,11,12,13,14]
+        colunas_registro = [1,3,4,5,9,11,12,13,7]
         item = []
         for linha in range(2,wb.max_row):
             item.append([str(wb.cell(linha,coluna).value) for coluna in colunas_registro])
@@ -37,11 +37,21 @@ class Planilha:
 
 def renomear_arquivo(pasta:str, arquivo:str, nomenclatura:str):
     """Renomea arquivo de acordo com a nomenclatura inserida."""
-    os.rename(pasta +'/'+ arquivo, pasta +'/'+ nomenclatura +'_'+ arquivo)
+    while True:
+        try:
+            os.rename(pasta +'/'+ arquivo, pasta +'/'+ nomenclatura +'_'+ arquivo)
+            break
+        except:
+            sg.popup('Favor fechar os arquivos do processo para renomea-los.')
 
 def mover_e_renomear_pasta(pasta:str,nomenclatura:str):
     local = '/'.join(pasta.split('/')[:-1])+'/'
-    os.rename(pasta,local+nomenclatura)
+    while True:
+        try:
+            os.rename(pasta,local+nomenclatura)
+            break
+        except:
+            sg.popup('Favor fechar qualquer documento que encontre-se dentro da pasta.')
 
 def cadastrar_planilha():
     """Realiza a leitura da planilha de cotação, insere os dados em banco de dados e move a pasta para a pasta de pregões"""
