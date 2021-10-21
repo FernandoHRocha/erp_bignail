@@ -244,6 +244,7 @@ def janela_consulta_itens_pregao(id_pregao:str):
                 [sg.Button('Abrir Pasta',enable_events=True,size=(20,1),key='bt_pasta')],
                 [sg.Button('Registrar Empenho',enable_events=True,visible=homologado,size=(20,1),key='bt_item_empenho')],
                 [sg.Button('Registrar Carona',enable_events=True,visible=homologado,size=(20,1),key='bt_item_carona')],
+                [sg.Button('Registrar Reequilibrio',visible=homologado,enable_events=True,size=(20,1),key='bt_reequilibrio')],
             ])
         ],
         [
@@ -257,7 +258,6 @@ def janela_consulta_itens_pregao(id_pregao:str):
         ],
         [
             sg.Button('Alterar item',enable_events=True,key='bt_item_alterar'),
-            sg.Button('Solicitar Reequilibrio',visible=homologado,enable_events=True,key='bt_reequilibrio'),
             sg.Button('Consultar Fornecedor',enable_events=True,key='bt_fornecedor'),
         ],
         [pt.bt_voltar()]

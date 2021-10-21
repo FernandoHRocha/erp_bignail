@@ -233,7 +233,9 @@ while True:
             evh.abrir_janela_itens_carona(window['txt_id_pregao'].get())
         
         if (event == 'bt_reequilibrio'):
-            pass
+            window.Close()
+            janela_anterior.append(partial(wds.janela_consulta_itens_pregao,str(window['txt_id_pregao'].get())))
+            evh.abrir_janela_itens_reequilibrio(window['txt_id_pregao'].get())
         
         if (event == 'bt_fornecedor'):
             item = evh.consultar_dados_selecionados_tabela(window,values,'tg_itens')
