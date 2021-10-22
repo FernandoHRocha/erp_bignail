@@ -219,6 +219,7 @@ while True:
             evh.abrir_pasta_pregao(window['txt_id_pregao'].get())
 
         if (event == 'bt_item_alterar'):
+            janela_anterior.append(partial(wds.janela_consulta_itens_pregao,window['txt_id_pregao'].get()))
             evh.abrir_janela_alteracao_itens(window['txt_id_pregao'].get())
         
         if (event == 'bt_homologar'):
@@ -362,6 +363,23 @@ while True:
         if (event):
             if ('check_' in event):
                 evh.alterar_apresentacao_item(window,values,event)
+            elif ('it_item_' in event):
+                entrada = str(event)
+                valor = evh.entrada_numerica(values[entrada],4)
+                window[entrada].update(value=valor)
+            elif ('it_valor_' in event):
+                entrada = str(event)
+                valor = evh.entrada_decimal(values[entrada],11)
+                window[entrada].update(value=valor)
+    
+        if (event=='bt_concluir'):
+            sg.popup('inserir itens')
+            window.Close()
+            evh.voltar_pagina(janela_anterior,wds.janela_menu)
+        
+        if (event == 'bt_cancelar'):
+            window.Close()
+            evh.voltar_pagina(janela_anterior,wds.janela_menu)
 
     if(window.Title==titulo_janelas['janela_alteracao_data_abertura']):
         if(event == 'bt_concluir'):

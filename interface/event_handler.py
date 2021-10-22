@@ -208,6 +208,44 @@ def abrir_janela_alteracao_itens(id_pregao:str):
     itens = cnn.consultar_itens_alterar(id_pregao)
     wds.janela_alteracao_itens_participados(itens,marcas,categorias)
 
+def alterar_item_pregao(window:sg.Window,values:dict):
+    """Valida as informações contidas nos campos de alteração do item e as envia para o banco de dados."""
+    id_pregao = window['txt_id_pregao'].get()
+    itens_alterar=[]
+    for item in values.keys():
+        if 'check' in item:
+            if values[item]:
+                codigo_item = item.replace('check_','')
+                valor = values[str(item).replace('check','it_valor')]
+                modelo = values[str(item).replace('check','it_modelo')]
+                marca = values[str(item).replace('check','cb_marca')]
+                categoria = values[str(item).replace('check','cb_categoria')]
+                quantidade = values[str(item).replace('check','it_quantidade')]
+                custo = values[str(item).replace('check','it_custo')]
+                fornecedor = values[str(item).replace('check','it_fornecedor')]
+                if valor.replace(',','',1).isdigit():
+                    aux = []
+                    aux.append(codigo_item)
+                    valor = str(round(float(valor.replace(',','.',1)),2))
+                    if (len(valor.split('.')[1])<2):
+                        valor = valor + '0'
+                    aux.append(valor)
+                    itens_homologar.append(aux)
+                else:
+                    return sg.popup('Favor corrigir o valor do item '+codigo_item)
+    else:
+        if(len(itens_homologar)<1):
+            return sg.popup('Para homologar um pregão é necessário que pelo menos um item seja empenhado.')
+        if not cnn.alterar_fase_pregao(uasg,pregao,'Homologado'):
+            return sg.popup('Não foi possível alterar a fase do pregão.')
+        if data_ata != False:
+            if not cnn.alterar_data_arp(id_pregao,data_ata):
+                sg.popup('Será necessário inserir a data de assinatura posteriormente.')
+        if not cnn.inserir_itens_ganho(uasg,pregao,itens_homologar):
+            return sg.popup('Não foi possível inserir os itens como homologados.')
+        sg.popup('O pregão foi homologado.')
+    return
+
 ##JANELA HOMOLOGAÇÃO DE ITENS
 
 def abrir_janela_homologacao_itens(id_pregao:str):
@@ -420,11 +458,14 @@ def entrada_decimal(valor:str,comprimento:int=12)->str:
     """Confere se o último caractere inserido é um número.\n
     Retorna um caractere a menos caso não seja um número ou pontuação.\n
     Retorna nulo quando a entrada é nula."""
-    if valor:
-        valor = valor.replace('.',',')
-        if(valor[-1].isdigit() and len(valor)<comprimento):
-            return valor
-        elif((valor[-1] == ',') and (valor.count(',')==1 and len(valor)<comprimento)):
-            return valor
-        else:
-            return valor[:-1]
+    try:
+        if valor:
+            valor = valor.replace('.',',')
+            if(valor[-1].isdigit() and len(valor)<comprimento):
+                return valor
+            elif((valor[-1] == ',') and (valor.count(',')==1 and len(valor)<comprimento)):
+                return valor
+            else:
+                return valor[:-1]
+    except:
+        print(valor)
