@@ -146,7 +146,7 @@ def frame_item_alterar(item:dict,marcas:list,categorias:list)->sg.Frame:
     return sg.Frame(' Item '+item['item'],layout=[
         [
             sg.Checkbox('Atualizar item',enable_events=True,key='check_'+item['id_item']),
-            sg.Text(item['id_item'],visible=False,key='txt_id_item')
+            sg.Text(item['id_item'],visible=False,key='txt_id_item_'+item['id_item'])
         ],
         [
             sg.Frame('',border_width=0,key='fr_it_'+item['id_item'],visible=False, layout=[

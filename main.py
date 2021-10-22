@@ -219,6 +219,7 @@ while True:
             evh.abrir_pasta_pregao(window['txt_id_pregao'].get())
 
         if (event == 'bt_item_alterar'):
+            window.Close()
             janela_anterior.append(partial(wds.janela_consulta_itens_pregao,window['txt_id_pregao'].get()))
             evh.abrir_janela_alteracao_itens(window['txt_id_pregao'].get())
         
@@ -369,7 +370,14 @@ while True:
                 window[entrada].update(value=valor)
             elif ('it_valor_' in event):
                 entrada = str(event)
-                valor = evh.entrada_decimal(values[entrada],11)
+                valor = evh.entrada_decimal(values[entrada],12)
+                window[entrada].update(value=valor)
+            elif ('it_custo_' in event):
+                entrada = str(event)
+                valor = evh.entrada_decimal(values[entrada],12)
+            elif ('it_quantidade_' in event):
+                entrada = str(event)
+                valor = evh.entrada_numerica(values[entrada],7)
                 window[entrada].update(value=valor)
     
         if (event=='bt_concluir'):
