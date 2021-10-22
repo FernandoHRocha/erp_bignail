@@ -44,3 +44,20 @@ def adaptar_codigo_pregao(pregao:str)->str:
 
 def calcular_preco_minimo(custo:str,frete:str)->str:
     return str((float(custo) + float(frete))/0.75)
+
+def converter_item_dicionario(item:list)->dict:
+    """Retorna um dicionario com os dados do item.\n
+    O item deve conter os dados na seguinte ordem:
+    id - item - modelo - quantidade - valor_ofertado - custo - frete - fornecedor - marca - categoria"""
+    return dict(
+        id_item = str(item[0]),
+        item = str(item[1]),
+        modelo = str(item[2]),
+        quantidade = str(item[3]),
+        valor_ofertado = str(item[4]),
+        preco_custo = str(item[5]),
+        frete = str(item[6]),
+        fornecedor = str(item[7]),
+        nome_marca = str(item[8]),
+        nome_categoria = str(item[9])
+    )

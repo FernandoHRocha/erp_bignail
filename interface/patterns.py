@@ -141,38 +141,30 @@ def aba_com_tabela_itens(cabecalho:list, identificador:str, valores:list):
     titulo = identificador[0].upper()+identificador[1:len(identificador)]
     return sg.Tab(titulo, tabela_itens_preenchida(cabecalho[0],valores,'tb_'+identificador,larguras=cabecalho[1]),key='tab_'+identificador,visible=True)
 
-def frame_item_completo(item:dict)->sg.Frame:
+def frame_item_alterar(item:dict,marcas:list,categorias:list)->sg.Frame:
+    size = (70,1)
     return sg.Frame(' Item '+item['item'],layout=[
         [
-            sg.Checkbox('Atualizar item'),sg.Text(item['id_item'],visible=False,)
+            sg.Checkbox('Atualizar item',enable_events=True,key='check_'+item['id_item']),sg.Text(item['id_item'],visible=False,)
         ],
         [
-            sg.Frame('',border_width=0,key='fr_it_'+item,visible=False, layout=[
-                [
-                    sg.Text('Item'),
-                    sg.InputText(default_text=item['valor_ofertado'],size=(3,1), enable_events=True, key='it_item_'+item)
-                ],
-                [
-                    sg.Text('Modelo'),
-                    sg.InputText(default_text=item['modelo'],size=(30,1), enable_events=True, key='it_modelo_'+item)
-                ],
-                [
-                    sg.Text('Marca'),
-                    sg.InputText(default_text=item['marca'],size=(15,1), enable_events=True, key='it_marca_'+item)
-                ],
-                [
-                    sg.Text('Quanitdade'),
-                    sg.InputText(default_text=item['quantidade'],size=(15,1), enable_events=True, key='it_marca_'+item)
-                ],
-                [
-                    sg.Text('Custo'),
-                    sg.InputText(default_text=item['custo'],size=(15,1), enable_events=True, key='it_marca_'+item)
-                ],
-                [
-                    sg.Text('Fornecedor'),
-                    sg.InputText(default_text=item['fornecedor'],size=(15,1), enable_events=True, key='it_marca_'+item)
-                ],
-
+            sg.Frame('',border_width=0,key='fr_it_'+item['id_item'],visible=False, layout=[
+                [sg.Text('Item')],
+                [sg.InputText(default_text=item['item'],size=size, enable_events=True, key='it_item_'+item['id_item'])],
+                [sg.Text('Valor Ofertado')],
+                [sg.InputText(default_text=item['valor_ofertado'],size=size, enable_events=True, key='it_valor_'+item['id_item'])],
+                [sg.Text('Modelo')],
+                [sg.InputText(default_text=item['modelo'],size=size, enable_events=True, key='it_modelo_'+item['id_item'])],
+                [sg.Text('Marca')],
+                [sg.Combo(readonly=True,default_value=item['nome_marca'],values=marcas,size=size, enable_events=True, key='cb_marca_'+item['id_item'])],
+                [sg.Text('Categoria')],
+                [sg.Combo(readonly=True,default_value=item['nome_categoria'],values=categorias,size=size, enable_events=True,key='cb_categoria_'+item['id_item'])],
+                [sg.Text('Quantidade')],
+                [sg.InputText(default_text=item['quantidade'],size=size, enable_events=True, key='it_quantidade_'+item['id_item'])],
+                [sg.Text('Preço de Custo')],
+                [sg.InputText(default_text=item['preco_custo'],size=size, enable_events=True, key='it_custo_'+item['id_item'])],
+                [sg.Text('Fornecedor')],
+                [sg.InputText(default_text=item['fornecedor'],size=size, enable_events=True, key='it_fornecedor_'+item['id_item'])],
             ]),
         ]
     ])

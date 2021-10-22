@@ -267,12 +267,17 @@ def janela_consulta_itens_pregao(id_pregao:str):
 
 ###JANELAS DESTINADAS A ALTERAÇÕES
 
-def janela_alteracao_itens_participados(itens:str,marcas:list,categorias:list):
+def janela_alteracao_itens_participados(itens:list,marcas:list,categorias:list):
+    col_item = list([adapter.converter_item_dicionario(item) for item in itens])
 
     layout = [
+        [sg.Text('Selecione os itens que deseja alterar.')],
         [
-            [pt.frame_item_completo(item) for item in itens]
-        ]
+            sg.Column(
+                [[pt.frame_item_alterar(item,marcas,categorias)] for item in col_item],
+                size=(600,400),vertical_scroll_only=True,scrollable=True,key='cl_itens')
+            ],
+        [pt.botoes_concluir_cancelar_operacao()]
     ]
     return sg.Window(title=titulo_janelas['janela_alteracao_itens_participados'],layout=layout, finalize=True)
 

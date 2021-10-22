@@ -15,7 +15,13 @@ def cadastrar_pregao():
     """Cadastra os itens do pregão para participação no site ComprasNet."""
     sg.popup('Favor encontrar a planilha de cotação.')
     planilha = arh.abrir_arquivo()
+    if(planilha == ''):
+        return
     sg.popup('Favor encontrar a proposta a ser enviada.')
     proposta = arh.abrir_arquivo()
+    if(proposta == ''):
+        return
     sg.popup('Favor encontrar a documentação.')
     documentacao = arh.abrir_arquivo()
+    if(documentacao == ''):
+        return

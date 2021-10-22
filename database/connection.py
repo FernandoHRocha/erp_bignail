@@ -165,6 +165,26 @@ def consultar_itens_geral(uasg:str,pregao:str):
         consulta.append([str(valor) for valor in row])
     return consulta
 
+def consultar_itens_alterar(id_pregao:str)->list:
+    """Retorna uma lista com os itens do pregão."""
+    query = (
+    """select
+        id_item,
+        item,
+        modelo,
+        quantidade,
+        valor_ofertado,
+        preco_custo,
+        frete,
+        fornecedor,
+        nome_marca,
+        nome_categoria from item as i
+	join marca as m on m.id_marca = i.id_marca
+	join categoria as c on c.id_categoria = i.id_categoria
+	where i.id_pregao = """+validar_com_aspas(id_pregao)+";")
+    cursor.execute(query)
+    return [list(row) for row in cursor.fetchall()]
+
 def consultar_marcas_item():
     """Retorna uma lista com todas as marcas registradas no banco de dados."""
     query=("select nome_marca from marca")

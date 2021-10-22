@@ -202,12 +202,11 @@ def atualizar_informacoes_pregao(uasg:str,pregao:str,window):
 ##JANELA DE ALTERAÇÃO DE ITENS
 
 def abrir_janela_alteracao_itens(id_pregao:str):
-    """Coleta os dados necessários para a alteração dos itens de um pregão"""
+    """Coleta os dados necessários para a alteração dos itens de um pregão."""
     marcas = cnn.consultar_marcas_item()
     categorias = cnn.consultar_categorias_item()
-    itens = cnn.consultar_itens_homologar(id_pregao)
-    
-    
+    itens = cnn.consultar_itens_alterar(id_pregao)
+    wds.janela_alteracao_itens_participados(itens,marcas,categorias)
 
 ##JANELA HOMOLOGAÇÃO DE ITENS
 

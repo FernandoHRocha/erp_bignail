@@ -219,7 +219,7 @@ while True:
             evh.abrir_pasta_pregao(window['txt_id_pregao'].get())
 
         if (event == 'bt_item_alterar'):
-            pregoes = evh.consultar_dados_selecionados_tabela(window,values,'tg_itens')
+            evh.abrir_janela_alteracao_itens(window['txt_id_pregao'].get())
         
         if (event == 'bt_homologar'):
             window.Close()
@@ -357,6 +357,11 @@ while True:
                 sg.popup('Reveja a data de entrega.')
 
 ###JANELAS DESTINADAS A PROCEDIMENTOS DE ALTERAÇÃO
+
+    if(window.Title==titulo_janelas['janela_alteracao_itens_participados']):
+        if (event):
+            if ('check_' in event):
+                evh.alterar_apresentacao_item(window,values,event)
 
     if(window.Title==titulo_janelas['janela_alteracao_data_abertura']):
         if(event == 'bt_concluir'):
