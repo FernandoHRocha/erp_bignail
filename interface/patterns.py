@@ -141,6 +141,43 @@ def aba_com_tabela_itens(cabecalho:list, identificador:str, valores:list):
     titulo = identificador[0].upper()+identificador[1:len(identificador)]
     return sg.Tab(titulo, tabela_itens_preenchida(cabecalho[0],valores,'tb_'+identificador,larguras=cabecalho[1]),key='tab_'+identificador,visible=True)
 
+def frame_item_completo(item:dict)->sg.Frame:
+    return sg.Frame(' Item '+item['item'],layout=[
+        [
+            sg.Checkbox('Atualizar item'),sg.Text(item['id_item'],visible=False,)
+        ],
+        [
+            sg.Frame('',border_width=0,key='fr_it_'+item,visible=False, layout=[
+                [
+                    sg.Text('Item'),
+                    sg.InputText(default_text=item['valor_ofertado'],size=(3,1), enable_events=True, key='it_item_'+item)
+                ],
+                [
+                    sg.Text('Modelo'),
+                    sg.InputText(default_text=item['modelo'],size=(30,1), enable_events=True, key='it_modelo_'+item)
+                ],
+                [
+                    sg.Text('Marca'),
+                    sg.InputText(default_text=item['marca'],size=(15,1), enable_events=True, key='it_marca_'+item)
+                ],
+                [
+                    sg.Text('Quanitdade'),
+                    sg.InputText(default_text=item['quantidade'],size=(15,1), enable_events=True, key='it_marca_'+item)
+                ],
+                [
+                    sg.Text('Custo'),
+                    sg.InputText(default_text=item['custo'],size=(15,1), enable_events=True, key='it_marca_'+item)
+                ],
+                [
+                    sg.Text('Fornecedor'),
+                    sg.InputText(default_text=item['fornecedor'],size=(15,1), enable_events=True, key='it_marca_'+item)
+                ],
+
+            ]),
+        ]
+    ])
+
+
 def frame_item_homologar(item:str,marca:str,modelo:str,unidades:str,valor_ofertado:str):
     """Retorna um sg.Frame para incluir itens em homologação."""
     item = str(item)

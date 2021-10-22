@@ -29,7 +29,7 @@ class Planilha:
     
     def obter_itens_cotados(self):
         wb = self.planilha['Planilha1']
-        colunas_registro = [1,3,4,5,9,11,12,13,7]
+        colunas_registro = [1,3,4,5,7,9,11,12,13]
         item = []
         for linha in range(2,wb.max_row):
             item.append([str(wb.cell(linha,coluna).value) for coluna in colunas_registro])
@@ -53,7 +53,7 @@ def mover_e_renomear_pasta(pasta:str,nomenclatura:str):
         except:
             sg.popup('Favor fechar qualquer documento que encontre-se dentro da pasta.')
 
-def cadastrar_planilha():
+def cadastrar_planilha(renomear:bool):
     """Realiza a leitura da planilha de cotação, insere os dados em banco de dados e move a pasta para a pasta de pregões"""
     try:
         pasta = abrir_pasta()
@@ -81,23 +81,24 @@ def cadastrar_planilha():
         cnn.inserir_orgao(pregao['uasg'],pregao['orgao'])
         cnn.inserir_pregao(pregao['uasg'],pregao['numero'],pregao['data'],"Proposta")
 
+    aux=[]
     for item in itens:
-        cnn.inserir_itens_planilha(
-            uasg = pregao['uasg'],
-            pregao = pregao['numero'],
+        aux.append(dict(
             item=item[0],
-            marca=item[1],
-            valor=item[2],
+            modelo=item[7],
             quantidade=item[3],
-            frete=item[4],
-            categoria=item[5],
-            modelo=item[6],
-            fornecedor=item[7],
-            preco_custo=item[8],
-            )
-    nomenclatura = adapter.padronizar_nome_pasta(pregao['data'],pregao['numero'],pregao['uasg'])
-    renomear_arquivo(pasta_proposta, arquivo_planilha, nomenclatura)
-    renomear_arquivo(pasta_proposta, arquivo_word, nomenclatura)
-    mover_e_renomear_pasta(pasta,nomenclatura)
-    sg.popup('Foram inseridos '+str(len(itens))+' itens no pregão de número '+pregao['numero'])
-    return
+            valor_ofertado=item[2],
+            preco_custo=item[4],
+            frete=item[5],
+            fornecedor=item[8],
+            marca=item[1],
+            categoria=item[6]))
+    if cnn.inserir_itens_planilha(pregao['uasg'],pregao['numero'],aux):
+        if (renomear):
+            nomenclatura = adapter.padronizar_nome_pasta(pregao['data'],pregao['numero'],pregao['uasg'])
+            renomear_arquivo(pasta_proposta, arquivo_planilha, nomenclatura)
+            renomear_arquivo(pasta_proposta, arquivo_word, nomenclatura)
+            mover_e_renomear_pasta(pasta,nomenclatura)
+        sg.popup('Foram inseridos '+str(len(itens))+' itens no pregão de número '+pregao['numero'])
+    else:
+        sg.popup('Ocorreu um erro ao tentar inserir um dos itens do pregão.')

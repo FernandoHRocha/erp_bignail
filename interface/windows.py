@@ -46,8 +46,8 @@ def janela_menu():
 
 def janela_consulta():
     """Retorna um sg.Window destinado a mostrar as opções de diferentes consultas disponíveis."""
-    layout = [[
-            sg.Button('Listar Processos',key='bt_consulta_geral',enable_events=True, size=(20,1))],
+    layout = [
+        [   sg.Button('Listar Processos',key='bt_consulta_geral',enable_events=True, size=(20,1))],
         [   sg.Button('Buscar Pregão',key='bt_consulta_pregao',enable_events=True, size=(20,1))],
         [   sg.Button('Listar Empenhos',key='bt_consulta_empenhos',enable_events=True, size=(20,1))],
         [   sg.Button('Pedidos de Reequilíbrio',key='bt_consulta_reequilibrios',enable_events=True, size=(20,1))],
@@ -242,6 +242,7 @@ def janela_consulta_itens_pregao(id_pregao:str):
             ]),
             sg.Column(layout=[
                 [sg.Button('Abrir Pasta',enable_events=True,size=(20,1),key='bt_pasta')],
+                [sg.Button('Homologar Pregão',enable_events=True,size=(20,1),key='bt_homologar',visible=(not homologado))],
                 [sg.Button('Registrar Empenho',enable_events=True,visible=homologado,size=(20,1),key='bt_item_empenho')],
                 [sg.Button('Registrar Carona',enable_events=True,visible=homologado,size=(20,1),key='bt_item_carona')],
                 [sg.Button('Registrar Reequilibrio',visible=homologado,enable_events=True,size=(20,1),key='bt_reequilibrio')],
@@ -266,11 +267,11 @@ def janela_consulta_itens_pregao(id_pregao:str):
 
 ###JANELAS DESTINADAS A ALTERAÇÕES
 
-def janela_alteracao_itens_participados(id_pregao:str):#INCOMPLETO
-    
+def janela_alteracao_itens_participados(itens:str,marcas:list,categorias:list):
+
     layout = [
         [
-
+            [pt.frame_item_completo(item) for item in itens]
         ]
     ]
     return sg.Window(title=titulo_janelas['janela_alteracao_itens_participados'],layout=layout, finalize=True)
@@ -297,8 +298,13 @@ def janela_alteracao_data_abertura(dados:str):
 
 def janela_cadastro():
     """Retorna um sg.Window destinado a mostrar as opções de diferentes cadastros disponíveis."""
-    layout = [[
-            sg.Button('Planilha de Cotação',key='bt_cadastro_planilha',enable_events=True, size=(20,1))],
+    layout = [
+        [
+            sg.Frame('Cadastrar Planilha de cotação',layout=[
+                [sg.Button('Pasta da Cotação',key='bt_cadastro_planilha',enable_events=True, size=(20,1))],
+                [sg.Checkbox('Renomear Pasta e Arquivos',default=True,key='ch_renomear')]
+            ]),
+        ],
         [   sg.Button('Registrar Empenho',key='bt_cadastro_empenho',enable_events=True, size=(20,1))],
         [   sg.Button('Registrar Carona',key='bt_cadastro_carona',enable_events=True, size=(20,1))],
         [   sg.Button('Registrar Reequilíbrio',key='bt_cadastro_reequilibrio',enable_events=True, size=(20,1))],

@@ -7,9 +7,9 @@ import datetime
 import openpyxl
 import os
 
-def cadastrar_planilha():
+def cadastrar_planilha(renomear:bool):
     """Lê os dados da planilha, cadastra o pregão e os itens no banco de dados, renomeia pasta e arquivos."""
-    arh.cadastrar_planilha()
+    arh.cadastrar_planilha(renomear)
 
 def cadastrar_pregao():
     """Cadastra os itens do pregão para participação no site ComprasNet."""

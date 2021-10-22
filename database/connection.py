@@ -8,6 +8,11 @@ def validar(campo):#NÃO PERMITE SQL INJECTION
     campo = str(campo).replace("'","").replace("--","")
     return campo
 
+def validar_com_aspas(campo:str)->str:
+    """Confere se o texto não quebra as regras de consulta ao banco de dados e insere aspas entre o texto."""
+    campo = str(campo).replace("''","").replace("--","")
+    return str("'"+campo+"'")
+
 ###CONSULTAS A IDENTIFICADORES
 
 def consultar_id_orgao(uasg):
@@ -28,6 +33,20 @@ def consultar_id_pregao(uasg:str,pregao:str):
     cursor.execute("select id_pregao from pregao where id_orgao = '"+validar(id_orgao)+"';")
     resultado = cursor.fetchone()
     return str(resultado[0]) if resultado!=None else '-1'
+
+def consultar_id_item_categoria(categoria:str)->str:
+    """Retorna o id da categoria, caso não encontre retornará '-1'."""
+    query=("select id_categoria from categoria where nome_categoria ='"+validar(categoria)+"';")
+    cursor.execute(query)
+    resultado = cursor.fetchone()
+    return str(resultado[0]) if resultado != None else '-1'
+
+def consultar_id_item_marca(marca:str)->str:
+    """Retorna o id da marca, caso não encontra retornará '-1'."""
+    query=("select id_marca from marca where nome_marca = '"+validar(marca)+"';")
+    cursor.execute(query)
+    resultado = cursor.fetchone()
+    return str(resultado[0]) if resultado != None else '-1'
 
 def consultar_id_fase_pregao(fase:str):
     """Retorna o id da fase do pregão. Caso não exista, retorna -1"""
@@ -128,14 +147,35 @@ def consultar_pregoes_fase(fase:str=''):
 def consultar_itens_geral(uasg:str,pregao:str):
     """Retorna uma lista de itens participados em um pregão."""
     cursor.execute(
-        "select item, nome_marca, modelo, quantidade, valor_ofertado, preco_custo, frete, fornecedor, id_item from item "
-        "join marca on item.id_marca = marca.id_marca "
-        "where id_pregao = (select id_pregao from pregao where id_orgao = "
-        "(select id_orgao from orgao where uasg = '"+validar(uasg)+"') and numero_pregao = '"+validar(pregao)+"');")
+        """select
+            item,
+            nome_marca,
+            modelo,
+            quantidade,
+            valor_ofertado,
+            preco_custo,
+            frete,
+            fornecedor,
+            id_item from item
+        join marca on item.id_marca = marca.id_marca 
+        where id_pregao = (select id_pregao from pregao where id_orgao = 
+        (select id_orgao from orgao where uasg = '"""+validar(uasg)+"') and numero_pregao = '"+validar(pregao)+"');")
     consulta=[]
     for row in cursor:
         consulta.append([str(valor) for valor in row])
     return consulta
+
+def consultar_marcas_item():
+    """Retorna uma lista com todas as marcas registradas no banco de dados."""
+    query=("select nome_marca from marca")
+    cursor.execute(query)
+    return [row[0] for row in cursor.fetchall()]
+
+def consultar_categorias_item():
+    """Retorna uma lista com todas as categorias de itens registradas em banco de dados."""
+    query=("select nome_categoria from categoria")
+    cursor.execute(query)
+    return [row[0] for row in cursor.fetchall()]
 
 def consultar_fases_pregoes():
     query="select nome_fase from fase_pregao"
@@ -567,22 +607,43 @@ def alterar_data_abertura(id_pregao:str,data:str):
 
 ###INSERÇÕES
 
-def inserir_itens_planilha(uasg, pregao, item, modelo, valor, quantidade, fornecedor, marca, categoria,preco_custo, frete):
+def inserir_itens_planilha(uasg:str, pregao:str, itens:list):
     """Insere os itens do pregão."""
     id_pregao = consultar_id_pregao(uasg, pregao)
-    if frete == "None": frete = 0.0
-    query = ("exec dbo.sp_inserir_item @frete="+validar(frete)+
-            ", @preco_custo="+validar(preco_custo)+
-            ", @item="+validar(item)+
-            ", @modelo='"+validar(modelo)+
-            "', @valor="+validar(valor)+
-            ", @quantidade="+validar(quantidade)+
-            ", @id_pregao="+str(id_pregao)+
-            ", @fornecedor='"+validar(fornecedor)+
-            "', @marca='"+validar(marca)+
-            "', @categoria='"+validar(categoria)+"';")
-    cursor.execute(query)
-    conn.commit()
+    try:
+        for item in itens:
+            id_categoria = consultar_id_item_categoria(item['categoria'])
+            id_marca = consultar_id_item_marca(item['marca'])
+            frete = 0 if item['frete'] == "None" else item['frete']
+            query = (
+            """insert into item (
+                item,
+                modelo,
+                quantidade,
+                valor_ofertado,
+                preco_custo,
+                frete,
+                fornecedor,
+                id_pregao,
+                id_marca,
+                id_categoria)
+            values ("""+
+                validar_com_aspas(item['item'])+", "+
+                validar_com_aspas(item['modelo'])+", "+
+                validar_com_aspas(item['quantidade'])+", "+
+                validar_com_aspas(item['valor_ofertado'])+", "+
+                validar_com_aspas(item['preco_custo'])+", "+
+                validar_com_aspas(frete)+", "+
+                validar_com_aspas(item['fornecedor'])+", "+
+                validar_com_aspas(id_pregao)+", "+
+                validar_com_aspas(id_marca)+", "+
+                validar_com_aspas(id_categoria)+");")
+            cursor.execute(query)
+        else:
+            conn.commit()
+            return True
+    except:
+        return False
     
 def inserir_pregao(uasg:str,pregao:str,data:str,fase:str):
     """Insere o pregão com base no id do órgão e no nome da fase."""

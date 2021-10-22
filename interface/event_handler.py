@@ -20,7 +20,8 @@ def voltar_pagina(historico:list,menu)->list:
 
 def copiar_para_area_transferencia(texto:str):
     """Passa o argumento para a area de transferência."""
-    cmd='echo '+texto.strip()+'|clip'
+    cmd='echo '+str(texto).strip()+'|clip'
+    sg.popup_auto_close('Fornecedor copiado.',auto_close_duration=1)
     return check_call(cmd,shell=True)
 
 def alterar_apresentacao_item(window:sg.Window,values:dict,event:str):
@@ -197,6 +198,16 @@ def atualizar_informacoes_pregao(uasg:str,pregao:str,window):
     window['txt_empenhos'].update(value=infos[4])
     window['txt_valor_homologado'].update(value=infos[3])
     window['txt_valor_empenhado'].update(value=infos[5])
+
+##JANELA DE ALTERAÇÃO DE ITENS
+
+def abrir_janela_alteracao_itens(id_pregao:str):
+    """Coleta os dados necessários para a alteração dos itens de um pregão"""
+    marcas = cnn.consultar_marcas_item()
+    categorias = cnn.consultar_categorias_item()
+    itens = cnn.consultar_itens_homologar(id_pregao)
+    
+    
 
 ##JANELA HOMOLOGAÇÃO DE ITENS
 

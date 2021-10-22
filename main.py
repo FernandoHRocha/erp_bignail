@@ -122,7 +122,7 @@ while True:
             if pregoes:
                 window.Close()
                 janela_anterior.append(wds.janela_consulta_pregoes)
-                [evh.abrir_janela_homologacao_itens(pregao[0]) for pregao in pregoes]
+                evh.abrir_janela_homologacao_itens(pregao[0][0])
 
         if(event == 'bt_registrar_empenho'):
             pregoes = evh.consultar_dados_selecionados_tabela(window,values,'tg_pregoes')
@@ -220,8 +220,12 @@ while True:
 
         if (event == 'bt_item_alterar'):
             pregoes = evh.consultar_dados_selecionados_tabela(window,values,'tg_itens')
-            pass
         
+        if (event == 'bt_homologar'):
+            window.Close()
+            janela_anterior.append(partial(wds.janela_consulta_itens_pregao,window['txt_id_pregao'].get()))
+            evh.abrir_janela_homologacao_itens(window['txt_id_pregao'].get())
+
         if (event == 'bt_item_empenho'):
             window.Close()
             janela_anterior.append(partial(wds.janela_consulta_itens_pregao,str(window['txt_id_pregao'].get())))
@@ -240,17 +244,20 @@ while True:
         if (event == 'bt_fornecedor'):
             item = evh.consultar_dados_selecionados_tabela(window,values,'tg_itens')
             if item:
-                evh.copiar_para_area_transferencia(item[0][8])
+                evh.copiar_para_area_transferencia(item[0][9])
 
 ###JANELAS DESTINADAS A PROCEDIMENTOS DE CADASTROS
 
     if(window.Title==titulo_janelas['janela_cadastro']):
         if(event == 'bt_cadastro_planilha'):
-            aut.cadastrar_planilha()
+            aut.cadastrar_planilha(values['ch_renomear'])
+        
         if(event == 'bt_cadastro_empenho'):
             pass
+        
         if(event == 'bt_cadastro_carona'):
             pass
+        
         if(event == 'bt_cadastro_reequilibrio'):
             pass
 
