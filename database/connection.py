@@ -165,26 +165,6 @@ def consultar_itens_geral(uasg:str,pregao:str):
         consulta.append([str(valor) for valor in row])
     return consulta
 
-def consultar_itens_alterar(id_pregao:str)->list:
-    """Retorna uma lista com os itens do pregão."""
-    query = (
-    """select
-        id_item,
-        item,
-        modelo,
-        quantidade,
-        valor_ofertado,
-        preco_custo,
-        frete,
-        fornecedor,
-        nome_marca,
-        nome_categoria from item as i
-	join marca as m on m.id_marca = i.id_marca
-	join categoria as c on c.id_categoria = i.id_categoria
-	where i.id_pregao = """+validar_com_aspas(id_pregao)+";")
-    cursor.execute(query)
-    return [list(row) for row in cursor.fetchall()]
-
 def consultar_marcas_item():
     """Retorna uma lista com todas as marcas registradas no banco de dados."""
     query=("select nome_marca from marca")
@@ -370,24 +350,24 @@ def consultar_dados_gerais_pregao(id_pregao:str):
     select
         format (p.data_abertura,'dd/MM/yyyy HH:mm'),
         nome_fase,
-        count(i.id_item) as itens_homologados,
-        sum(i.quantidade * i.valor_ofertado) as total_homologado,
+        ih.homologados as itens_homologados,
+        ih.valor_homologado as total_homologado,
         e.empenhos,
         emp.total as total_empenhado
         from pregao as p
     left join fase_pregao as fp on fp.id_fase = p.id_fase
     left join item as i on i.id_pregao = p.id_pregao
     left join (select id_pregao, count(id_empenho) as empenhos from empenho group by id_pregao) as e on e.id_pregao = p.id_pregao
+    left join (select id_pregao, count(id_item) as homologados, sum(quantidade * valor_ofertado) as valor_homologado from item where colocacao = 1 group by id_pregao) as ih on ih.id_pregao = p.id_pregao
     left join (
         select p.id_pregao, e.empenhos, sum(ie.valor_ofertado * ie.quantidade) as total from pregao as p
         join (select id_empenho, id_pregao, count(id_empenho) as empenhos from empenho group by id_empenho, id_pregao) as e on e.id_pregao = p.id_pregao
         join item_empenho as ie on ie.id_empenho = e.id_empenho
         group by p.id_pregao, e.id_pregao, e.empenhos) as emp on emp.id_pregao = p.id_pregao
     where p.id_pregao = '"""+validar(id_pregao)+"""'
-    group by data_abertura, nome_fase, e.empenhos, emp.total""")
+    group by data_abertura, nome_fase, e.empenhos, emp.total, ih.homologados, ih.valor_homologado""")
     cursor.execute(query)
     consulta=[list(row) for row in cursor.fetchall()]
-    print(consulta)
     return consulta[0]
 
 def consultar_itens_participados(id_pregao:str):
@@ -409,6 +389,26 @@ def consultar_itens_participados(id_pregao:str):
     cursor.execute(query)
     consulta=[list(row) for row in cursor.fetchall()]
     return consulta
+
+def consultar_itens_alterar(id_pregao:str)->list:
+    """Retorna uma lista com os itens do pregão."""
+    query = (
+    """select
+        id_item,
+        item,
+        modelo,
+        quantidade,
+        valor_ofertado,
+        preco_custo,
+        frete,
+        fornecedor,
+        nome_marca,
+        nome_categoria from item as i
+	join marca as m on m.id_marca = i.id_marca
+	join categoria as c on c.id_categoria = i.id_categoria
+	where i.id_pregao = """+validar_com_aspas(id_pregao)+";")
+    cursor.execute(query)
+    return [list(row) for row in cursor.fetchall()]
 
 def consultar_itens_homologar(id_pregao:str):
     """Retorna número, quantidade e modelo dos itens de um pregão."""
@@ -735,15 +735,18 @@ def inserir_itens_em_carona(uasg:str,pregao:str,orgao:str,data:str,itens:list):
     except:
         return False
 
-def inserir_empenho(uasg:str,pregao:str,data:str,nota:str,fase:str='Solicitado'):
+def inserir_empenho(uasg:str,pregao:str,data:str,nota:str,fase:str='Solicitado',id_carona:str='null'):
     """Insere um empenho no banco de dados, caso a fase não seja especificada, será inserido como Solicitado."""
-    id_orgao = consultar_id_orgao(uasg)
     id_pregao = consultar_id_pregao(uasg,pregao)
     id_fase = consultar_id_fase_empenho(fase)
-    if( '-1' in [id_orgao,id_pregao,id_fase]): return False
-    query = (   "insert into empenho (data_empenho,nota_empenho, id_pregao, id_fase, id_orgao) values"
-                "('"+validar(data)+"','"+validar(nota)+"','"+validar(id_pregao)+"','"+validar(id_fase)+"','"+validar(id_orgao)+"')")
+    if(id_carona != 'null'):
+        id_carona = validar_com_aspas(id_carona)
+    if( '-1' in [id_carona,id_pregao,id_fase]):
+        return False
+    query = (   "insert into empenho (data_empenho, nota_empenho, id_pregao, id_fase, id_carona) values"
+                "('"+validar(data)+"','"+validar(nota)+"','"+validar(id_pregao)+"','"+validar(id_fase)+"', "+id_carona+");")
     try:
+        print(query)
         cursor.execute(query)
         conn.commit()
         return True

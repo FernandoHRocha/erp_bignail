@@ -164,12 +164,13 @@ def frame_item_alterar(item:dict,marcas:list,categorias:list)->sg.Frame:
                 [sg.InputText(default_text=item['quantidade'],size=size, enable_events=True, key='it_quantidade_'+item['id_item'])],
                 [sg.Text('Preço de Custo')],
                 [sg.InputText(default_text=item['preco_custo'],size=size, enable_events=True, key='it_custo_'+item['id_item'])],
+                [sg.Text('Frete')],
+                [sg.InputText(default_text=item['frete'],size=size, enable_events=True, key='it_frete_'+item['id_item'])],
                 [sg.Text('Fornecedor')],
                 [sg.InputText(default_text=item['fornecedor'],size=size, enable_events=True, key='it_fornecedor_'+item['id_item'])],
             ]),
         ]
     ])
-
 
 def frame_item_homologar(item:str,marca:str,modelo:str,unidades:str,valor_ofertado:str):
     """Retorna um sg.Frame para incluir itens em homologação."""

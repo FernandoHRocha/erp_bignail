@@ -122,7 +122,7 @@ while True:
             if pregoes:
                 window.Close()
                 janela_anterior.append(wds.janela_consulta_pregoes)
-                evh.abrir_janela_homologacao_itens(pregao[0][0])
+                evh.abrir_janela_homologacao_itens(pregoes[0][0])
 
         if(event == 'bt_registrar_empenho'):
             pregoes = evh.consultar_dados_selecionados_tabela(window,values,'tg_pregoes')

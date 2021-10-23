@@ -137,7 +137,6 @@ CREATE TABLE empenho
  id_carona int NULL,
  id_pregao int NOT NULL,
  id_fase int NOT NULL,
- id_orgao int NULL,
 CONSTRAINT FK_carona_empenho
 	FOREIGN KEY (id_carona)
 	REFERENCES carona (id_carona)
@@ -152,12 +151,7 @@ CONSTRAINT FK_fase_empenho
 	FOREIGN KEY (id_fase)
 	REFERENCES fase_empenho (id_fase)
 	ON DELETE NO ACTION
-	ON UPDATE CASCADE,
-CONSTRAINT FK_orgao_empenho
-	FOREIGN KEY (id_orgao)
-	REFERENCES orgao (id_orgao)
-	ON DELETE NO ACTION
-	ON UPDATE NO ACTION
+	ON UPDATE CASCADE
 );
 
 CREATE TABLE item_empenho

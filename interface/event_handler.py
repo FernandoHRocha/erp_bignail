@@ -277,12 +277,12 @@ def homologar_pregao_e_itens(window:sg.Window,values:dict):
                     aux.append(valor)
                     itens_homologar.append(aux)
                 else:
-                    return sg.popup('Favor corrigir o valor do item '+codigo_item)
+                    sg.popup('Favor corrigir o valor do item '+codigo_item)
     else:
         if(len(itens_homologar)<1):
-            return sg.popup('Para homologar um pregão é necessário que pelo menos um item seja empenhado.')
+            sg.popup('Para homologar um pregão é necessário que pelo menos um item seja empenhado.')
         if not cnn.alterar_fase_pregao(uasg,pregao,'Homologado'):
-            return sg.popup('Não foi possível alterar a fase do pregão.')
+            sg.popup('Não foi possível alterar a fase do pregão.')
         if data_ata != False:
             if not cnn.alterar_data_arp(id_pregao,data_ata):
                 sg.popup('Será necessário inserir a data de assinatura posteriormente.')
@@ -461,6 +461,8 @@ def entrada_decimal(valor:str,comprimento:int=12)->str:
     try:
         if valor:
             valor = valor.replace('.',',')
+            if(valor.count(',')>0):
+                print(valor)
             if(valor[-1].isdigit() and len(valor)<comprimento):
                 return valor
             elif((valor[-1] == ',') and (valor.count(',')==1 and len(valor)<comprimento)):
