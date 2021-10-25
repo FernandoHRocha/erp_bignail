@@ -315,6 +315,14 @@ def consultar_pregoes_do_orgao(id_orgao:str):
     cursor.execute(query)
     return [row[0] for row in cursor.fetchall()]
 
+def consultar_fase_pregao(id_pregao:str):
+    """Retorna a fase atual do pregão."""
+    query=("select nome_fase from fase_pregao "+
+            "join pregao on pregao.id_fase=fase_pregao.id_fase where pregao.id_pregao ="+validar_com_aspas(id_pregao)+";")
+    cursor.execute(query)
+    resultado = cursor.fetchone()
+    return str(resultado[0]) if resultado != None else '-1'
+
 def consultar_dados_pregao(id_pregao:str):
     """Retorna os dados gerais de um pregão.\n
     numero, uasg, órgão, data de abertura, data da ata, fase."""
@@ -403,7 +411,8 @@ def consultar_itens_alterar(id_pregao:str)->list:
         frete,
         fornecedor,
         nome_marca,
-        nome_categoria from item as i
+        nome_categoria,
+        colocacao from item as i
 	join marca as m on m.id_marca = i.id_marca
 	join categoria as c on c.id_categoria = i.id_categoria
 	where i.id_pregao = """+validar_com_aspas(id_pregao)+";")
@@ -605,6 +614,20 @@ def alterar_fase_pregao(uasg:str,pregao:str,fase:str):
     except:
         return False
 
+def alterar_fase_pregao_id_pregao(id_pregao:str,fase:str):
+    """Altera a fase do pregão, utilizando o id do pregão."""
+    id_fase = consultar_id_fase_pregao(fase)
+    if id_fase == '-1':
+        return False
+    try:
+        query = ("update pregao set id_fase = '"+id_fase+"'"
+                "where id_pregao = "+validar_com_aspas(id_pregao)+";")
+        cursor.execute(query)
+        cursor.commit()
+        return True
+    except:
+        return False
+
 def alterar_data_arp(id_pregao:str,data:str):
     try:
         query = ("update pregao set data_ata = '"+validar(data)+"' "
@@ -624,6 +647,32 @@ def alterar_data_abertura(id_pregao:str,data:str):
         return True
     except:
         return False
+
+def alterar_itens(itens:dict):
+    """Altera as propriedades de um item."""
+    try:
+        for item in itens:
+            id_marca = consultar_id_item_marca(item['nome_marca'])
+            id_categoria = consultar_id_item_categoria(item['nome_categoria'])
+            print(item)
+            query=( "update item set item="+validar_com_aspas(item['item'])+
+                    ", colocacao="+validar_com_aspas(item['colocacao'])+
+                    ", modelo="+validar_com_aspas(item['modelo'])+
+                    ", valor_ofertado="+validar_com_aspas(item['valor_ofertado'])+
+                    ", quantidade="+validar_com_aspas(item['quantidade'])+
+                    ", preco_custo="+validar_com_aspas(item['preco_custo'])+
+                    ", frete="+validar_com_aspas(item['frete'])+
+                    ", fornecedor="+validar_com_aspas(item['fornecedor'])+
+                    ", id_marca="+validar_com_aspas(id_marca)+
+                    ", id_categoria="+validar_com_aspas(id_categoria)+
+                    " where id_item="+validar_com_aspas(item['id_item'])+";")
+            print(query)
+            cursor.execute(query)
+        cursor.commit()
+        return True
+    except:
+        return False
+
 
 ###INSERÇÕES
 

@@ -218,46 +218,43 @@ def abrir_janela_alteracao_itens(id_pregao:str):
     """Coleta os dados necessários para a alteração dos itens de um pregão."""
     marcas = cnn.consultar_marcas_item()
     categorias = cnn.consultar_categorias_item()
+    fases = cnn.consultar_fases_pregoes()
+    fase_atual = cnn.consultar_fase_pregao(id_pregao)
     itens = cnn.consultar_itens_alterar(id_pregao)
-    wds.janela_alteracao_itens_participados(itens,marcas,categorias)
+    wds.janela_alteracao_itens_participados(itens,marcas,categorias,id_pregao,fases,fase_atual)
 
-def alterar_item_pregao(window:sg.Window,values:dict):
+def alterar_item_e_fase_pregao(window:sg.Window,values:dict):
     """Valida as informações contidas nos campos de alteração do item e as envia para o banco de dados."""
-    id_pregao = window['txt_id_pregao'].get()
     itens_alterar=[]
     for item in values.keys():
+        aux_item={}
         if 'check' in item:
             if values[item]:
-                codigo_item = item.replace('check_','')
-                valor = values[str(item).replace('check','it_valor')]
-                modelo = values[str(item).replace('check','it_modelo')]
-                marca = values[str(item).replace('check','cb_marca')]
-                categoria = values[str(item).replace('check','cb_categoria')]
-                quantidade = values[str(item).replace('check','it_quantidade')]
-                custo = values[str(item).replace('check','it_custo')]
-                fornecedor = values[str(item).replace('check','it_fornecedor')]
-                if valor.replace(',','',1).isdigit():
-                    aux = []
-                    aux.append(codigo_item)
-                    valor = str(round(float(valor.replace(',','.',1)),2))
-                    if (len(valor.split('.')[1])<2):
-                        valor = valor + '0'
-                    aux.append(valor)
-                    itens_homologar.append(aux)
-                else:
-                    return sg.popup('Favor corrigir o valor do item '+codigo_item)
+                identificador = item.replace('check_','')
+                aux_item = dict(
+                    item = identificador,
+                    id_item = window['txt_id_item_'+identificador].get(),
+                    valor_ofertado = values['it_valor_'+identificador],
+                    modelo = values['it_modelo_'+identificador],
+                    nome_marca = values['cb_marca_'+identificador],
+                    nome_categoria = values['cb_categoria_'+identificador],
+                    quantidade = values['it_quantidade_'+identificador],
+                    preco_custo = values['it_custo_'+identificador],
+                    fornecedor = values['it_fornecedor_'+identificador],
+                    colocacao = values['it_colocacao_'+identificador]
+                )
+                itens_alterar.append(aux_item)
     else:
-        if(len(itens_homologar)<1):
-            return sg.popup('Para homologar um pregão é necessário que pelo menos um item seja empenhado.')
-        if not cnn.alterar_fase_pregao(uasg,pregao,'Homologado'):
-            return sg.popup('Não foi possível alterar a fase do pregão.')
-        if data_ata != False:
-            if not cnn.alterar_data_arp(id_pregao,data_ata):
-                sg.popup('Será necessário inserir a data de assinatura posteriormente.')
-        if not cnn.inserir_itens_ganho(uasg,pregao,itens_homologar):
-            return sg.popup('Não foi possível inserir os itens como homologados.')
-        sg.popup('O pregão foi homologado.')
-    return
+        id_pregao = window['txt_id_pregao'].get()
+        fase = values['cb_fase_pregao']
+        if(len(itens_alterar)>0):
+            if not cnn.alterar_itens(itens_alterar):
+                sg.popup('Ocorreu um erro ao alterar os itens.')
+                return False
+        if not cnn.alterar_fase_pregao_id_pregao(id_pregao,fase):
+            sg.popup('Ocorreu um erro ao tentar trocar a fase do pregão.')
+            return False
+        return True
 
 ##JANELA HOMOLOGAÇÃO DE ITENS
 

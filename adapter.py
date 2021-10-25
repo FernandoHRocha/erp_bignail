@@ -59,5 +59,6 @@ def converter_item_dicionario(item:list)->dict:
         frete = str(item[6]),
         fornecedor = str(item[7]),
         nome_marca = str(item[8]),
-        nome_categoria = str(item[9])
+        nome_categoria = str(item[9]),
+        colocacao = str(item[10])
     )

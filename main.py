@@ -13,7 +13,7 @@ wds.janela_menu()
 while True:
     window, event, values = sg.read_all_windows()
 
-    print(window,event,values)
+    #print(window,event,values)
 
     if(window.Title==titulo_janelas['janela_menu']):
         if(event == 'bt_consultar'):
@@ -103,6 +103,12 @@ while True:
             if pregoes:
                 [evh.abrir_pasta_pregao(pregao[0]) for pregao in pregoes]
         
+        if(event == 'bt_registrar_disputa'):
+            pregoes = evh.consultar_dados_selecionados_tabela(window,values,'tg_pregoes')
+            if pregoes:
+                window.Close()
+                evh.abrir_janela_alteracao_itens(pregoes[0][0])
+
         if(event == 'bt_consultar_itens'):
             pregoes = evh.consultar_dados_selecionados_tabela(window,values,'tg_pregoes')
             if pregoes:
@@ -151,7 +157,6 @@ while True:
                 evh.alternar_opcoes_pregao_categoria(window,tabela.replace('tab','cl'))
             else:
                 evh.alternar_opcoes_pregao_categoria(window,'bt_pasta')
-            #Opção de alteração de data de abertura
             if(values['tg_pregoes'] in ['tab_proposta','tab_frustrado','tab_suspenso']):
                 window['bt_alterar_data'].update(visible=True)
             if(values['tg_pregoes'] in ['tab_julgamento','tab_homologado','tab_finalizado']):
@@ -255,15 +260,6 @@ while True:
         if(event == 'bt_cadastro_planilha'):
             aut.cadastrar_planilha(values['ch_renomear'])
         
-        if(event == 'bt_cadastro_empenho'):
-            pass
-        
-        if(event == 'bt_cadastro_carona'):
-            pass
-        
-        if(event == 'bt_cadastro_reequilibrio'):
-            pass
-
     if(window.Title==titulo_janelas['janela_cadastro_homologacao']):
         if event:
             if ('check_' in event):
@@ -369,22 +365,23 @@ while True:
                 entrada = str(event)
                 valor = evh.entrada_numerica(values[entrada],4)
                 window[entrada].update(value=valor)
-            elif ('it_valor_' in event):
+            elif (event in ['it_valor_','it_custo_','it_frete_']):
                 entrada = str(event)
                 valor = evh.entrada_decimal(values[entrada],12)
                 window[entrada].update(value=valor)
-            elif ('it_custo_' in event):
-                entrada = str(event)
-                valor = evh.entrada_decimal(values[entrada],12)
             elif ('it_quantidade_' in event):
                 entrada = str(event)
                 valor = evh.entrada_numerica(values[entrada],7)
                 window[entrada].update(value=valor)
+            elif ('it_colocacao_' in event):
+                entrada = str(event)
+                valor = evh.entrada_numerica(values[entrada],2)
+                window[entrada].update(value=valor)
     
         if (event=='bt_concluir'):
-            sg.popup('inserir itens')
-            window.Close()
-            evh.voltar_pagina(janela_anterior,wds.janela_menu)
+           if evh.alterar_item_e_fase_pregao(window,values):
+                window.Close()
+                evh.voltar_pagina(janela_anterior,wds.janela_menu)
         
         if (event == 'bt_cancelar'):
             window.Close()

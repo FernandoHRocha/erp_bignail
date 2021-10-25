@@ -141,6 +141,13 @@ def aba_com_tabela_itens(cabecalho:list, identificador:str, valores:list):
     titulo = identificador[0].upper()+identificador[1:len(identificador)]
     return sg.Tab(titulo, tabela_itens_preenchida(cabecalho[0],valores,'tb_'+identificador,larguras=cabecalho[1]),key='tab_'+identificador,visible=True)
 
+def frame_fase_pregao(fases:list,fase_atual:str)->sg.Frame:
+    """Retorna um sg.Frame contendo um combo box para alteração da fase do pregão."""
+    return sg.Frame('',layout=[
+        [sg.Text('Selecione a nova fase do pregão.')],
+        [sg.Combo(values=fases,default_value=fase_atual,size=(25,6),key='cb_fase_pregao',enable_events=True)]
+    ])
+
 def frame_item_alterar(item:dict,marcas:list,categorias:list)->sg.Frame:
     size = (70,1)
     return sg.Frame(' Item '+item['item'],layout=[
@@ -152,6 +159,8 @@ def frame_item_alterar(item:dict,marcas:list,categorias:list)->sg.Frame:
             sg.Frame('',border_width=0,key='fr_it_'+item['id_item'],visible=False, layout=[
                 [sg.Text('Item')],
                 [sg.InputText(default_text=item['item'],size=size, enable_events=True, key='it_item_'+item['id_item'])],
+                [sg.Text('Colocação')],
+                [sg.InputText(default_text=item['colocacao'],size=size, enable_events=True, key='it_colocacao_'+item['id_item'])],
                 [sg.Text('Valor Ofertado')],
                 [sg.InputText(default_text=item['valor_ofertado'],size=size, enable_events=True, key='it_valor_'+item['id_item'])],
                 [sg.Text('Modelo')],

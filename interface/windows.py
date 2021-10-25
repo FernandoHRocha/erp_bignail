@@ -83,7 +83,7 @@ def janela_consulta_pregoes():
     abas = evh.listar_pregoes_gerais()
     #As chaves da coluna devem seguir "cl_" + nome_fase para dinamizar a apresentação das opções.
     coluna_proposta=sg.Column(key='cl_proposta',visible=True,layout=[
-        [sg.Button('Registrar Disputa NF', enable_events=True,key='br_registrar_disputa',size=tamanho_padrao)],
+        [sg.Button('Registrar Disputa NF', enable_events=True,key='bt_registrar_disputa',size=tamanho_padrao)],
     ])
     coluna_julgamento=sg.Column(key='cl_julgamento',visible=False,layout=[
         [sg.Button('Frustrar Pregão NF',enable_events=True,key='bt_frustrar',size=tamanho_padrao)],
@@ -282,17 +282,25 @@ def janela_consulta_itens_pregao(id_pregao:str):
 
 ###JANELAS DESTINADAS A ALTERAÇÕES
 
-def janela_alteracao_itens_participados(itens:list,marcas:list,categorias:list):
+def janela_alteracao_itens_participados(itens:list,marcas:list,categorias:list,id_pregao:str,fases:list,fase_atual:str):
     col_item = list([adapter.converter_item_dicionario(item) for item in itens])
 
     layout = [
-        [sg.Text('Selecione os itens que deseja alterar.')],
+        [
+            sg.Text('Selecione os itens que deseja alterar.'),
+            sg.Text(id_pregao,visible=False,key='txt_id_pregao')
+        ],
         [
             sg.Column(
                 [[pt.frame_item_alterar(item,marcas,categorias)] for item in col_item],
                 size=(600,400),vertical_scroll_only=True,scrollable=True,key='cl_itens')
-            ],
-        [pt.botoes_concluir_cancelar_operacao()]
+        ],
+        [
+            pt.frame_fase_pregao(fases,fase_atual)
+        ],
+        [
+            pt.botoes_concluir_cancelar_operacao()
+        ]
     ]
     return sg.Window(title=titulo_janelas['janela_alteracao_itens_participados'],layout=layout, finalize=True)
 
@@ -324,10 +332,7 @@ def janela_cadastro():
                 [sg.Button('Pasta da Cotação',key='bt_cadastro_planilha',enable_events=True, size=(20,1))],
                 [sg.Checkbox('Renomear Pasta e Arquivos',default=True,key='ch_renomear')]
             ]),
-        ],
-        [   sg.Button('Registrar Empenho',key='bt_cadastro_empenho',enable_events=True, size=(20,1))],
-        [   sg.Button('Registrar Carona',key='bt_cadastro_carona',enable_events=True, size=(20,1))],
-        [   sg.Button('Registrar Reequilíbrio',key='bt_cadastro_reequilibrio',enable_events=True, size=(20,1))],
+        ]
         ]
     return sg.Window(titulo_janelas['janela_cadastro'], layout, finalize=True)
 
