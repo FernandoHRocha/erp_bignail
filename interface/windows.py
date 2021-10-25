@@ -81,14 +81,24 @@ def janela_consulta_pregoes():
         [0,10,8,20,30]
     ]
     abas = evh.listar_pregoes_gerais()
-    coluna1=[#APLICADO PARA PREGÕES EM FASE DE PROPOSTA, JULGAMENTO E FRUSTRADO
-        [sg.Button('Alterar Fase',enable_events=True,key='bt_alterar_fase',size=tamanho_padrao)],
+    coluna_proposta=[
+        [sg.Button('Registrar Disputa', enable_events=True,key='br_registrar_disputa',size=tamanho_padrao)],
+    ]
+    coluna_julgamento=[
+        [sg.Button('Frustrar Pregão',enable_events=True,key='bt_frustrar',size=tamanho_padrao)],
         [sg.Button('Homologar Pregão',enable_events=True,key='bt_homologar',size=tamanho_padrao),]
     ]
-    coluna2=[#APLICADO PARA PREGÕES HOMOLOGADOS
+    coluna_homologados=[
         [sg.Button('Registrar Empenho',enable_events=True,key='bt_registrar_empenho',size=tamanho_padrao)],
         [sg.Button('Registrar Carona',enable_events=True,key='bt_registrar_carona',size=tamanho_padrao)],
-        [sg.Button('Registrar Reequilibrio',enable_events=True,key='bt_registrar_reequilibrio',size=tamanho_padrao),]
+        [sg.Button('Registrar Reequilibrio',enable_events=True,key='bt_registrar_reequilibrio',size=tamanho_padrao)],
+        [sg.Button('Finalizar Pregão',enable_events=True,key='bt_finalizar_pregao',size=tamanho_padrao)],
+    ]
+    coluna_frustrado=[
+        [sg.Button('Restaurar')]
+    ]
+    coluna_suspenso=[
+        [sg.Button('Frustrar Pregão',enable_events=True,key='bt_frustrar',size=tamanho_padrao)],
     ]
     layout=[
         [
@@ -103,8 +113,8 @@ def janela_consulta_pregoes():
                 [sg.Button('Consultar Itens',enable_events=True,key='bt_consultar_itens',size=tamanho_padrao)],
                 [sg.Button('Alterar Data Abertura',enable_events=True,key='bt_alterar_data',size=tamanho_padrao)],
                 [
-                    sg.Column(coluna1,key='cl_julgamento'),
-                    sg.Column(coluna2,key='cl_ganho',visible=False),
+                    sg.Column(coluna_proposta,key='cl_julgamento'),
+                    sg.Column(coluna_homologados,key='cl_ganho',visible=False),
                 ]
             ])
         ],
