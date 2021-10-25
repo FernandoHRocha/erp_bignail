@@ -81,25 +81,27 @@ def janela_consulta_pregoes():
         [0,10,8,20,30]
     ]
     abas = evh.listar_pregoes_gerais()
-    coluna_proposta=[
-        [sg.Button('Registrar Disputa', enable_events=True,key='br_registrar_disputa',size=tamanho_padrao)],
-    ]
-    coluna_julgamento=[
-        [sg.Button('Frustrar Pregão',enable_events=True,key='bt_frustrar',size=tamanho_padrao)],
+    #As chaves da coluna devem seguir "cl_" + nome_fase para dinamizar a apresentação das opções.
+    coluna_proposta=sg.Column(key='cl_proposta',visible=True,layout=[
+        [sg.Button('Registrar Disputa NF', enable_events=True,key='br_registrar_disputa',size=tamanho_padrao)],
+    ])
+    coluna_julgamento=sg.Column(key='cl_julgamento',visible=False,layout=[
+        [sg.Button('Frustrar Pregão NF',enable_events=True,key='bt_frustrar',size=tamanho_padrao)],
         [sg.Button('Homologar Pregão',enable_events=True,key='bt_homologar',size=tamanho_padrao),]
-    ]
-    coluna_homologados=[
+    ])
+    coluna_homologado=sg.Column(key='cl_homologado',visible=False,layout=[
         [sg.Button('Registrar Empenho',enable_events=True,key='bt_registrar_empenho',size=tamanho_padrao)],
         [sg.Button('Registrar Carona',enable_events=True,key='bt_registrar_carona',size=tamanho_padrao)],
         [sg.Button('Registrar Reequilibrio',enable_events=True,key='bt_registrar_reequilibrio',size=tamanho_padrao)],
-        [sg.Button('Finalizar Pregão',enable_events=True,key='bt_finalizar_pregao',size=tamanho_padrao)],
-    ]
-    coluna_frustrado=[
-        [sg.Button('Restaurar')]
-    ]
-    coluna_suspenso=[
-        [sg.Button('Frustrar Pregão',enable_events=True,key='bt_frustrar',size=tamanho_padrao)],
-    ]
+        [sg.Button('Finalizar Pregão NF',enable_events=True,key='bt_finalizar_pregao',size=tamanho_padrao)],
+    ])
+    coluna_frustrado=sg.Column(key='cl_frustrado',visible=False,layout=[
+        [sg.Button('Restaurar NF',enable_events=True,key='bt_restaurar_frustrado',size=tamanho_padrao)]
+    ])
+    coluna_suspenso=sg.Column(key='cl_suspenso',visible=False,layout=[
+        [sg.Button('Frustrar Pregão NF',enable_events=True,key='bt_frustrar',size=tamanho_padrao)],
+        [sg.Button('Restaurar NF',enable_events=True,key='bt_restaurar_suspenso',size=tamanho_padrao)]
+    ])
     layout=[
         [
             sg.TabGroup(
@@ -113,8 +115,11 @@ def janela_consulta_pregoes():
                 [sg.Button('Consultar Itens',enable_events=True,key='bt_consultar_itens',size=tamanho_padrao)],
                 [sg.Button('Alterar Data Abertura',enable_events=True,key='bt_alterar_data',size=tamanho_padrao)],
                 [
-                    sg.Column(coluna_proposta,key='cl_julgamento'),
-                    sg.Column(coluna_homologados,key='cl_ganho',visible=False),
+                    coluna_proposta,
+                    coluna_julgamento,
+                    coluna_homologado,
+                    coluna_frustrado,
+                    coluna_suspenso,
                 ]
             ])
         ],
@@ -138,7 +143,7 @@ def janela_consulta_empenhos():
         [
             sg.Button('Abrir Pasta Pregão', enable_events=True,key='bt_pasta'),
             sg.Button('Consultar o Pregão', enable_events=True,key='bt_consultar_pregao'),
-            sg.Button('Consultar os Itens',enable_events=True,key='bt_consultar_itens'),
+            sg.Button('Consultar os Itens NF',enable_events=True,key='bt_consultar_itens'),
             sg.Button('Registrar Entrega',enable_events=True,key='bt_registrar_entrega'),
         ],
         [pt.bt_voltar()]
@@ -159,9 +164,9 @@ def janela_consulta_reequilibrio():
                 ],enable_events=True,key='tg_reequilibrio')
         ],
         [
-            sg.Button('Registrar Envio',enable_events=True,key='bt_registrar_envio'),
-            sg.Button('Registrar Aceite',enable_events=True,key='bt_registrar_aceite'),
-            sg.Button('Registrar Recusa',enable_events=True,key='bt_registrar_recusa'),
+            sg.Button('Registrar Envio NF',enable_events=True,key='bt_registrar_envio'),
+            sg.Button('Registrar Aceite NF',enable_events=True,key='bt_registrar_aceite'),
+            sg.Button('Registrar Recusa NF',enable_events=True,key='bt_registrar_recusa'),
         ],
         [pt.bt_voltar()]
         ]
@@ -183,8 +188,8 @@ def janela_consulta_carona():
         [
             sg.Button('Abrir Pasta Pregão', enable_events=True,key='bt_pasta'),
             sg.Button('Consultar o Pregão', enable_events=True,key='bt_consultar_pregao'),
-            sg.Button('Itens do Empenho',enable_events=True,key='bt_consultar_itens'),
-            sg.Button('Registrar Empenho',enable_events=True,key='bt_empenho'),
+            sg.Button('Itens do Empenho NF',enable_events=True,key='bt_consultar_itens'),
+            sg.Button('Registrar Empenho NF',enable_events=True,key='bt_empenho'),
         ],
         [pt.bt_voltar()]
         ]

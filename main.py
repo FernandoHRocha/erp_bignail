@@ -146,15 +146,16 @@ while True:
                 evh.abrir_janela_itens_reequilibrio(pregoes[0][0])
 
         if(event == 'tg_pregoes'):
-            if(values['tg_pregoes'] in ['tab_homologado','tab_finalizado']):
-                window['cl_julgamento'].update(visible=False)
-                window['cl_ganho'].update(visible=True)
-            elif(values['tg_pregoes'] in ['tab_proposta','tab_julgamento','tab_frustrado']):
-                window['cl_julgamento'].update(visible=True)
-                window['cl_ganho'].update(visible=False)
+            tabela = str(values['tg_pregoes'])
+            if (tabela != 'tab_finalizado'):
+                evh.alternar_opcoes_pregao_categoria(window,tabela.replace('tab','cl'))
             else:
-                window['cl_julgamento'].update(visible=False)
-                window['cl_ganho'].update(visible=False)
+                evh.alternar_opcoes_pregao_categoria(window,'bt_pasta')
+            #Opção de alteração de data de abertura
+            if(values['tg_pregoes'] in ['tab_proposta','tab_frustrado','tab_suspenso']):
+                window['bt_alterar_data'].update(visible=True)
+            if(values['tg_pregoes'] in ['tab_julgamento','tab_homologado','tab_finalizado']):
+                window['bt_alterar_data'].update(visible=False)
 
     if(window.Title==titulo_janelas['janela_consulta_empenhos']):
         if(event=='bt_pasta'):

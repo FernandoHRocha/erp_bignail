@@ -7,6 +7,8 @@ import PySimpleGUI as sg
 import time
 import os
 
+COLUNAS_FASE_PREGOES=['cl_proposta','cl_julgamento','cl_homologado','cl_frustrado','cl_suspenso']
+
 def voltar_pagina(historico:list,menu)->list:
     """Retorna a aplicação para a página vista anteriormente."""
     try:
@@ -138,6 +140,17 @@ def abrir_pasta_pregao(id_pregao:str):
         os.startfile(os.path.realpath(path))
     except:
         sg.popup('Não foi possível encontrar a pasta.')
+
+##JANELA DE CONSULTA PELOS PREGÕES GERAIS
+
+def alternar_opcoes_pregao_categoria(window:sg.Window,coluna_atual:str):
+    """Altera a visibilidade de opções para as diferentes categorias de pregões."""
+    for coluna in COLUNAS_FASE_PREGOES:
+        window[coluna].update(visible=False)
+        window[coluna].hide_row()
+    window[coluna_atual].update(visible=True)
+    window[coluna_atual].unhide_row()
+    return
 
 ##JANELA DE PROCURA POR PREGÃO
 
