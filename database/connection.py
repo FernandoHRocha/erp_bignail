@@ -650,29 +650,27 @@ def alterar_data_abertura(id_pregao:str,data:str):
 
 def alterar_itens(itens:dict):
     """Altera as propriedades de um item."""
-    try:
-        for item in itens:
-            id_marca = consultar_id_item_marca(item['nome_marca'])
-            id_categoria = consultar_id_item_categoria(item['nome_categoria'])
-            print(item)
-            query=( "update item set item="+validar_com_aspas(item['item'])+
-                    ", colocacao="+validar_com_aspas(item['colocacao'])+
-                    ", modelo="+validar_com_aspas(item['modelo'])+
-                    ", valor_ofertado="+validar_com_aspas(item['valor_ofertado'])+
-                    ", quantidade="+validar_com_aspas(item['quantidade'])+
-                    ", preco_custo="+validar_com_aspas(item['preco_custo'])+
-                    ", frete="+validar_com_aspas(item['frete'])+
-                    ", fornecedor="+validar_com_aspas(item['fornecedor'])+
-                    ", id_marca="+validar_com_aspas(id_marca)+
-                    ", id_categoria="+validar_com_aspas(id_categoria)+
-                    " where id_item="+validar_com_aspas(item['id_item'])+";")
-            print(query)
-            cursor.execute(query)
-        cursor.commit()
-        return True
-    except:
-        return False
-
+    for item in itens:
+        id_marca = consultar_id_item_marca(item['nome_marca'])
+        id_categoria = consultar_id_item_categoria(item['nome_categoria'])
+        coloc = ''
+        if item['colocacao'] != 'None':
+            coloc = ", colocacao="+validar_com_aspas(item['colocacao'])
+        query=( "update item set item="+validar_com_aspas(item['item'])+
+                coloc+
+                ", modelo="+validar_com_aspas(item['modelo'])+
+                ", valor_ofertado="+validar_com_aspas(item['valor_ofertado'])+
+                ", quantidade="+validar_com_aspas(item['quantidade'])+
+                ", preco_custo="+validar_com_aspas(item['preco_custo'])+
+                ", frete="+validar_com_aspas(item['frete'])+
+                ", fornecedor="+validar_com_aspas(item['fornecedor'])+
+                ", id_marca="+validar_com_aspas(id_marca)+
+                ", id_categoria="+validar_com_aspas(id_categoria)+
+                " where id_item="+validar_com_aspas(item['id_item'])+";")
+        print(query)
+        cursor.execute(query)
+    cursor.commit()
+    return True
 
 ###INSERÇÕES
 

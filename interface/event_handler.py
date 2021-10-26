@@ -152,6 +152,18 @@ def alternar_opcoes_pregao_categoria(window:sg.Window,coluna_atual:str):
     window[coluna_atual].unhide_row()
     return
 
+def frustrar_pregao(id_pregao:str):
+    if not cnn.alterar_fase_pregao_id_pregao(id_pregao,'Frustrado'):
+        sg.popup('Não foi possível frustrar o pregão.')
+    else:
+        sg.popup_auto_close('SUCESSO!\nA fase do pregão foi alterada.',auto_close_duration=2)
+
+def restaurar_pregao(id_pregao:str):
+    if not cnn.alterar_fase_pregao_id_pregao(id_pregao,'Proposta'):
+        sg.popup('Não foi possível restaurar o pregão.')
+    else:
+        sg.popup_auto_close('SUCESSO!\nA fase do pregão foi alterada.',auto_close_duration=2)
+
 ##JANELA DE PROCURA POR PREGÃO
 
 def limpar_entradas_procura_pregao(window,entradas:list):
@@ -232,9 +244,10 @@ def alterar_item_e_fase_pregao(window:sg.Window,values:dict):
             if values[item]:
                 identificador = item.replace('check_','')
                 aux_item = dict(
-                    item = identificador,
+                    item = values['it_item_'+identificador],
                     id_item = window['txt_id_item_'+identificador].get(),
                     valor_ofertado = values['it_valor_'+identificador],
+                    frete = values['it_frete_'+identificador],
                     modelo = values['it_modelo_'+identificador],
                     nome_marca = values['cb_marca_'+identificador],
                     nome_categoria = values['cb_categoria_'+identificador],

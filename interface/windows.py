@@ -83,10 +83,10 @@ def janela_consulta_pregoes():
     abas = evh.listar_pregoes_gerais()
     #As chaves da coluna devem seguir "cl_" + nome_fase para dinamizar a apresentação das opções.
     coluna_proposta=sg.Column(key='cl_proposta',visible=True,layout=[
-        [sg.Button('Registrar Disputa NF', enable_events=True,key='bt_registrar_disputa',size=tamanho_padrao)],
+        [sg.Button('Registrar Disputa', enable_events=True,key='bt_registrar_disputa',size=tamanho_padrao)],
     ])
     coluna_julgamento=sg.Column(key='cl_julgamento',visible=False,layout=[
-        [sg.Button('Frustrar Pregão NF',enable_events=True,key='bt_frustrar',size=tamanho_padrao)],
+        [sg.Button('Frustrar Pregão',enable_events=True,key='bt_frustrar_julgamento',size=tamanho_padrao)],
         [sg.Button('Homologar Pregão',enable_events=True,key='bt_homologar',size=tamanho_padrao),]
     ])
     coluna_homologado=sg.Column(key='cl_homologado',visible=False,layout=[
@@ -96,11 +96,11 @@ def janela_consulta_pregoes():
         [sg.Button('Finalizar Pregão NF',enable_events=True,key='bt_finalizar_pregao',size=tamanho_padrao)],
     ])
     coluna_frustrado=sg.Column(key='cl_frustrado',visible=False,layout=[
-        [sg.Button('Restaurar NF',enable_events=True,key='bt_restaurar_frustrado',size=tamanho_padrao)]
+        [sg.Button('Restaurar',enable_events=True,key='bt_restaurar_frustrado',size=tamanho_padrao)]
     ])
     coluna_suspenso=sg.Column(key='cl_suspenso',visible=False,layout=[
-        [sg.Button('Frustrar Pregão NF',enable_events=True,key='bt_frustrar',size=tamanho_padrao)],
-        [sg.Button('Restaurar NF',enable_events=True,key='bt_restaurar_suspenso',size=tamanho_padrao)]
+        [sg.Button('Frustrar Pregão',enable_events=True,key='bt_frustrar_suspenso',size=tamanho_padrao)],
+        [sg.Button('Restaurar',enable_events=True,key='bt_restaurar_suspenso',size=tamanho_padrao)]
     ])
     layout=[
         [

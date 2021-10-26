@@ -13,7 +13,7 @@ wds.janela_menu()
 while True:
     window, event, values = sg.read_all_windows()
 
-    #print(window,event,values)
+    print(window,event,values)
 
     if(window.Title==titulo_janelas['janela_menu']):
         if(event == 'bt_consultar'):
@@ -91,66 +91,7 @@ while True:
             wds.janela_consulta_itens_pregao(window['txt_id_pregao'].get())
 
     if(window.Title==titulo_janelas['janela_consulta_pregoes']):
-        if(event == 'bt_alterar_fase'):
-            pregoes = evh.consultar_dados_selecionados_tabela(window,values,'tg_pregoes')
-            if pregoes:
-                window.Close()
-                janela_anterior.append(wds.janela_consulta_pregoes)
-                [evh.abrir_janela_alterar_fase_pregao(pregao[2],pregao[1]) for pregao in pregoes]
-
-        if(event == 'bt_pasta'):
-            pregoes = evh.consultar_dados_selecionados_tabela(window,values,'tg_pregoes')
-            if pregoes:
-                [evh.abrir_pasta_pregao(pregao[0]) for pregao in pregoes]
-        
-        if(event == 'bt_registrar_disputa'):
-            pregoes = evh.consultar_dados_selecionados_tabela(window,values,'tg_pregoes')
-            if pregoes:
-                window.Close()
-                evh.abrir_janela_alteracao_itens(pregoes[0][0])
-
-        if(event == 'bt_consultar_itens'):
-            pregoes = evh.consultar_dados_selecionados_tabela(window,values,'tg_pregoes')
-            if pregoes:
-                window.Close()
-                janela_anterior.append(wds.janela_consulta_pregoes)
-                wds.janela_consulta_itens_pregao(pregoes[0][0])
-        
-        if(event == 'bt_alterar_data'):
-            pregao = evh.consultar_dados_selecionados_tabela(window,values,'tg_pregoes')
-            if pregao:
-                window.Close()
-                janela_anterior.append(wds.janela_consulta_pregoes)
-                wds.janela_alteracao_data_abertura(cnn.consultar_dados_pregao(pregao[0][0]))
-
-        if(event == 'bt_homologar'):
-            pregoes = evh.consultar_dados_selecionados_tabela(window,values,'tg_pregoes')
-            if pregoes:
-                window.Close()
-                janela_anterior.append(wds.janela_consulta_pregoes)
-                evh.abrir_janela_homologacao_itens(pregoes[0][0])
-
-        if(event == 'bt_registrar_empenho'):
-            pregoes = evh.consultar_dados_selecionados_tabela(window,values,'tg_pregoes')
-            if pregoes:
-                window.Close()
-                janela_anterior.append(wds.janela_consulta_pregoes)
-                evh.abrir_janela_itens_empenhar(pregoes[0][0])
-        
-        if(event == 'bt_registrar_carona'):
-            pregoes = evh.consultar_dados_selecionados_tabela(window,values,'tg_pregoes')
-            if pregoes:
-                window.Close()
-                janela_anterior.append(wds.janela_consulta_pregoes)
-                evh.abrir_janela_itens_carona(pregoes[0][0])
-
-        if(event == 'bt_registrar_reequilibrio'):
-            pregoes = evh.consultar_dados_selecionados_tabela(window,values,'tg_pregoes')
-            if pregoes:
-                window.Close()
-                janela_anterior.append(wds.janela_consulta_pregoes)
-                evh.abrir_janela_itens_reequilibrio(pregoes[0][0])
-
+        #RESPONSÁVEL PELA DINÂMICA DOS BOTÕES DA TELA
         if(event == 'tg_pregoes'):
             tabela = str(values['tg_pregoes'])
             if (tabela != 'tab_finalizado'):
@@ -161,6 +102,75 @@ while True:
                 window['bt_alterar_data'].update(visible=True)
             if(values['tg_pregoes'] in ['tab_julgamento','tab_homologado','tab_finalizado']):
                 window['bt_alterar_data'].update(visible=False)
+        
+        #SEÇÃO DOS BOTÕES
+        if(event == 'bt_pasta'):
+            pregoes = evh.consultar_dados_selecionados_tabela(window,values,'tg_pregoes','Selecione um ou mais pregões!')
+            if pregoes:
+                [evh.abrir_pasta_pregao(pregao[0]) for pregao in pregoes]
+        
+        if(event == 'bt_registrar_disputa'):
+            pregoes = evh.consultar_dados_selecionados_tabela(window,values,'tg_pregoes','Selecione o pregão para registrar a disputa!')
+            if pregoes:
+                window.Close()
+                if evh.abrir_janela_alteracao_itens(pregoes[0][0]):
+                    evh.voltar_pagina(janela_anterior,wds.janela_menu())
+
+        if(event == 'bt_consultar_itens'):
+            pregoes = evh.consultar_dados_selecionados_tabela(window,values,'tg_pregoes','Selecione o pregão para consultar!')
+            if pregoes:
+                window.Close()
+                janela_anterior.append(wds.janela_consulta_pregoes)
+                wds.janela_consulta_itens_pregao(pregoes[0][0])
+        
+        if(event == 'bt_alterar_data'):
+            pregao = evh.consultar_dados_selecionados_tabela(window,values,'tg_pregoes','Selecione o pregão para alterar a data!')
+            if pregao:
+                window.Close()
+                janela_anterior.append(wds.janela_consulta_pregoes)
+                wds.janela_alteracao_data_abertura(cnn.consultar_dados_pregao(pregao[0][0]))
+
+        if(event == 'bt_homologar'):
+            pregoes = evh.consultar_dados_selecionados_tabela(window,values,'tg_pregoes','Selecione o pregão para homologar!')
+            if pregoes:
+                window.Close()
+                janela_anterior.append(wds.janela_consulta_pregoes)
+                evh.abrir_janela_homologacao_itens(pregoes[0][0])
+
+        if(event == 'bt_registrar_empenho'):
+            pregoes = evh.consultar_dados_selecionados_tabela(window,values,'tg_pregoes','Selecione o pregão para empenhar!')
+            if pregoes:
+                window.Close()
+                janela_anterior.append(wds.janela_consulta_pregoes)
+                evh.abrir_janela_itens_empenhar(pregoes[0][0])
+        
+        if(event == 'bt_registrar_carona'):
+            pregoes = evh.consultar_dados_selecionados_tabela(window,values,'tg_pregoes','Selecione o pregão da carona!')
+            if pregoes:
+                window.Close()
+                janela_anterior.append(wds.janela_consulta_pregoes)
+                evh.abrir_janela_itens_carona(pregoes[0][0])
+
+        if(event == 'bt_registrar_reequilibrio'):
+            pregoes = evh.consultar_dados_selecionados_tabela(window,values,'tg_pregoes','Selecione o pregão do reequilíbrio!')
+            if pregoes:
+                window.Close()
+                janela_anterior.append(wds.janela_consulta_pregoes)
+                evh.abrir_janela_itens_reequilibrio(pregoes[0][0])
+
+        if(event == 'bt_frustrar_julgamento' or event == 'bt_frustrar_suspenso'):
+            pregoes = evh.consultar_dados_selecionados_tabela(window,values,'tg_pregoes','Selecione um pregão para frustrar!')
+            if pregoes:
+                evh.frustrar_pregao(pregoes[0][0])
+                window.Close()
+                wds.janela_consulta_pregoes()
+
+        if(event == 'bt_restaurar_frustrado' or event == 'bt_restaurar_suspenso'):
+            pregoes = evh.consultar_dados_selecionados_tabela(window,values,'tg_pregoes','Selecione um pregão para restaurar!')
+            if pregoes:
+                evh.restaurar_pregao(pregoes[0][0])
+                window.Close()
+                wds.janela_consulta_pregoes()
 
     if(window.Title==titulo_janelas['janela_consulta_empenhos']):
         if(event=='bt_pasta'):
