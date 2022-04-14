@@ -1,19 +1,20 @@
-# Projeto Brainpro BigNail, por Fernando H. Rocha
-## Objetivo
-Desenvolver ao setor de licitação da empresa, automações de processos e gestão dos processos licitatórios da empresa.
+# Projeto BigNail
 
-## Fundamentos
-A seguir será apresentada uma lista de conceitos fundamentais para o entendimento do processo licitatório
+## Descrição do projeto
+Automações em web e em gestão baseados na participação empresarial em processos licitatórios da modalidade pregão.
 
-### Ciclo de Vida de um Pregão
-O pregão é uma modalidade da licitação, onde o processo acontece integralmente online, no nosso caso especificamente por meio da plataforma do ComprasNet.
-O ciclo de vida de um pregão segue o seguinte procedimento:
+## Pregão
+
+### Introdução
+O pregão é uma modalidade da licitação, onde o processo acontece online, por meio de plataformas online como o [ComprasNet](http://www.comprasnet.gov.br/seguro/loginPortal.asp).
+
+### Ciclo de Vida de um Pregão.
 
 #### Publicação do Edital.
-O Órgão disponibiliza publicamente o edital do processo, para que os interessados analisem os termos e condições para validar a viabilidade de sua participação.
+Os processos de licitação por pregão são processos onde empresas participam a fim de disputar o direito exclusivo de venda e/ou prestação de serviços específicos para determinados órgãos, por meio de aquisições que contemplam integral ou parcialmente a porção de itens licitados no edital de participação.
 
 #### Registro da Proposta de Preços.
-Os interessados que estão de acordo com o edital devem registrar no portal os itens que desejam disputar, incluindo marca, modelo, preço, quantidade e descrição dos itens. Aqui também devem ser enviados a **proposta de preços**, com as especificações citadas, e os **documentos da empresa** caso necessário.
+As empresas interessadas estão de acordo com o edital devem registrar na plataforma os itens que desejam disputar, necessariamente especificando marca, modelo, preço, quantidade e descrição dos itens e/ou serviços. É quando sa empresa submeter a **proposta de preços** (documento confeccionado pela empresa declarando participação no processo e declarando os itens/serviços de interesse), e os **documentos da empresa** de capacitação e regularização da empresa necessarios para participação no processo.
 
 #### Disputa de Lances.
 Para cada item registrado, os fornecedores disputam durante um intervalo de tempo, para decidir quem está disposto a oferecer tal produto pelo menor preço. O menor lance fica temporariamente classificado como ganhador daquele item.
@@ -106,7 +107,7 @@ Não possível negociar o valor dos itens, geralmente o fornecedor é liberado d
 
 ----
 
-# Sobre o Sistema de Gestão ERP BigNail Brainpro
+# Sobre o Sistema de Gestão ERP BigNail
 ### Operações comuns a todos os pregões
 - Consulta aos itens cotados
 - Abrir a pasta de cotação
